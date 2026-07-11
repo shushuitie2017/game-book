@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R7 · 引力设计 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(74,154,142,.11), transparent 60%),var(--ink)}
+.hero::after{content:"引";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 07 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>引力设计<br>不画箭头,给每个地点一份「让人想去」的引力</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      为每个 POI(兴趣点)标注两个属性:它服务的<strong>动机类型</strong>(情报/成长/装备/好奇)与它的<strong>可见半径</strong>。检查任意一点的视野内,是否总有至少一个未消费的引力点。有盲区就补小引力。
+    </div>
+    <div class="src">
+      来源 · <b>CEDEC 2017「『ゼルダの伝説 BotW』におけるフィールドレベルデザイン ～ハイラルの大地ができるまで～」藤林秀麿</b>(Famitsu / 4Gamer / GAME Watch / Gamer / Nintendo DREAM 报道) ／ 青沼英二访谈「为什么想去那里」
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>「不强制方向」和「有想让你看的东西」,如何两全</h2>
+  <p>《旷野之息》立项时定了一个近乎自相矛盾的目标:玩家去哪、做什么完全自由,不强制行进方向;但开发者又确实有想让玩家看的绝景、想给的冒险线索。<strong>既不强制,又要引导——这两件事怎么共存?</strong></p>
+  <p>藤林秀麿最初的答案是「点与线」:塔是"点"(高、显眼、登顶送地图),在塔与塔之间的"线"上铺满事件。逻辑很顺,但热力图测试给了当头一棒:</p>
+  <div class="quote">
+    <div class="q">沿街道认真走的8成玩家觉得"一本道感强、被牵着走";故意偏离路线的2成玩家几乎遇不到事件,觉得"什么都没有,好无聊"。人和人的体验以坏的方式分裂了。</div>
+    <div class="who">—— <b>藤林秀麿</b> · CEDEC 2017,谈"点与线"方案的失败</div>
+  </div>
+  <p>问题的本质是:<strong>「线」是强制的</strong>——它假设玩家会走某条路。一旦玩家不走,设计就落空。藤林卡在这里很久,形容自己像在找"在水上行走的方法"。最终的突破口,是把"引导线"换成"引导场"——不再规定玩家走哪条线,而是在世界里布满会"吸引"玩家的点,让玩家自己被吸过去。这个吸引力,他称之为<strong>「引力」</strong>。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CORE · 核心概念</div>
+  <h2>引力 = 昆虫扑向的那束光</h2>
+  <div class="quote">
+    <div class="q">请想象扑向光的昆虫。像被耀眼的光牵引一样,让玩家能动地、不由自主地被吸引过去的"得利的场所",如果能用它来设计引导,就非常契合这次的概念。</div>
+    <div class="who">—— <b>藤林秀麿</b> · CEDEC 2017</div>
+  </div>
+  <p>关键词是<strong>「お得な場所(得利的场所)」</strong>。引力不是凭空的,它来自"去那里对玩家有好处"。最能说明问题的是<strong>马厩的改造</strong>:</p>
+  <div class="quote">
+    <div class="q">马厩当初只是能登记野生捕获的马的地方。后来给它加了住宿、情报交换、购物等功能——从"只能登记马"变成"能从人们口中听到得利情报的地方",引力就被制造出来了。</div>
+    <div class="who">—— <b>藤林秀麿</b> · CEDEC 2017</div>
+  </div>
+  <p>这是 R7 最实操的一课:<strong>引力是被"赋予功能"制造出来的,不是地点天生就有的</strong>。一个地标如果玩家去了没好处,它就没有引力;给它一个明确的、玩家想要的功能,它才开始"发光"。祠(通关加体力)、敌营(能抢到武器)、马厩(得利情报)——每个引力点背后,都对应玩家的一个具体欲望。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE · 引力按动机分层</div>
+  <h2>同一张地图,对不同玩家呈现不同的引力场</h2>
+  <p>引力的精妙之处在于:<strong>它的强弱随"玩家此刻想要什么"而变</strong>。同一个祠,对想变强的玩家引力巨大,对只想赶路的玩家引力微弱。藤林把引力做成了随动机浮动的量:</p>
+
+  <table>
+    <tr><th>引力点</th><th>服务的动机</th><th>可见半径 / 引力特性</th></tr>
+    <tr><td>塔</td><td>「想掌握地图/情报」</td><td>超远(全域级)。结构上高耸,极远可见,登顶送周边地图。是玩家最初的强引力锚点。</td></tr>
+    <tr><td>祠</td><td>「想变强(体力上限)」</td><td>中距。橙色发光、白天也醒目(专门强化过)。<strong>对想强化自己的玩家引力最大</strong>。</td></tr>
+    <tr><td>敌营</td><td>「想变强(装备)」</td><td>中近距。能像盗贼一样闯入抢武器。<strong>尺寸虽小,但对战斗型玩家排位靠前</strong>。</td></tr>
+    <tr><td>马厩</td><td>「想要情报/补给/休息」</td><td>中距。改造后提供住宿、购物、得利情报。夜晚亮灯,引力上升。</td></tr>
+    <tr><td>狼烟 / 异形岩 / 发光物</td><td>「那是什么?」纯好奇</td><td>小引力,近距才生效。负责在路途中途持续勾引,是"变化球"引力。</td></tr>
+  </table>
+
+  <p>两个维度让同一张图产生无数条不同路线:</p>
+  <div class="model">
+    <div class="mstep"><h5>动机维度:玩家类型决定引力排序</h5><p>收集型、战斗型、探索型玩家,各自被不同的点吸走。<strong>路线因人而异地自然分叉</strong>——这正是"点与线"想要却做不到的:不再有唯一正确路径,每个人的旅程都不同。</p></div>
+    <div class="mstep"><h5>时间维度:昼夜切换引力相位</h5><p>夜晚黑暗压低地形引力,却抬高自发光设施(塔、马厩、祠)的引力。同一片区域,白天和夜晚给你两套不同的导航。<strong>这是极低成本的内容翻倍</strong>——同一批资产,靠光照变化产生两种探索体验。</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">CASE · 引力如何连锁</div>
+  <h2>兴趣链:让"视野里永远有一个目标"的无限机关</h2>
+  <p>单个引力点不够。藤林发现,武器、蘑菇这类东西"进不了视野就没引力"。真正的突破是把引力<strong>串联</strong>起来:</p>
+  <div class="quote">
+    <div class="q">把引力点配置成从塔上眺望时能看见。而在玩家奔向它的途中,又能发现新的引力点。引力就这样连锁下去,生出了"能动地行动的、理想的游玩无限机关(無限機関)"。</div>
+    <div class="who">—— <b>藤林秀麿</b> · CEDEC 2017</div>
+  </div>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 250" xmlns="http://www.w3.org/2000/svg">
+      <!-- player on tower -->
+      <rect x="52" y="150" width="12" height="50" fill="#d9a441"/>
+      <circle cx="58" cy="146" r="6" fill="#d9a441"/>
+      <text x="58" y="216" text-anchor="middle" class="sla">塔(起点)</text>
+      <!-- gaze -->
+      <path d="M70 150 L 250 120" stroke="#4a9a8e" stroke-width="1" stroke-dasharray="2 3"/>
+      <path d="M70 155 L 470 150" stroke="#4a9a8e" stroke-width="1" stroke-dasharray="2 3"/>
+      <!-- point A: shrine -->
+      <circle cx="250" cy="120" r="9" fill="none" stroke="#4a9a8e" stroke-width="2"/>
+      <text x="250" y="106" text-anchor="middle" class="slt">祠 A</text>
+      <text x="250" y="146" text-anchor="middle" class="sl">「想变强」</text>
+      <!-- walking to A, discover B (smoke) -->
+      <path d="M70 175 C 150 190, 200 175, 245 132" stroke="#d8d2c4" stroke-width="1.4" fill="none" marker-end="url(#aw)"/>
+      <!-- B smoke appears mid-way -->
+      <circle cx="200" cy="200" r="6" fill="#c8442a" opacity=".7"/>
+      <text x="200" y="224" text-anchor="middle" class="slc">狼烟 B(途中撞见)</text>
+      <path d="M215 195 L 245 130" stroke="#c8442a" stroke-width="1" stroke-dasharray="3 3"/>
+      <!-- from A see C -->
+      <circle cx="470" cy="150" r="10" fill="none" stroke="#d9a441" stroke-width="2"/>
+      <text x="470" y="136" text-anchor="middle" class="sla">异形岩 C</text>
+      <text x="470" y="176" text-anchor="middle" class="sl">「那是什么?」</text>
+      <path d="M262 122 C 360 128, 420 140, 458 148" stroke="#d8d2c4" stroke-width="1.2" fill="none" stroke-dasharray="4 3" marker-end="url(#aw)"/>
+      <!-- from C see D -->
+      <rect x="660" y="120" width="12" height="60" fill="#d9a441"/>
+      <circle cx="666" cy="116" r="6" fill="#d9a441"/>
+      <text x="666" y="196" text-anchor="middle" class="sla">下一座塔 D</text>
+      <path d="M482 148 C 560 150, 610 145, 655 142" stroke="#d8d2c4" stroke-width="1.2" fill="none" stroke-dasharray="4 3" marker-end="url(#aw)"/>
+      <defs><marker id="aw" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L5,3 L0,6 z" fill="#d8d2c4"/></marker></defs>
+    </svg>
+    <div class="figcap">兴趣链:从塔上看见祠A→奔向A途中撞见狼烟B→到A后又望见异形岩C→到C后望见下一座塔D……<b>玩家永远在"去A的路上发现了B"</b>,寄り道(绕路)不是失控,是被编排的主线。设计目标:视野里永远有至少一个未消费的引力点。</div>
+  </div>
+
+  <div class="quote">
+    <div class="q">朝着目的地走的途中,另一个目的地自然进入了视野边缘——目标是让游戏"视野里永远有某个目标"。</div>
+    <div class="who">—— <b>米津真</b>(地形リードアーティスト) · CEDEC 2017</div>
+  </div>
+  <p>这条链能成立,还依赖地形的"遮蔽与渐露"(那是 R9 的三角形法则)。但引力的部分,核心就是这条 R7 的铁律:<strong>在玩家能到达的任意视点,视野里都应至少有一个还没被消费的引力点</strong>。有盲区(视野空无一物),玩家就会迷茫、无聊;补一个小引力(一缕烟、一块异形岩),链条就接上了。</p>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 引力哲学的底层</div>
+  <h2>青沼英二:唯一诚实的引导,是把"想去"做出来</h2>
+  <p>为什么不干脆用地图标记(marker)告诉玩家去哪?青沼英二反复追问过一个问题,最终决定删掉标记:</p>
+  <div class="quote">
+    <div class="q">青沼反复自问"为什么会想去那里"。当意识到答案除了"因为在意/好奇"之外别无其他时,就能把标记删掉了。比起告诉玩家去哪,全力去创造一个"让人在意的景色",才是更诚实的做法。</div>
+    <div class="who">—— <b>关于青沼英二的设计判断</b>(玩家考察整理)</div>
+  </div>
+  <p>这句话点出了引力设计和传统"贴心引导"的根本区别。贴心引导(满屏标记、任务箭头)替玩家做了决定,玩家只是执行;引力设计只负责<strong>让地点变得"值得在意"</strong>,去不去、怎么去,全由玩家的好奇心驱动。前者是"被牵着走",后者是"自己想去"——体验的性质完全不同。</p>
+  <p>还有一层更微妙的:<strong>世界"不等你来"的姿态</strong>。山不会因为没人爬而困扰,祠也不挂出"来我这里"的告示。正因为世界不主动讨好玩家,玩家的每一次探索才是真正自发的。对你的设计启示是:与其用UI催促玩家,不如把功夫全花在"让那个点本身值得好奇"上。</p>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么给你的地图布引力场</div>
+  <h2>执行流程</h2>
+  <div class="model">
+    <div class="mstep"><h5>盘点玩家的动机类型</h5><p>先列出你的游戏里玩家"想要什么":情报?变强?资源?好奇满足?每一类动机,都需要有对应的引力点来承接。</p></div>
+    <div class="mstep"><h5>给每个 POI 赋予明确功能(制造引力)</h5><p>照抄马厩改造法:每个地点都要能回答"玩家来这里能得到什么"。答不上来的地点没有引力,要么赋予功能,要么删掉。</p></div>
+    <div class="mstep"><h5>为每个 POI 标注动机类型 + 可见半径</h5><p>动机类型决定"谁会被吸引",可见半径决定"从多远能被吸引"。大引力(塔/地标)可见半径大、数量少;小引力(好奇物)可见半径小、数量多、密集补位。</p></div>
+    <div class="mstep"><h5>做"视野无盲区"检查</h5><p>沿玩家可能走的路线走一遍(别用debug瞬移,真的走),检查每一步的视野里是否都有≥1个未消费引力点。发现盲区(视野空白),补一个小引力。</p></div>
+    <div class="mstep"><h5>让引力随周期变化</h5><p>用昼夜/天气/季节改变引力排序,让同一张图产生多套路线。自发光物在夜间上位,是最经典的一招。</p></div>
+    <div class="mstep"><h5>用热力图验证(见 R14)</h5><p>让测试者跑图,叠加轨迹。探索型游戏要看到路线离散、全图被踏破——若仍集中在一条线,说明引力场没做匀,回去补点。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 引力场审计</h4>
+    <ul>
+      <li>玩家的动机类型是否已盘点(情报/成长/装备/好奇…)?</li>
+      <li>每个 POI 是否有明确功能,能回答"来这里得到什么"?</li>
+      <li>每个 POI 是否标注了动机类型 + 可见半径?</li>
+      <li>大引力少而远、小引力多而近,配比是否合理?</li>
+      <li>沿真实路线走,每一步视野里是否都有≥1个未消费引力?</li>
+      <li>发现的盲区是否已用小引力补上?</li>
+      <li>引力是否随昼夜/周期变化,产出多套路线?</li>
+      <li>是否用"让人在意的景色"而非UI标记来驱动?</li>
+      <li>热力图是否显示路线离散(而非集中一条线)?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>POI 引力登记表</h2>
+  <div class="tpl">
+    <div class="h">POI GRAVITY ENTRY</div>
+    <div class="row"><span class="k">poi_name</span>: 地点名称</div>
+    <div class="row"><span class="k">function</span>: 玩家来这里能得到______(答不出→<span class="x">赋功能或删除</span>)</div>
+    <div class="row"><span class="k">motive</span>: 服务的动机 = 情报 / 成长 / 装备 / 好奇</div>
+    <div class="row"><span class="k">visible_radius</span>: 可见半径(大地标=远 / 好奇物=近)</div>
+    <div class="row"><span class="k">gravity_by_type</span>: 对各玩家类型的引力排序</div>
+    <div class="row"><span class="k">time_phase</span>: 昼/夜/天气如何改变它的引力</div>
+    <div class="row"><span class="k">chains_to</span>: 从这里能望见的下一个引力点(维持链条)</div>
+    <div class="row"><span class="k">blindspot_fill</span>: 若它周边有视野盲区,补什么小引力</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>人生小镇(人生模拟) — 2D俯视同样成立</h4>
+    <ul>
+      <li><strong>给镇子每个建筑赋予功能引力</strong>:学校(成长)、职介所(机会)、酒馆(情报)、公园(好奇事件)。玩家走进小镇,不同建筑对不同追求的玩家发出不同强度的"想进去看看"。别做纯装饰建筑——每栋都要能回答"进去有什么"。</li>
+      <li><strong>2D的"可见半径"=屏幕露出</strong>:俯视图里,让玩家当前位置的屏幕边缘总露出至少一个"想去"的目标(一栋亮灯的店、一个感叹号NPC、一处异样的地块)。走到哪,视野里都有下一个勾子。</li>
+      <li><strong>用时间段切换引力</strong>:白天学校/职场引力强,夜晚酒馆/家宅引力强。同一个小镇,不同时段值得逛的地方不同——低成本让小镇"活"起来。</li>
+      <li><strong>兴趣链驱动人生探索</strong>:玩家为了A事件(升职)去公司,途中撞见B(同事的八卦线),办完A又望见C(街角的机遇)。让人生的"绕路"成为被编排的主线。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>星屑急便(多人配送)</h4>
+    <ul>
+      <li><strong>配送目标本身就是最强引力</strong>:送达点是玩家的"塔"。但沿途要布小引力——捷径入口、隐藏客户、道具点——让玩家在赶路时"顺手绕一下"的诱惑一直存在。</li>
+      <li><strong>动机分层做玩家类型分化</strong>:纯速通玩家直奔送达点;收集型玩家被沿途道具吸引;探索型玩家被隐藏路线勾走。同一张图,不同玩家跑出不同路线,重玩性自然产生。</li>
+      <li><strong>联机场景:引力点变成争夺焦点</strong>:把稀缺道具/捷径设为高引力点,多个玩家同时被吸引过去,自然形成博弈与碰撞——引力设计在联机里直接转化为对抗热点。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 用"线"强制路径(点与线的原始错误)。</b>预设玩家会走某条路、在路上铺事件,是藤林验证失败的老路。玩家一旦偏离,设计全落空,还会造成"走对的人觉得一本道、走偏的人觉得空虚"的体验分裂。改用"场":布满引力点,让玩家自己被吸过去。</div>
+  <div class="warn"><b>误用二 · 地点没有功能,只有外观。</b>一个漂亮但去了没好处的地点,不产生引力,玩家去一次就再不去。引力来自"お得(得利)"——每个 POI 必须能回答"来这里得到什么"。照马厩改造法给它一个玩家真正想要的功能。</div>
+  <div class="warn"><b>误用三 · 视野出现盲区,链条断裂。</b>如果玩家走到某处,视野里空无一物,兴趣链就断了,玩家会迷茫、无聊、甚至弃游。必须沿真实路线检查,凡是视野空白处,补一个小引力(烟、光、异形轮廓)把链条接上。别依赖UI标记来救场——那会破坏"自己想去"的自发性。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R6 · 炫技谢幕</span>
+      <span>NEXT ▶ <b>R8 · 周期改变引力:同一地图多套路线</b></span>
+    </div>
+    <p>资料来源 · CEDEC 2017「『ゼルダの伝説 ブレス オブ ザ ワイルド』におけるフィールドレベルデザイン～ハイラルの大地ができるまで～」(藤林秀麿・米津真)的 Famitsu.com / 4Gamer.net / GAME Watch / Gamer.ne.jp / Nintendo DREAM WEB 各家报道 ／ 青沼英二相关访谈与玩家考察。图示为基于讲演内容的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

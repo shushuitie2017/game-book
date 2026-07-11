@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R12 · 京都标定法 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(217,164,65,.11), transparent 60%),var(--ink)}
+.hero::after{content:"尺";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep.d1::before{content:"距";font-family:var(--serif);color:var(--amber);font-weight:900}
+.mstep.d2::before{content:"密";font-family:var(--serif);color:var(--teal);font-weight:900}
+.mstep.d3::before{content:"尺";font-family:var(--serif);color:var(--cinnabar);font-weight:900}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 12 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>京都标定法<br>用你有身体记忆的真实空间,给虚拟世界定尺寸</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      动工前,先用你有身体记忆的真实街区,标定三把尺子:<strong>距离感</strong>(世界该多大)、<strong>密度感</strong>(每单位面积放多少事件)、<strong>尺感</strong>(单次游玩的节拍)。数值表格骗人,身体不骗人。
+    </div>
+    <div class="src">
+      来源 · <b>CEDEC 2017「フィールド設計図の作成手法」藤林秀麿</b>(4Gamer / GAME Watch 报道) ／ "手拿地图走遍京都市内"标定距离感 ／ 用便利店密度换算游戏世界密度
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>"这个世界该多大"——数值表格给不出答案</h2>
+  <p>前面几条(R7–R11)都在讲"世界里放什么、怎么摆"。R12 往前退一步,处理一个最基础、却最容易拍脑袋决定的问题:<strong>这个世界到底该多大?每平方公里放几个事件?一次游玩该有多长的节拍?</strong></p>
+  <p>这些是尺寸问题,而尺寸问题最危险的地方在于:<strong>你在编辑器里看到的数字,和玩家实际游玩时的体感,是两回事</strong>。你在地图编辑器里设"5000米宽",这个数字对你毫无意义——它到底是"走两步就到"还是"走到腻"?你设"每100米一个事件",这密度是"密集得喘不过气"还是"空旷得无聊"?光看数值,你根本判断不了。</p>
+  <p>任天堂第一次做这么大的开放世界,同样没有经验。藤林的解法极其朴素而聪明:<strong>不靠猜数值,而是借用一个你身体已经烂熟的真实空间来标定</strong>。你不知道"5000米在游戏里是什么感觉",但你知道"从家走到常去的那家店是什么感觉"。把这种身体记忆换算成游戏尺寸,你就有了一把绝对可靠的尺子。这就是京都标定法。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CORE · 三把尺子</div>
+  <h2>距离感 · 密度感 · 尺感</h2>
+  <p>藤林在设计海拉鲁的"规模感"时,定了三把尺子,全部数值化。这三把尺子回答三个不同的尺寸问题:</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 220" xmlns="http://www.w3.org/2000/svg">
+      <!-- three rulers -->
+      <text x="140" y="30" text-anchor="middle" class="sla" font-size="13">距离感</text>
+      <text x="140" y="50" text-anchor="middle" class="sl" font-size="10">世界多大?</text>
+      <line x1="50" y1="90" x2="230" y2="90" stroke="#d9a441" stroke-width="2"/>
+      <line x1="50" y1="82" x2="50" y2="98" stroke="#d9a441" stroke-width="2"/>
+      <line x1="230" y1="82" x2="230" y2="98" stroke="#d9a441" stroke-width="2"/>
+      <text x="140" y="118" text-anchor="middle" class="sl" font-size="10">走多久算"远方"</text>
+
+      <text x="420" y="30" text-anchor="middle" class="slt" font-size="13">密度感</text>
+      <text x="420" y="50" text-anchor="middle" class="sl" font-size="10">放多少事件?</text>
+      <g fill="#4a9a8e">
+        <circle cx="360" cy="85" r="4"/><circle cx="400" cy="95" r="4"/><circle cx="440" cy="80" r="4"/>
+        <circle cx="380" cy="105" r="4"/><circle cx="470" cy="100" r="4"/><circle cx="420" cy="88" r="4"/>
+      </g>
+      <rect x="345" y="70" width="150" height="48" fill="none" stroke="rgba(74,154,142,.4)"/>
+      <text x="420" y="140" text-anchor="middle" class="sl" font-size="10">每单位面积几个点</text>
+
+      <text x="700" y="30" text-anchor="middle" class="slc" font-size="13">尺感</text>
+      <text x="700" y="50" text-anchor="middle" class="sl" font-size="10">节拍多长?</text>
+      <path d="M620 90 Q 645 75 670 90 Q 695 75 720 90 Q 745 75 770 90" stroke="#c8442a" stroke-width="2" fill="none"/>
+      <circle cx="620" cy="90" r="3" fill="#c8442a"/>
+      <circle cx="670" cy="90" r="3" fill="#c8442a"/>
+      <circle cx="720" cy="90" r="3" fill="#c8442a"/>
+      <circle cx="770" cy="90" r="3" fill="#c8442a"/>
+      <text x="700" y="118" text-anchor="middle" class="sl" font-size="10">点到点的时长=呼吸节拍</text>
+    </svg>
+    <div class="figcap">三把尺子各回答一个尺寸问题:<b>距离感</b>=世界整体多大、走多久算远;<b>密度感</b>=每单位面积放多少事件点;<b>尺感</b>=从一个点走到下一个点的时长,即游戏的呼吸节拍。三者互相关联,共同定义世界的规模体感。</div>
+  </div>
+
+  <table>
+    <tr><th>尺子</th><th>回答的问题</th><th>标定方法</th></tr>
+    <tr><td>距离感</td><td>世界该多大?走多久不腻?</td><td>用京都地图做标定原器:"从京都御所看京都塔能看到什么程度?""步行多久开始想坐车?"把身体实感换算成海拉鲁基准尺寸。</td></tr>
+    <tr><td>密度感</td><td>每单位面积放多少"事件"?</td><td>用现实密度换算:比如"便利店的间隔"。设定好想要的密度意象,上网查这类现实物的实际间隔数值,直接采用。</td></tr>
+    <tr><td>尺感</td><td>单次游玩的节拍多长?</td><td>从一个引力点走到下一个引力点的时长=游戏的呼吸节拍,与遮蔽物(小三角,接 R11)密度联动调整。</td></tr>
+  </table>
+</section>
+
+<section>
+  <div class="eyebrow">CASE 1 · 距离感</div>
+  <h2>藤林拿着地图,走遍了京都</h2>
+  <div class="quote">
+    <div class="q">任天堂第一次做这么大规模的开放世界,没有"带着实感的知见"。于是藤林他们和负责地形设计的美术一起,手拿地图,走遍了任天堂所在地京都市内。</div>
+    <div class="who">—— <b>藤林秀麿</b> · CEDEC 2017(4Gamer 报道)</div>
+  </div>
+  <p>为什么是京都?因为藤林他们对京都有<strong>身体记忆</strong>——这座城市的距离感已经刻在他们的身体里。3D游戏的世界尺度基本接近现实、移动速度也接近真人,所以"实际在京都市内行走时的距离感",可以直接作为游戏世界大小的基准。</p>
+  <div class="quote">
+    <div class="q">从京都御所能把京都塔看到什么程度?走到哪里开始觉得该坐车了?——把这些真实的身体实感,换算成即将制作的游戏世界的广度。</div>
+    <div class="who">—— <b>藤林秀麿</b> · CEDEC 2017(整理)</div>
+  </div>
+  <p>京都标定法的精髓<strong>不在京都</strong>,而在于:<strong>用你有身体记忆的真实空间,给虚拟空间定标</strong>。任何人都能精确调用"从家走到便利店有多远""从这个路口到那个路口走多久开始累"这类体感。数值表格("5000米")对身体毫无意义,但"走到那家店的距离"你闭着眼都知道。<strong>身体是你随身携带、绝对可靠的测量仪。</strong></p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE 2 · 密度感</div>
+  <h2>用"便利店的间隔"换算事件密度</h2>
+  <p>密度感更巧妙。"每平方公里放几个祠"这种问题,凭空定数字必然出错。藤林的方法是<strong>借用现实世界里已经存在的、你熟悉其密度的东西</strong>:</p>
+  <div class="quote">
+    <div class="q">调整密度的方法,把对象物随便先摆一摆看看是最直接的,但很难看出该摆多少才合适。这时用的是现实中的感觉——比如便利店的数量。除此之外还有邮筒等等,按想要设定的密度意象去寻找对应的现实物,目标确定后上网查它的数值,直接用那个数值就行。用作密度尺子的东西,在街上到处都是。</div>
+    <div class="who">—— <b>藤林秀麿</b> · CEDEC 2017(4Gamer / GAME Watch 报道)</div>
+  </div>
+  <p>这个方法的聪明之处:<strong>你对"便利店有多密"是有身体直觉的</strong>——走多远能遇到下一家便利店,这个间隔你天天在经历。如果你想让祠的密度感觉"像便利店那么方便可及",就去查便利店的实际间隔数值,拿来用。想要更稀疏,就用"邮局"或"车站"的间隔。<strong>现实世界提供了一整套现成的、带身体直觉的密度标尺,散落在你身边的街道上,免费取用。</strong></p>
+  <p>一个值得注意的验证细节:祠的密度数值一旦按此定下,<strong>从开发初期到最后几乎没有增减</strong>——藤林特意指出这一点。这说明用现实标定法定出的密度,一次就对了,不需要反复试错调整。这正是身体记忆标定的可靠性证明。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE 3 · 尺感 & 空场地验证</div>
+  <h2>先做空场地验证密度,再扩张全图</h2>
+  <p>第三把尺子"尺感"管的是<strong>游玩节拍</strong>:从一个引力点走到下一个引力点要多久?这个时长就是游戏的"呼吸"——太长玩家会腻,太短会喘不过气。它和 R11 的小三角遮蔽密度联动:遮蔽多则节奏碎、遮蔽少则节奏舒缓。</p>
+  <p>而验证这三把尺子是否调对了,藤林用的方法是<strong>空场地实验</strong>:</p>
+  <div class="quote">
+    <div class="q">先按距离感做出一块空场地,把脑内设想的玩法用粗糙的地形摆进去验证。密度不对就调,对了才扩张到全图。</div>
+    <div class="who">—— <b>藤林秀麿</b> · CEDEC 2017(整理)</div>
+  </div>
+  <p>注意这一步的纪律:<strong>验证密度和节拍时,用的是"空场地+粗糙地形",绝不上美术</strong>。这和骨架期禁止精修(前面卷宗提过的 R16 精神)是同一条纪律。先用最便宜的占位方式把尺寸和密度调对,确认体感正确,才投入昂贵的美术制作。反过来——先做漂亮美术再发现尺寸不对——会浪费掉所有已完成的精细工作。</p>
+  <div class="warn"><b>三把尺子是联动的,不能孤立调。</b>距离感决定世界多大,密度感决定里面塞多少,尺感决定走起来的节拍——三者互相牵制。世界大了密度就得跟上否则空旷,密度高了尺感就变碎。空场地验证的价值,正是让你在最低成本下同时感受三者的合力,而不是分别拍三个数字。</div>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么用身体记忆定尺寸</div>
+  <h2>执行流程</h2>
+  <div class="model">
+    <div class="mstep d1"><h5>选一个你有身体记忆的真实空间做标定原器</h5><p>你最熟的街区、通勤路线、老家附近。关键是你对它的距离、密度有身体直觉,能闭眼说出"从A走到B多久"。</p></div>
+    <div class="mstep d1"><h5>标定距离感:把身体实感换算成游戏尺寸</h5><p>"从这个路口到那个路口走多久开始累?""站在这里能看多远?"把这些体感换算成游戏世界的基准尺寸(移动速度接近真人的话可近似1:1)。</p></div>
+    <div class="mstep d2"><h5>标定密度感:借现实物的间隔</h5><p>确定你想要的密度意象("像便利店那么密""像车站那么疏"),查那个现实物的实际间隔,直接采用为事件点密度。</p></div>
+    <div class="mstep d3"><h5>标定尺感:定点到点的节拍时长</h5><p>决定从一个引力点走到下一个要多久(呼吸节拍)。与遮蔽密度联动:想节奏舒缓就疏,想紧凑就密。</p></div>
+    <div class="mstep"><h5>做空场地,用粗糙地形验证(禁美术)</h5><p>按三把尺子做一块空场地,占位地形摆上玩法,真人走一遍感受距离/密度/节拍的合力。不对就调,对了再扩张。绝不在此阶段上美术。</p></div>
+    <div class="mstep"><h5>验证通过后,以此尺寸为基准扩张全图</h5><p>三把尺子调对的空场地,成为整个世界的度量基准。以它为模板向外扩展(接 R11 的区块扩张)。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 尺寸标定审计</h4>
+    <ul>
+      <li>是否选了一个你有身体记忆的真实空间做标定原器?</li>
+      <li>距离感是否用身体实感(而非拍脑袋数字)换算?</li>
+      <li>密度感是否借了某个现实物的实际间隔?</li>
+      <li>尺感(点到点节拍)是否已确定,并与遮蔽密度联动?</li>
+      <li>是否做了"空场地+粗糙地形"来验证?</li>
+      <li>验证阶段是否严格禁止上美术?</li>
+      <li>是否真人走一遍感受了三把尺子的合力?</li>
+      <li>三把尺子是否联动调整(而非孤立拍数字)?</li>
+      <li>验证通过后,是否以此尺寸为基准扩张?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>三把尺子标定表</h2>
+  <div class="tpl">
+    <div class="h">THREE RULERS CALIBRATION</div>
+    <div class="row"><span class="k">reference_space</span>: 你的标定原器(有身体记忆的真实空间)</div>
+    <div class="row"><span class="k">distance</span>: 距离感——"走____开始累"→游戏基准尺寸</div>
+    <div class="row"><span class="k">density_ref</span>: 密度感——借哪个现实物的间隔(便利店/车站…)</div>
+    <div class="row"><span class="k">density_value</span>: 查得的实际间隔数值 → 事件点密度</div>
+    <div class="row"><span class="k">tempo</span>: 尺感——点到点节拍时长(呼吸)</div>
+    <div class="row"><span class="k">tempo_link</span>: 与遮蔽/障碍密度的联动关系</div>
+    <div class="row"><span class="k">blank_test</span>: 空场地验证(粗糙地形,禁美术)结果</div>
+    <div class="row"><span class="k">walked</span>: 真人走一遍感受三者合力?(是/否)</div>
+    <div class="row"><span class="k">expand_base</span>: 以此为基准扩张全图</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>星屑急便(多人配送) — 你的"京都"就是尼崎/关西</h4>
+    <ul>
+      <li><strong>用你最熟的街区给配送图定标</strong>:你在尼崎/关西一带,对本地街区的距离有身体记忆。"从这个车站走到那个便利店多久"——用它给配送图定距离感。小镇主街步行30秒,对应现实中哪两个路口之间?先定这个,再画图。</li>
+      <li><strong>用便利店/邮局间隔定配送点密度</strong>:想让配送目标"像便利店那么密集可及"?查便利店实际间隔,换算成图上的送达点密度。想更有挑战就用更稀疏的现实物(车站、邮局)的间隔。</li>
+      <li><strong>尺感=单局节拍</strong>:一单配送从取货到送达该多久?这是星屑急便的核心节拍,直接决定单局爽不爽。用身体感受"送一趟外卖的合理时长"来标定,而非拍数字。</li>
+      <li><strong>空场地验证(禁美术)</strong>:用纯色块+粗糙地形做一张测试图,真人跑一遍,感受距离/密度/节拍对不对,调好了再上美术。符合你 pipeline 的垂直切片纪律。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>人生小镇(人生模拟) — 尺子的抽象化:时间与节奏</h4>
+    <ul>
+      <li><strong>距离感→时间跨度</strong>:人生模拟的"距离"是时间。用你的人生身体记忆标定:一个人生阶段(比如大学四年)在游戏里该"感觉多长"?玩家玩多久会觉得"这个阶段够了、想进入下一阶段"?用真实的人生时间感来定,而非机械分配回合数。</li>
+      <li><strong>密度感→事件频率</strong>:每个游戏"月/年"该发生几个有意义的事件?借现实直觉:真实人生里"多久会遇到一次值得记住的事"?太密则琐碎疲惫,太疏则乏味。用你对真实生活节奏的身体记忆来标定事件密度。</li>
+      <li><strong>尺感→决策节拍</strong>:从一个重要抉择到下一个该间隔多久(多少日常小事)?这是人生模拟的呼吸。太密集(全是重大抉择)让玩家喘不过气,太稀疏(全是琐事)让玩家无聊。</li>
+      <li><strong>空表验证</strong>:先用纯文本/占位事件做一段时间线,自己走一遍,感受时间跨度/事件密度/决策节拍对不对,再填正式内容。别先写好华丽剧情才发现节奏错了。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 凭空拍数值定尺寸。</b>在编辑器里直接填"世界5000米宽""每100米一个事件",这些数字对身体毫无意义,几乎必然出错——不是空旷得无聊就是密集得窒息。永远用你有身体记忆的真实空间来标定,让身体当尺子,而不是让抽象数字当尺子。</div>
+  <div class="warn"><b>误用二 · 先做美术再验证尺寸。</b>如果先把地图做得漂漂亮亮,再发现距离太远/密度不对,所有精细美术都得推翻重做。必须先用"空场地+粗糙地形"把三把尺子调对,确认体感正确,才投入美术。验证阶段严禁上美术——这是省下大量返工的铁律。</div>
+  <div class="warn"><b>误用三 · 三把尺子孤立调,忽略联动。</b>只调距离不管密度,世界会空旷;只加密度不管尺感,节奏会碎裂。三者互相牵制,必须一起调、一起用空场地感受合力。孤立地拍三个漂亮数字,合起来往往是灾难。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R11 · 三角配比</span>
+      <span>NEXT ▶ <b>R13 · 空场地先行:密度验证先于美术</b></span>
+    </div>
+    <p>资料来源 · CEDEC 2017「『ゼルダの伝説 ブレス オブ ザ ワイルド』におけるフィールドレベルデザイン～ハイラルの大地ができるまで～」(藤林秀麿「フィールド設計図の作成手法」三把尺子部分)的 4Gamer.net / GAME Watch / Nintendo DREAM WEB 各家报道。图示为基于讲演内容的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

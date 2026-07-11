@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>任天堂关卡设计实战手册 · 场景构思与设计机制</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--paper:#14171c;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9;font-size:16px}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:960px;margin:0 auto;padding:0 26px}
+
+.hero{padding:110px 0 70px;position:relative;overflow:hidden;
+  background:radial-gradient(1000px 500px at 85% 0%, rgba(217,164,65,.08), transparent 60%),
+             radial-gradient(800px 480px at 0% 100%, rgba(74,154,142,.07), transparent 60%),var(--ink)}
+.hero::after{content:"設";position:absolute;right:-3%;bottom:-14%;font-size:min(40vw,360px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.32em;color:var(--amber);margin-bottom:20px}
+.hero h1{font-size:clamp(30px,5.4vw,56px);font-weight:900;line-height:1.3}
+.hero h1 em{font-style:normal;color:var(--cinnabar)}
+.hero .sub{margin-top:22px;max-width:660px;color:var(--dim);font-size:16.5px}
+
+.toc{border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);padding:28px 0;margin-bottom:20px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:10px 30px}
+.toc a{display:flex;gap:12px;align-items:baseline;color:var(--text);text-decoration:none;padding:5px 0;transition:.25s}
+.toc a:hover{color:var(--amber)}
+.toc a .no{font-family:var(--mono);font-size:12px;color:var(--cinnabar)}
+
+section{padding:66px 0}
+.sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:10px}
+.sec-head .no{font-family:var(--mono);font-size:13px;color:var(--cinnabar);letter-spacing:.18em}
+.sec-head h2{font-size:clamp(23px,3.4vw,32px);font-weight:900}
+.sec-src{font-family:var(--mono);font-size:11.5px;color:var(--dim);letter-spacing:.06em;margin-bottom:34px}
+.sec-src b{color:var(--teal);font-weight:500}
+h3{font-size:19px;font-weight:700;margin:42px 0 14px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+small{color:var(--dim)}
+
+.quote{margin:26px 0;padding:22px 26px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:17px;font-weight:600;line-height:2;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:30px 0;background:var(--panel);border:1px solid var(--hairline);padding:24px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:1.9;letter-spacing:.03em}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:26px 0;font-size:14px}
+th{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-align:left;color:var(--amber);padding:11px 13px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:13px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.85}
+td:first-child{color:var(--teal);font-weight:600;white-space:nowrap}
+
+.steps{counter-reset:st;margin:26px 0}
+.step{display:grid;grid-template-columns:52px 1fr;gap:18px;padding:20px 0;border-bottom:1px dashed var(--hairline)}
+.step:last-child{border-bottom:none}
+.step::before{counter-increment:st;content:counter(st,decimal-leading-zero);font-family:var(--mono);font-size:22px;color:var(--cinnabar);font-weight:700;line-height:1.3}
+.step h5{font-size:16px;color:#efe9da;font-weight:700;margin-bottom:6px}
+.step p{font-size:14.5px;margin-bottom:6px}
+.step .why{font-family:var(--mono);font-size:12px;color:var(--teal);letter-spacing:.04em}
+.step .why::before{content:"→ 教会玩家：";color:var(--dim)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.35);padding:24px 26px;margin:30px 0}
+.apply h4{font-family:var(--mono);font-size:11.5px;letter-spacing:.25em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.85;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:24px 0}
+@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--hairline);padding:22px 24px}
+.card h4{font-size:15px;color:var(--teal);font-weight:700;margin-bottom:10px}
+.card p{font-size:14px;margin-bottom:0}
+
+.divider{height:1px;background:var(--hairline)}
+footer{padding:56px 0 76px;border-top:1px solid var(--hairline);margin-top:36px}
+footer p{font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:2.2;margin:0}
+
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.rv.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+/* svg shared */
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.sl2{font-family:'JetBrains Mono',monospace;fill:#d8d2c4;font-size:11.5px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">NINTENDO LEVEL DESIGN · FIELD MANUAL</div>
+    <h1>任天堂关卡设计实战手册<br><em>场景构思的可复用机制</em></h1>
+    <p class="sub">只收录访谈与讲演中披露的具体设计机制：马里奥1-1的逐格教学配置、起承转结四段关卡构造、《旷野之息》的引力分层与三角形法则、京都地图标定法、热力图验证。每一节都可以直接搬进你的关卡编辑器。</p>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc rv">
+  <div class="toc-grid">
+    <a href="#s1"><span class="no">壹</span>马里奥1-1 · 无教程的教学配置</a>
+    <a href="#s2"><span class="no">贰</span>起承转结 · 四段式关卡构造</a>
+    <a href="#s3"><span class="no">叁</span>引力 · 玩家为什么往那边走</a>
+    <a href="#s4"><span class="no">肆</span>三角形法则 · 地形即导演</a>
+    <a href="#s5"><span class="no">伍</span>三把尺子 · 世界的度量衡</a>
+    <a href="#s6"><span class="no">陆</span>热力图 · 验证与修正循环</a>
+    <a href="#s7"><span class="no">柒</span>速查表 · 设计规则清单</a>
+  </div>
+</nav>
+</div>
+
+<div class="wrap">
+
+<!-- ============ S1 ============ -->
+<section id="s1" class="rv">
+  <div class="sec-head"><span class="no">壹</span><h2>马里奥1-1：无教程的教学配置</h2></div>
+  <div class="sec-src">来源：<b>宫本茂×手塚卓志 Eurogamer 开发者访谈（2015）</b> ／ 社長が訊く『New スーパーマリオブラザーズ Wii』 ／ E3 2015『マリオメーカー』Developer Story</div>
+
+  <p>宫本茂在访谈中把1-1开场的每一个摆放都讲了一遍。这不是「用心设计」的泛泛而谈，而是一条<strong>精确的心理连锁反应</strong>——每个元素触发的玩家反应，正好为下一个元素做准备：</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 900 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- ground -->
+      <rect x="20" y="210" width="860" height="28" fill="#20252e" stroke="rgba(216,210,196,.15)"/>
+      <!-- mario -->
+      <rect x="50" y="178" width="22" height="32" fill="#c8442a"/>
+      <text x="61" y="170" text-anchor="middle" class="slc">马里奥</text>
+      <!-- goomba -->
+      <rect x="215" y="188" width="24" height="22" fill="#8a6a3f"/>
+      <text x="227" y="180" text-anchor="middle" class="sl">① 栗宝宝</text>
+      <path d="M200 199 L172 199" stroke="#8a6a3f" stroke-width="1.5" marker-end="url(#ar)"/>
+      <!-- ? blocks -->
+      <rect x="300" y="130" width="26" height="26" fill="none" stroke="#d9a441" stroke-width="1.6"/>
+      <text x="313" y="149" text-anchor="middle" class="sla">?</text>
+      <rect x="356" y="130" width="26" height="26" fill="#3a4150"/>
+      <rect x="384" y="130" width="26" height="26" fill="none" stroke="#d9a441" stroke-width="1.6"/>
+      <text x="397" y="149" text-anchor="middle" class="sla">?</text>
+      <rect x="412" y="130" width="26" height="26" fill="#3a4150"/>
+      <rect x="440" y="130" width="26" height="26" fill="none" stroke="#d9a441" stroke-width="1.6"/>
+      <text x="453" y="149" text-anchor="middle" class="sla">?</text>
+      <!-- high ? block -->
+      <rect x="384" y="66" width="26" height="26" fill="none" stroke="#d9a441" stroke-width="1.6"/>
+      <text x="397" y="85" text-anchor="middle" class="sla">?</text>
+      <text x="384" y="52" text-anchor="middle" class="sl">② 砖块列</text>
+      <!-- mushroom path -->
+      <circle cx="330" cy="118" r="9" fill="#4a9a8e"/>
+      <text x="330" y="100" text-anchor="middle" class="slt">③ 蘑菇</text>
+      <path d="M340 118 C 420 92, 520 120, 560 176" stroke="#4a9a8e" stroke-width="1.5" stroke-dasharray="4 4" fill="none" marker-end="url(#art)"/>
+      <path d="M560 186 C 540 200, 500 205, 470 200" stroke="#4a9a8e" stroke-width="1.5" stroke-dasharray="4 4" fill="none" marker-end="url(#art)"/>
+      <!-- pipe -->
+      <rect x="556" y="150" width="44" height="60" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <rect x="550" y="138" width="56" height="16" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <text x="578" y="128" text-anchor="middle" class="sl">反弹壁</text>
+      <!-- 4 pipes increasing -->
+      <rect x="660" y="182" width="34" height="28" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <rect x="712" y="166" width="34" height="44" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <rect x="764" y="150" width="34" height="60" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <rect x="816" y="134" width="34" height="76" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <text x="754" y="120" text-anchor="middle" class="sl">④ 递增水管 = 长按跳跃教学</text>
+      <defs>
+        <marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#8a6a3f"/></marker>
+        <marker id="art" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#4a9a8e"/></marker>
+      </defs>
+    </svg>
+    <div class="figcap">1-1 开场约六个屏幕的教学配置复原。<b>蘑菇的弹道是关键</b>：从?块弹出后向前滚，撞水管反弹折返；此时玩家头顶恰好有砖块封住跳跃逃生路线——「躲不掉」是被摆放出来的。</div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <h5>栗宝宝：缓慢、单独、正面接近</h5>
+      <p>宫本原话逻辑：「有东西从前面走过来，玩家会躲。」栗宝宝的移动速度被专门调校成——不会B冲刺的新手慌乱起跳时，<strong>恰好落在它头上</strong>的速度。失败了也只损失几秒进度，立刻重试。</p>
+      <div class="why">敌人存在／碰到会死／跳跃可以躲避、甚至能踩死</div>
+    </div>
+    <div class="step">
+      <h5>?块：一枚金币买一个操作习惯</h5>
+      <p>「块上画着?，所以会去敲。敲了『叮』一声出金币，玩家会开心，于是去敲下一个。」奖励音效+得分把「顶块」这个操作在3秒内变成条件反射——为下一步投放蘑菇铺好路。</p>
+      <div class="why">顶块有好处 → 主动重复该操作</div>
+    </div>
+    <div class="step">
+      <h5>蘑菇：强制的「因祸得福」</h5>
+      <p>玩家刚学会「蘑菇形状=敌人」（栗宝宝），所以会躲这个从?块里钻出来的东西。但蘑菇撞水管反弹折返、头顶砖块封死跳跃路线——<strong>必定撞上</strong>。撞上的瞬间马里奥变大。宫本：「我做1-1时刻意追求的，就是『最糟的时刻发生最好的事』。」变大后玩家兴奋地去撞砖、敲块——到这里，「这是个什么游戏」已经全部传达完毕。</p>
+      <div class="why">蘑菇是增益／变大能破坏砖块／这个世界会奖励冒险</div>
+    </div>
+    <div class="step">
+      <h5>四根递增水管：不说话的按键时长教学</h5>
+      <p>四根高度递增的水管，逼玩家自己发现「按住跳跃键越久跳得越高」。紧随其后的坑，早期几个<strong>底部有地板</strong>——掉下去能爬出来，不用重玩整关。惩罚的坡度也是设计出来的。</p>
+      <div class="why">跳跃高度可控／坑可以跳过／失败代价先小后大</div>
+    </div>
+  </div>
+
+  <h3>两条被忽视的工程事实</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4>「真正想让你玩的是2-1」</h4>
+      <p>宫本在马里奥制作者访谈中透露工作流：「我自己真正想让人玩的关卡定为2-1或2-2。<strong>把它简化、拆解成1-1</strong>——这是我一贯的做法。」即：先做设计巅峰关，再从中反推出教学关。教学关不是从零写的，是从正式关「降采样」出来的。</p>
+    </div>
+    <div class="card">
+      <h4>栗宝宝是最后才做的</h4>
+      <p>社長が訊く披露：初版敌人只有乌龟（诺库龟）。实测发现新手第一个遇到乌龟太难（踩完还有壳）。于是在<strong>开发末期、内存几乎耗尽时</strong>补做了「踩一下就死的敌人」——素材只够画一帧，靠左右翻转假装走路，所以栗宝宝身体是歪的。教学难度曲线的优先级高于素材排期。</p>
+    </div>
+  </div>
+
+  <div class="apply">
+    <h4>APPLY · 搬进你的项目</h4>
+    <ul>
+      <li>给每个开场元素写一行「→ 教会玩家：___」。写不出来的元素从新手区删掉。人生小镇的第一个事件、星屑急便的第一单配送，都该用这个格式过一遍。</li>
+      <li>照抄「因祸得福」结构：让玩家在第一次「操作失误」时获得增益而不是惩罚（撞上的东西是buff、掉进的坑里有宝箱）。这是把「恐惧新系统」转为「想乱按试试」的最短路径。</li>
+      <li>照抄「先做2-1」工作流：先把你觉得最好玩的一关做出来，再删减出教学关。反着做会让教学关变成无聊的功能清单。</li>
+      <li>递增水管模式=参数教学的通用模板：任何「按住时长/力度/时机」类操作，用四个难度递增的同型障碍教，不用文字。</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ S2 ============ -->
+<section id="s2" class="rv">
+  <div class="sec-head"><span class="no">贰</span><h2>起承转结：四段式关卡构造</h2></div>
+  <div class="sec-src">来源：<b>林田宏一（3Dランド/3Dワールド总监）设计方针</b> ／ GMTK「Super Mario 3D World's 4 Step Level Design」分析 ／ 社長が訊く『スーパーマリオ 3Dワールド』</div>
+
+  <p>《3D世界》塞进了突击秃鹫、翻转板、双重樱桃、炮台箱、开关滑板、空中秋千……几十个新机制，却<strong>没有一个弹窗教程</strong>。总监林田宏一的方法：每关只围绕一个机制，按「起承转结」四段展开——</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 900 210" xmlns="http://www.w3.org/2000/svg">
+      <!-- curve -->
+      <path d="M40 170 C 200 168, 260 150, 380 128 C 500 106, 560 96, 640 60 C 700 34, 740 40, 790 78 C 820 100, 850 130, 870 150"
+        stroke="#d9a441" stroke-width="2" fill="none"/>
+      <!-- zones -->
+      <line x1="230" y1="20" x2="230" y2="185" stroke="rgba(216,210,196,.15)" stroke-dasharray="4 5"/>
+      <line x1="450" y1="20" x2="450" y2="185" stroke="rgba(216,210,196,.15)" stroke-dasharray="4 5"/>
+      <line x1="700" y1="20" x2="700" y2="185" stroke="rgba(216,210,196,.15)" stroke-dasharray="4 5"/>
+      <text x="130" y="40" text-anchor="middle" class="slc" font-size="15">起</text>
+      <text x="340" y="40" text-anchor="middle" class="sla" font-size="15">承</text>
+      <text x="575" y="40" text-anchor="middle" class="slt" font-size="15">転</text>
+      <text x="795" y="40" text-anchor="middle" class="sl2" font-size="15">結</text>
+      <text x="130" y="62" text-anchor="middle" class="sl">零风险展示机制</text>
+      <text x="340" y="62" text-anchor="middle" class="sl">加入风险与变化</text>
+      <text x="575" y="62" text-anchor="middle" class="sl">意外的用法反转</text>
+      <text x="795" y="62" text-anchor="middle" class="sl">华丽收尾+告别</text>
+      <text x="40" y="200" class="sl">难度/复杂度 →</text>
+      <text x="870" y="200" text-anchor="end" class="sl">插旗</text>
+    </svg>
+    <div class="figcap">四段结构的复杂度曲线。注意「結」段回落——机制的最后一次登场往往是<b>纪念性的、低风险的谢幕演出</b>（例如通往旗杆前用它拿一个大金币），给玩家留下掌控感而非疲惫感。</div>
+  </div>
+
+  <table>
+    <tr><th>段</th><th>设计任务</th><th>翻转板（フリップパネル）实例</th></tr>
+    <tr><td>起</td><td>在无死亡风险的环境展示机制的核心规则，玩家可以随便试</td><td>平地上一小块翻转板：踩过变色，掉不下去，随便走</td></tr>
+    <tr><td>承</td><td>同一机制+风险：加入坑、敌人、时间压力；或与已知机制组合</td><td>悬空的翻转板路，踩错顺序会掉落</td></tr>
+    <tr><td>転</td><td>违反刚建立的预期——换视角、换用途、换规模，「原来还能这样用」</td><td>大型翻转板阵+敌人干扰+必须规划路线一笔画</td></tr>
+    <tr><td>結</td><td>短促华丽的最终考验或奖励演出，然后这个机制退场，下关换新的</td><td>旗杆前一段炫技式翻转板，奖励绿星</td></tr>
+  </table>
+
+  <p>配套的还有一个大胆的技术决策——社長が訊く里小泉欢晃、林田说明：从《3D乐园》起<strong>「彻底割舍」自由摄像机，改为与马里奥保持固定方向、固定距离的平行摄像机</strong>。代价是牺牲视角自由，换来「关卡内迷路骤减」和多人同屏的可行性（「分屏不可能」是第一前提）。这是一个「用限制换清晰」的教科书案例。</p>
+
+  <div class="apply">
+    <h4>APPLY · 搬进你的项目</h4>
+    <ul>
+      <li>把起承转结做成关卡模板四个字段：intro区/risk区/twist区/finale区。做星屑急便每张配送地图时按字段填空，空着的字段就是设计没做完的信号。</li>
+      <li>「転」是最容易偷懒漏掉的一段——检验标准：这一段里机制的用法是否<strong>违反了前两段建立的预期</strong>。只是「更难」不算転，那还是承。</li>
+      <li>一关一机制的纪律对独立规模尤其重要：机制清单排队进关卡，而不是全部堆进大厅。你的机制冷藏库正好是这条流水线的原料仓。</li>
+      <li>摄像机「割り切り」：联机2D游戏直接锁定摄像机行为（固定跟随/固定缩放），把省下的调试时间花在关卡上。</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ S3 ============ -->
+<section id="s3" class="rv">
+  <div class="sec-head"><span class="no">叁</span><h2>引力：玩家为什么往那边走</h2></div>
+  <div class="sec-src">来源：<b>CEDEC 2017「フィールドレベルデザイン～ハイラルの大地ができるまで～」藤林秀麿</b>（Famitsu / 4Gamer / GAME Watch 报道）</div>
+
+  <p>《旷野之息》不强制行进方向，但开发者有想让你看的绝景和想给你的线索。藤林的解法：不画箭头，而是在地图上布设带有「引力」的地点——<strong>把玩家心理动机量化成吸引力参数</strong>。</p>
+
+  <h3>引力随「玩家想要什么」而变</h3>
+  <table>
+    <tr><th>地点</th><th>吸引的动机</th><th>引力特性</th></tr>
+    <tr><td>塔</td><td>「想掌握地图/情报」</td><td>超远视距可见，全域级引力；登顶送地图=引力兑现</td></tr>
+    <tr><td>祠</td><td>「想变强（体力）」</td><td>中距引力；橙色发光，<strong>夜晚引力增强</strong>（自发光地物在夜间权重上升）</td></tr>
+    <tr><td>敌人据点</td><td>「想变强（装备）」</td><td>稀有武器掉落驱动；对战斗型玩家引力大于祠</td></tr>
+    <tr><td>烟、奇形地貌、发光点</td><td>「那是什么？」纯好奇</td><td>小引力，负责路径中途的持续勾引</td></tr>
+  </table>
+
+  <p>要点有二。第一，<strong>同一张地图对不同玩家呈现不同的引力场</strong>——收集型、战斗型、探索型玩家各自被不同的点拉走，路线自然分叉。第二，引力有昼夜相位：夜晚黑暗压低地形引力、抬高自发光设施引力，同一片区域每天给你两套导航。</p>
+
+  <div class="quote">
+    <div class="q">「朝着目的地走的途中，另一个目的地自然进入了视野边缘」——设计目标是让游戏「视野里永远有某个目标」。</div>
+    <div class="who">—— <b>米津真</b>（地形リードアーティスト）· CEDEC 2017</div>
+  </div>
+
+  <p>这就是「兴趣链（chain of interest）」：丘 → 桥状建筑 → 塔。玩家永远在「去A的路上发现了B」，寄り道（绕路）不是失控，是被编排的主线。</p>
+
+  <div class="apply">
+    <h4>APPLY · 搬进你的项目</h4>
+    <ul>
+      <li>给地图上每个POI标两个属性：<strong>服务的动机类型</strong>（情报/成长/装备/好奇）与<strong>可见半径</strong>。用脚本检查：任意一点的视野内，是否总有≥1个未消费的引力点？有盲区就补小引力（烟、光、异形轮廓）。</li>
+      <li>昼夜（或你游戏里的任意周期）应改变引力排序，让同一地图产生两套探索路线——极低成本的内容翻倍。</li>
+      <li>2D俯视游戏同样适用：视野边缘露出的半个建筑屋顶、地平线上的一缕烟，就是2D版的引力。人生小镇的镇子布局可以直接按兴趣链摆。</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ S4 ============ -->
+<section id="s4" class="rv">
+  <div class="sec-head"><span class="no">肆</span><h2>三角形法则：地形即导演</h2></div>
+  <div class="sec-src">来源：<b>CEDEC 2017 同讲演，米津真</b>（4Gamer / GIGAZINE / Gamer 报道，Matt Walker 现场记录）</div>
+
+  <p>海拉鲁的地形起伏与自然物摆放，被刻意设计成<strong>在玩家视点里呈现为三角形</strong>。一个几何选择，同时完成三件事（注意：又是一个「一次解决多个问题」的点子）：</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg">
+      <!-- big triangle -->
+      <path d="M120 240 L300 80 L480 240 Z" fill="#20252e" stroke="#4a9a8e" stroke-width="1.6"/>
+      <text x="300" y="170" text-anchor="middle" class="slt">大三角＝地标</text>
+      <text x="300" y="190" text-anchor="middle" class="sl">远距可见 / 数量少</text>
+      <!-- medium -->
+      <path d="M430 240 L540 140 L650 240 Z" fill="#1a1e25" stroke="#d9a441" stroke-width="1.4"/>
+      <text x="540" y="205" text-anchor="middle" class="sla">中三角＝遮蔽</text>
+      <!-- small -->
+      <path d="M640 240 L685 196 L730 240 Z" fill="#1a1e25" stroke="#c8442a" stroke-width="1.3"/>
+      <path d="M720 240 L760 204 L800 240 Z" fill="#1a1e25" stroke="#c8442a" stroke-width="1.3"/>
+      <path d="M790 240 L825 210 L860 240 Z" fill="#1a1e25" stroke="#c8442a" stroke-width="1.3"/>
+      <text x="750" y="270" text-anchor="middle" class="slc">小三角＝节奏（频繁摇杆输入）</text>
+      <!-- tower behind big -->
+      <rect x="288" y="30" width="10" height="60" fill="#d9a441"/>
+      <circle cx="293" cy="26" r="5" fill="#d9a441"/>
+      <text x="293" y="14" text-anchor="middle" class="sla">塔（目标）</text>
+      <!-- player + two routes -->
+      <circle cx="60" cy="236" r="7" fill="#c8442a"/>
+      <text x="60" y="262" text-anchor="middle" class="slc">玩家</text>
+      <path d="M75 230 C 150 190, 220 130, 292 95" stroke="#d8d2c4" stroke-width="1.4" stroke-dasharray="5 4" fill="none" marker-end="url(#aw)"/>
+      <text x="150" y="140" class="sl">A 直接翻越（短·费力·目标渐渐从上方露出）</text>
+      <path d="M70 246 C 200 268, 380 268, 470 246 C 500 238, 520 220, 530 205" stroke="#d8d2c4" stroke-width="1.4" stroke-dasharray="5 4" fill="none" marker-end="url(#aw)"/>
+      <text x="300" y="288" class="sl">B 绕行（长·轻松·目标从侧面缓缓滑入视野，途中撞见新引力）</text>
+      <defs><marker id="aw" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#d8d2c4"/></marker></defs>
+    </svg>
+    <div class="figcap">三角形的三个尺寸各司其职：<b>大＝地标（landmark）· 中＝遮蔽（occlusion）· 小＝节奏（tempo）</b>。大三角周围环绕小三角，实际上把「全方位可进入」收窄成了几条可控的进入路线——自由感保留，测试成本骤降。</div>
+  </div>
+
+  <div class="steps">
+    <div class="step">
+      <h5>分岔装置：翻越还是绕行</h5>
+      <p>每座三角形的山丘对玩家都是一次微型决策：直上（短而费力）还是迂回（长而轻松、但会遇到新东西）。米津称之为「探索中对玩家意志决定的考验」。整张地图就是由几千次这种微决策织成的。</p>
+    </div>
+    <div class="step">
+      <h5>渐露装置：「徐々に」是关键词</h5>
+      <p>绕行时，山后的塔从侧面<strong>缓缓滑入视野</strong>；直越时，塔从棱线上方<strong>逐渐升起</strong>。渐露制造期待感——四角形（方形轮廓）则相反：走近之前完全看不见，越过瞬间「豁然开朗」，用于伏击敌袭和惊喜彩蛋。台形兼具两者性质。三角=预告片，四角=jump scare，按情绪需求选用。</p>
+    </div>
+    <div class="step">
+      <h5>视线聚焦装置：顶点是免费的聚光灯</h5>
+      <p>「三角形有把视线引向顶端的强烈效果」——所以在山顶、丘顶放置异物（一棵孤树、一块怪石、一个发光物），玩家自然会注意到。想让玩家看什么，摆在三角形顶点上。</p>
+    </div>
+  </div>
+
+  <div class="apply">
+    <h4>APPLY · 搬进你的项目</h4>
+    <ul>
+      <li>2D等价物完全成立：俯视图里的建筑/树丛/山体轮廓同样有「遮蔽渐露」与「豁然开朗」的区别。用tilemap画地图时问自己：这个障碍物是三角（渐露）还是四角（突现）？我要的情绪是哪种？</li>
+      <li>「顶点=聚光灯」在UI设计里同样成立：视觉动线的尖端摆CTA。这条可以直接进你的 ui-layout-audit 技能规则库。</li>
+      <li>大中小三级三角的配比是可量化的关卡审计指标：地标（全图唯一性目标）是否太多互相打架？小型遮蔽是否足够密集到维持操作节奏？</li>
+      <li>「大三角+周围小三角=收窄进入路线」解决联机游戏的经典难题：看似开放的PVP地图，其实只需要测试有限几条进攻路线。</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ S5 ============ -->
+<section id="s5" class="rv">
+  <div class="sec-head"><span class="no">伍</span><h2>三把尺子：世界的度量衡</h2></div>
+  <div class="sec-src">来源：<b>CEDEC 2017 同讲演，藤林秀麿「フィールド設計図作り」部分</b></div>
+
+  <p>在铺任何美术之前，藤林先解决「这个世界该多大」。他定了三把尺子，全部数值化：</p>
+
+  <table>
+    <tr><th>尺子</th><th>回答的问题</th><th>做法</th></tr>
+    <tr><td>距離感</td><td>多远算「远方」？走多久不腻？</td><td>用<strong>京都地图做标定原器</strong>：藤林是京都人，就用自己有身体记忆的城市——「从京都御所看京都塔能看到什么程度？」步行多久开始想坐车？把这些实感换算成海拉鲁的基准尺寸。</td></tr>
+    <tr><td>密度感</td><td>每单位面积放多少「事件」？</td><td>先按上面的尺寸做一块<strong>空场地</strong>，把脑内设想的玩法用粗糙地形摆进去验证，密度不对就调，对了才扩张到全图。</td></tr>
+    <tr><td>尺感</td><td>单次游玩节拍多长？</td><td>从一个引力点走到下一个引力点的时长=游戏的呼吸节拍，与遮蔽物（小三角）密度联动调整。</td></tr>
+    </table>
+
+  <p>京都标定法的精髓不在京都，在于：<strong>用你有身体记忆的真实空间给虚拟空间定标</strong>。数值表格骗人，身体不骗人。「从家走到便利店」的体感时长，任何人都能精确调用。</p>
+
+  <div class="apply">
+    <h4>APPLY · 搬进你的项目</h4>
+    <ul>
+      <li>用尼崎（或你最熟的街区）给人生小镇定标：小镇主街步行30秒＝现实中哪两个路口之间？玩家跑图10秒的腻烦阈值对应多少tile？先定这三个数，再画图。</li>
+      <li>先做「空场地+粗地形」验证密度，这一步排在美术之前——和骨架期禁令是同一条纪律的两面。</li>
+      <li>节拍公式可以写成lint规则：相邻引力点间的移动时长超过X秒→警告，自动扫描你的关卡数据。</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ S6 ============ -->
+<section id="s6" class="rv">
+  <div class="sec-head"><span class="no">陆</span><h2>热力图：验证与修正循环</h2></div>
+  <div class="sec-src">来源：<b>CEDEC 2017 讲演（GIGAZINE / Matt Walker 记录）</b> ／ 电ファミ「ゲームの企画書」青沼英二访谈</div>
+
+  <p>引力和三角形不是拍脑袋定案的——任天堂用数据闭环验证。测试者的移动轨迹被叠加成热力图：</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 900 250" xmlns="http://www.w3.org/2000/svg">
+      <!-- before -->
+      <rect x="30" y="40" width="380" height="180" fill="#1a1e25" stroke="rgba(216,210,196,.15)"/>
+      <text x="220" y="28" text-anchor="middle" class="sl">施策前：轨迹沿道路重叠，大片区域无人踏足</text>
+      <path d="M50 200 C 130 170, 200 150, 380 60" stroke="#c8442a" stroke-width="7" fill="none" opacity=".85"/>
+      <path d="M50 196 C 135 168, 205 148, 378 64" stroke="#c8442a" stroke-width="4" fill="none" opacity=".5"/>
+      <path d="M50 120 L 200 118 L 390 130" stroke="#c8442a" stroke-width="3" fill="none" opacity=".4"/>
+      <!-- after -->
+      <rect x="490" y="40" width="380" height="180" fill="#1a1e25" stroke="rgba(216,210,196,.15)"/>
+      <text x="680" y="28" text-anchor="middle" class="slt">施策后：路线离散，全图被踏破</text>
+      <path d="M510 200 C 560 120, 640 90, 850 60" stroke="#4a9a8e" stroke-width="2.5" fill="none" opacity=".8"/>
+      <path d="M510 180 C 600 190, 700 140, 850 130" stroke="#4a9a8e" stroke-width="2.5" fill="none" opacity=".8"/>
+      <path d="M510 90 C 620 60, 720 110, 850 190" stroke="#4a9a8e" stroke-width="2.5" fill="none" opacity=".8"/>
+      <path d="M520 60 C 600 130, 680 200, 840 210" stroke="#4a9a8e" stroke-width="2.5" fill="none" opacity=".8"/>
+      <path d="M510 140 C 640 160, 740 70, 860 90" stroke="#4a9a8e" stroke-width="2.5" fill="none" opacity=".8"/>
+    </svg>
+    <div class="figcap">CEDEC 讲演展示的前后对比（示意复原）。<b>判定标准不是「玩家走了设计者铺的路」，恰恰相反——路线越离散越成功</b>，因为目标是「没有被强迫感」的自由探索。</div>
+  </div>
+
+  <p>配套的组织机制同样是干货：<strong>全公司约300人各玩一周</strong>的大规模测试；QA讲演披露的「取消bug报告确认义务」——报告者不需要负责复现与跟进，降低报告门槛让bug数暴涨（这是好事）；指示与规格变更直接以气泡形式钉在游戏画面对应位置。青沼英二还有一个细节：开发初期他要求「不许安易地用过去作品的东西置换」，因为拿旧东西填空「有干活的感觉但其实什么都没推进」。</p>
+
+  <div class="apply">
+    <h4>APPLY · 搬进你的项目</h4>
+    <ul>
+      <li>Web游戏埋点成本近乎为零：把玩家坐标每秒采样发到服务端，Canvas叠加渲染就是热力图。M2发朋友测试时默认开启。</li>
+      <li>明确你的热力图判定方向：探索型游戏要「离散」，竞技图要「路线均衡」，教学关要「收敛」。先写下预期形状再看数据。</li>
+      <li>「报告不需要负责跟进」值得写进你所有项目的协作约定——反直觉但被验证有效。</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ S7 ============ -->
+<section id="s7" class="rv">
+  <div class="sec-head"><span class="no">柒</span><h2>速查表：设计规则清单</h2></div>
+  <div class="sec-src">全卷宗压缩为可执行规则，建议直接放进关卡设计 checklist</div>
+
+  <table>
+    <tr><th>#</th><th>规则</th><th>来源</th></tr>
+    <tr><td>R1</td><td>新手区每个元素必须能写出「→教会玩家___」，写不出即删除</td><td>马里奥1-1</td></tr>
+    <tr><td>R2</td><td>第一次接触新系统时，安排一次「因祸得福」：失误触发奖励</td><td>宫本茂·蘑菇</td></tr>
+    <tr><td>R3</td><td>先做你最想让人玩的那一关，再降采样出教学关</td><td>宫本茂·2-1法</td></tr>
+    <tr><td>R4</td><td>参数类操作（时长/力度/时机）用4个递增同型障碍教，禁用文字</td><td>1-1水管</td></tr>
+    <tr><td>R5</td><td>一关一机制，按 起→承→転→結 展开；「転」必须违反预期，只加难度不算転</td><td>林田宏一</td></tr>
+    <tr><td>R6</td><td>结尾段复杂度回落：机制以低风险炫技谢幕，不以最难考验收尾</td><td>3D世界·結</td></tr>
+    <tr><td>R7</td><td>每个POI标注动机类型（情报/成长/装备/好奇）与可见半径；任意视点应有≥1个未消费引力</td><td>BotW·引力</td></tr>
+    <tr><td>R8</td><td>用周期（昼夜/天气/赛季）改变引力排序，同一地图产出多套路线</td><td>BotW·夜间引力</td></tr>
+    <tr><td>R9</td><td>遮蔽物按情绪选形状：三角=渐露期待，四角=突现惊吓，台形=混合</td><td>米津真</td></tr>
+    <tr><td>R10</td><td>想让玩家注意的东西，摆在视觉三角的顶点上</td><td>米津真</td></tr>
+    <tr><td>R11</td><td>大地标周围布小遮蔽：既收窄可测试的进入路线，又保留自由感</td><td>BotW·三角配比</td></tr>
+    <tr><td>R12</td><td>动工前用身体记忆的真实街区标定 距離感/密度感/尺感 三个数</td><td>藤林·京都法</td></tr>
+    <tr><td>R13</td><td>密度验证用空场地+粗地形，先于一切美术</td><td>BotW·设计图</td></tr>
+    <tr><td>R14</td><td>热力图先写预期形状（离散/均衡/收敛）再看数据；探索图以离散为成功</td><td>BotW·QA</td></tr>
+    <tr><td>R15</td><td>bug/反馈报告免除跟进义务，最大化报告量</td><td>BotW·QA</td></tr>
+    <tr><td>R16</td><td>骨架期禁止用旧内容填空——「有干活的感觉」是最危险的信号</td><td>青沼英二</td></tr>
+  </table>
+
+  <div class="quote">
+    <div class="q">「玩了很多游戏的新人，会想把以前玩过的游戏做得更豪华。而游戏设计，是从身边的事物中组装出『把什么做成游戏会有趣』。」</div>
+    <div class="who">—— <b>宫本茂</b> · 每年新员工讲义的核心命题</div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>资料来源 · CEDEC 2017「『ゼルダの伝説 BotW』におけるフィールドレベルデザイン」（藤林秀麿·米津真，Famitsu/4Gamer/GAME Watch/GIGAZINE/Gamer 报道）／ Eurogamer 宫本茂×手塚卓志访谈（2015，Game*Spark/GIGAZINE 编译）／ E3 2015 マリオメーカー Developer Story ／ 社長が訊く『New スーパーマリオブラザーズ Wii』『スーパーマリオ 3Dワールド』／ GMTK「Super Mario 3D World's 4 Step Level Design」／ 电ファミ「ゲームの企画書」青沼英二×藤澤仁。图示为基于讲演内容的示意复原，引文为最小限度摘录。编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+<script>
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}})},{threshold:.06});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

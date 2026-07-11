@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R8 · 周期改变引力 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(74,154,142,.1), transparent 60%),
+             radial-gradient(700px 360px at 5% 120%, rgba(217,164,65,.06), transparent 60%),var(--ink)}
+.hero::after{content:"環";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 08 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>周期改变引力<br>用昼夜与天气,让同一批资产产生多套体验</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      用周期(昼夜/天气/季节)改变引力排序与玩法规则,让<strong>同一张地图产出多套路线</strong>。同一批资产,靠环境变化产生数倍的探索体验——这是独立开发者性价比最高的内容杠杆。
+    </div>
+    <div class="src">
+      来源 · <b>《旷野之息》昼夜引力变化(CEDEC 2017 藤林秀麿)</b> ／ BotW 天气系统(雨/雷雨/气温)对玩法的改写 ／ 藤林 Game Informer 访谈「为何不给玩家改天气的能力」
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>独立开发者最缺的是内容量,周期是最便宜的乘数</h2>
+  <p>做开放世界或探索型游戏,最痛的问题永远是<strong>内容量</strong>。玩家跑遍全图后,世界就"看完了",重玩动力骤降。大厂靠堆美术、堆关卡硬填,但独立开发者没有这个预算。</p>
+  <p>R8 是对这个困境最优雅的回答。它的核心洞察是:<strong>你不需要更多地图,你需要让同一张地图在不同条件下变成"不同的地图"</strong>。一片草原,白天和夜晚是两种体验;晴天和雷雨是两种玩法。同一批建模、地形、POI,靠昼夜和天气的切换,可以产生成倍的内容感——而这些变化的开发成本,远低于做一张新地图。</p>
+  <p>这不是简单换个滤镜。R8 的关键是让周期<strong>真正改变玩家的决策</strong>:改变哪里有引力、改变哪些路能走、改变什么策略有效。当环境变化会实质影响玩家怎么玩时,同一张图才真正变成了多张图。这一条紧接 R7(引力设计)——R7 布好引力场,R8 让这个场随时间脉动。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE 1 · 昼夜改变引力排序</div>
+  <h2>夜晚:黑暗压低地形引力,发光物上位</h2>
+  <p>R7 讲过引力随玩家动机浮动,而藤林在 CEDEC 2017 里明确讲了引力还随<strong>时间</strong>浮动:</p>
+  <div class="quote">
+    <div class="q">尺寸带来的引力(越大越显眼引力越强)之外,还有目的带来的引力(想强化自己的玩家,祠的引力最大)。此外,夜晚发光的东西会变得醒目,又生出另一套不同的引力平衡。</div>
+    <div class="who">—— <b>藤林秀麿</b> · CEDEC 2017</div>
+  </div>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 240" xmlns="http://www.w3.org/2000/svg">
+      <!-- day side -->
+      <rect x="20" y="30" width="390" height="190" fill="#20252e" opacity=".4"/>
+      <text x="215" y="22" text-anchor="middle" class="sla" font-size="12">☀ 白天:地形/地标引力主导</text>
+      <!-- mountains big -->
+      <path d="M50 180 L110 90 L170 180 Z" fill="#2b3038" stroke="#d9a441" stroke-width="1.2"/>
+      <text x="110" y="150" text-anchor="middle" class="sla" font-size="10">大山(强)</text>
+      <path d="M180 180 L220 120 L260 180 Z" fill="#2b3038" stroke="#8a8577" stroke-width="1"/>
+      <!-- dim shrine -->
+      <circle cx="330" cy="160" r="7" fill="none" stroke="#4a9a8e" stroke-width="1.2" opacity=".5"/>
+      <text x="330" y="182" text-anchor="middle" class="sl" font-size="9">祠(弱·白天不显眼)</text>
+      <!-- night side -->
+      <rect x="430" y="30" width="390" height="190" fill="#0a0c10"/>
+      <text x="625" y="22" text-anchor="middle" class="slt" font-size="12">🌙 夜晚:发光物引力上位</text>
+      <!-- dark mountains -->
+      <path d="M460 180 L520 90 L580 180 Z" fill="#14171c" stroke="#3a3f47" stroke-width="1"/>
+      <text x="520" y="150" text-anchor="middle" class="sl" font-size="10">大山(暗·弱)</text>
+      <!-- glowing shrine -->
+      <circle cx="700" cy="150" r="10" fill="#d9a441" opacity=".9"/>
+      <circle cx="700" cy="150" r="18" fill="none" stroke="#d9a441" stroke-width="1" opacity=".4"/>
+      <text x="700" y="182" text-anchor="middle" class="sla" font-size="10">祠(发光·强)</text>
+      <!-- glowing tower -->
+      <rect x="620" y="120" width="8" height="55" fill="#4a9a8e" opacity=".9"/>
+      <circle cx="624" cy="116" r="6" fill="#4a9a8e"/>
+      <text x="624" y="105" text-anchor="middle" class="slt" font-size="9">塔(发光)</text>
+    </svg>
+    <div class="figcap">同一片区域的昼夜引力对比。<b>白天玩家被大地形(山、地标)吸引,夜晚地形隐入黑暗,而祠、塔、马厩等自发光设施跃升为主引力。</b>同一批资产,靠光照产生两套导航——玩家白天走的路和夜晚走的路自然不同。</div>
+  </div>
+
+  <p>这一招的精妙在于<strong>零额外内容成本</strong>:祠还是那个祠,山还是那座山,只是"谁在此刻更醒目"变了。白天你追着远山跑,夜晚你追着荧光的祠走。同一张图,一天之内给你两套探索路线。对独立开发者,这是"用一套光照系统换一倍探索体验"的买卖。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE 2 · 天气改写玩法规则</div>
+  <h2>天气不只是背景,它改变"什么能做、什么策略有效"</h2>
+  <p>比昼夜更狠的是天气。BotW 的天气不是视觉滤镜,而是<strong>实质改写玩法规则的系统</strong>。每种天气都同时带来限制和机会,逼玩家改变策略:</p>
+
+  <table>
+    <tr><th>天气</th><th>限制(玩家被迫改变)</th><th>机会(新策略打开)</th></tr>
+    <tr><td>雨</td><td>崖壁湿滑,攀爬耐力消耗剧增,常常爬到一半滑落;篝火被浇灭;炎之箭/炸弹箭失效退化为普通箭</td><td>雨声掩盖脚步,更容易潜行接近敌人/动物不被察觉;特定鱼虫只在雨天/雨后出现</td></tr>
+    <tr><td>雷雨</td><td>装备金属武器/盾/防具会遭雷击受大伤害——必须临时换成木制装备,战力被迫削弱</td><td>可主动利用:把金属武器扔向敌群引雷,或诱敌站在金属附近被雷劈</td></tr>
+    <tr><td>严寒</td><td>雪山/寒带持续掉血,不做防寒(服装/料理)站着都会死</td><td>逼出资源管理与准备玩法;寒冷地形本身成为一道"软门槛"控制探索节奏</td></tr>
+    <tr><td>酷热</td><td>火山/沙漠热伤,火山区木制装备会自燃损坏</td><td>火山的高温可反过来利用(环境化学);沙漠昼夜温差制造额外挑战层</td></tr>
+  </table>
+
+  <p>关键设计原则:<strong>每种天气都是"限制+机会"的双面</strong>,而不是单纯的惩罚。雨让你爬不了山,但也让你能潜行;雷雨逼你卸下金属,但也给你引雷杀敌的新武器。玩家不是被动忍受天气,而是<strong>根据天气重新规划怎么玩</strong>——这才让天气成为玩法维度,而非烦人的干扰。</p>
+  <p>同一座悬崖,晴天是攀爬路线,雨天就变成"绕路或等天晴"的决策点。同一片敌营,晴天硬打,雷雨天可以引雷智取。<strong>天气把每个地点变成了随条件切换的多个"玩法状态"</strong>——这是同一批资产产出多套体验的最强杠杆。</p>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 一个反直觉的关键决策</div>
+  <h2>藤林为什么"不给"玩家改天气的能力</h2>
+  <p>开发中曾有过让玩家自由切换天气的方案(类似时之笛吹奏乐曲改天气)。藤林最终<strong>否决</strong>了它。原因极其深刻,值得每个做周期系统的人记住:</p>
+  <div class="quote">
+    <div class="q">如果玩家能自己改天气,大概绝大多数人一下雨就立刻切成晴天。那样一来,这个世界里"雨"的存在感就变薄了。所以特意没有加入(改天气的能力)。</div>
+    <div class="who">—— <b>关于藤林的设计判断</b>(Game Informer 访谈整理)</div>
+  </div>
+  <p>这里的洞察是:<strong>周期系统的价值,恰恰来自玩家"不能控制"它</strong>。如果玩家能随意跳过不便的天气,他们一定会,于是那个天气(以及它带来的所有独特玩法)就等于不存在了。周期必须是玩家<strong>要去适应、而非消除</strong>的外部条件,它的不可控性正是它产生游戏性的根源。</p>
+  <p>还有一个反直觉的玩家反馈佐证了这一点:很多玩家承认雨天攀爬"让人烦躁",但同时说——</p>
+  <div class="quote">
+    <div class="q">下雨爬不上去时确实很烦。但正因为让玩家适度地烦躁,才把最终登顶的达成感抬高了。</div>
+    <div class="who">—— <b>BotW 玩家反馈</b>(玩家论坛整理)</div>
+  </div>
+  <p><strong>适度的不便,是达成感的原料</strong>。周期系统制造的障碍(等雨停、绕远路、换装备),让玩家的每次成功都更有分量。这条对你的设计的启示是:别急着让周期变化"对玩家友好",适度的摩擦正是它的价值所在——但要给出<strong>可预测性</strong>(BotW 有右下角天气预报)和<strong>应对手段</strong>(篝火消磨时间、防寒料理),让不便可管理,而非纯粹随机的惩罚。</p>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么给你的游戏加周期杠杆</div>
+  <h2>执行流程</h2>
+  <div class="model">
+    <div class="mstep"><h5>选一个契合你游戏的周期轴</h5><p>昼夜最通用,天气次之,季节适合长周期游戏。选一个玩家能感知、且能自然影响玩法的轴。别一次上太多轴,先做透一个。</p></div>
+    <div class="mstep"><h5>让周期改变引力排序</h5><p>照昼夜引力法:哪些 POI 在哪个相位更醒目/更有价值?让同一批地点在不同周期下的引力排序不同,玩家路线自然分叉(接 R7)。</p></div>
+    <div class="mstep"><h5>让周期改写玩法规则(限制+机会成对)</h5><p>每个周期状态都要既加限制、又开机会。只加限制=惹人烦的惩罚;只加机会=没有张力。成对出现,玩家才会"根据周期重新规划"。</p></div>
+    <div class="mstep"><h5>保留不可控性,但给可预测性和应对手段</h5><p>不让玩家随意消除周期(否则它形同虚设),但给预报(让玩家能规划)和应对工具(让不便可管理)。不可控 × 可预测 × 可应对 = 良性摩擦。</p></div>
+    <div class="mstep"><h5>把独占内容绑定到特定周期</h5><p>某些敌人/资源/事件/景观只在特定周期出现(血月刷怪、雨后彩虹、夜行生物)。这给玩家"为了那个东西专门等某个周期"的主动理由,直接增加内容深度。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 周期系统审计</h4>
+    <ul>
+      <li>是否选定了1个契合游戏的周期轴(先做透再加)?</li>
+      <li>周期是否改变了引力排序(不同周期不同路线)?</li>
+      <li>每个周期状态是否"限制+机会"成对,而非纯惩罚?</li>
+      <li>周期是否真正改变玩家决策(而非只换滤镜)?</li>
+      <li>玩家是否"不能随意消除"周期(保住存在感)?</li>
+      <li>是否提供了预报/预测手段(让玩家能规划)?</li>
+      <li>是否提供了应对工具(让不便可管理)?</li>
+      <li>是否有独占内容绑定特定周期(给等待的理由)?</li>
+      <li>同一批资产,是否真的产出了≥2套体验?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>周期状态设计表</h2>
+  <p>为周期轴上的每个状态填一行。限制和机会必须都填。</p>
+  <div class="tpl">
+    <div class="h">CYCLE STATE DESIGN</div>
+    <div class="row"><span class="k">cycle_axis</span>: 周期轴 = 昼夜 / 天气 / 季节</div>
+    <div class="row"><span class="k">state</span>: 状态名(如"雨""夜")</div>
+    <div class="row"><span class="k">gravity_shift</span>: 此状态下引力排序如何变化</div>
+    <div class="row"><span class="k">restriction</span>: 加的限制(玩家被迫改变什么)</div>
+    <div class="row"><span class="k">opportunity</span>: 开的机会(新策略/新玩法)</div>
+    <div class="row"><span class="k">decision_change</span>: 玩家的决策具体如何改变</div>
+    <div class="row"><span class="k">exclusive_content</span>: 仅此状态出现的敌人/资源/事件</div>
+    <div class="row"><span class="k">predictability</span>: 玩家如何预知它(预报/征兆)</div>
+    <div class="row"><span class="k">countermeasure</span>: 玩家如何应对(工具/准备)</div>
+    <div class="row"><span class="k">player_control</span>: 玩家能否消除?(应为<span class="x">否</span>或高成本)</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>人生小镇(人生模拟) — 周期轴可以是抽象的</h4>
+    <ul>
+      <li><strong>时段周期改变可用内容</strong>:白天学校/职场开放(成长引力),夜晚酒馆/家宅/夜市开放(社交/情报引力)。同一个小镇,不同时段值得去的地方不同——玩家一天内跑两套路线,内容感翻倍而资产不变。</li>
+      <li><strong>把"人生季节"作为长周期轴</strong>:少年/青年/中年/老年是天然的季节轴。同一批NPC、同一个镇子,在不同人生季节对玩家呈现不同的"引力"(青年时酒馆诱人,中年时学区房诱人)。资产复用,体验递变。</li>
+      <li><strong>限制+机会成对</strong>:比如"经济萧条期"作为一个周期状态——限制(工作机会减少、收入下降),机会(低价抄底、危机中的隐藏支线)。别做纯惩罚的坏时期,让每个时期都有独特的可乘之机。</li>
+      <li><strong>不可控 + 可预测</strong>:人生的周期(衰老、经济波动)玩家不能随意跳过,但给"预兆"(体检报告、经济新闻)让玩家能提前规划。良性摩擦制造真实感与达成感。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>星屑急便(多人配送) — 天气是现成的玩法维度</h4>
+    <ul>
+      <li><strong>昼夜改变配送引力与难度</strong>:白天常规路线清晰,夜晚部分路段变暗、发光路标成为主导航,某些"夜间限定客户"只在夜里下单。同一张图,昼夜两套跑法。</li>
+      <li><strong>天气改写路线策略(限制+机会)</strong>:雨天——限制:某些路面打滑/减速,机会:雨天专属急件(高小费);大风——限制:投掷偏移难控,机会:顺风可投超远。让玩家根据天气重新选路线、选策略。</li>
+      <li><strong>联机:周期是公平的共同变量</strong>:天气对所有玩家一视同仁,却考验谁能更快适应。突降暴雨时,会利用雨天捷径的玩家瞬间反超——周期变化成为联机博弈的动态搅局器,每局都不一样。</li>
+      <li><strong>独占内容给重玩理由</strong>:雪天限定包裹、夜间限定路线、雷雨限定高危高酬订单——让玩家为了特定内容主动在特定周期上线,直接提升重玩率。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 周期只换滤镜,不改玩法。</b>如果夜晚只是画面变暗、下雨只是加了雨滴特效,而玩家的决策毫无变化,那周期就只是装饰,产生不了"多套体验"。周期必须实质改变引力排序或玩法规则——改变玩家"怎么玩",才算数。</div>
+  <div class="warn"><b>误用二 · 周期变化只有惩罚,没有机会。</b>如果雨天纯粹是"什么都做不了只能等",玩家会厌恶这个系统(BotW 雨天被诟病,部分正因平衡偏惩罚)。每个周期状态都要"限制+机会"成对,让玩家有事可做、有新策略可用,而不是干等着熬过去。</div>
+  <div class="warn"><b>误用三 · 让玩家能随意消除周期。</b>给玩家一键切晴天的能力,等于宣告这个天气不存在——所有人都会立刻消除不便,你精心设计的周期玩法全部作废。周期的游戏性来自它的不可控。要给的是"预测能力"和"应对手段",而不是"消除按钮"。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R7 · 引力设计</span>
+      <span>NEXT ▶ <b>R9 · 遮蔽物按情绪选形状:三角渐露/四角突现</b></span>
+    </div>
+    <p>资料来源 · CEDEC 2017「『ゼルダの伝説 BotW』におけるフィールドレベルデザイン」藤林秀麿(引力昼夜变化部分) ／ BotW 天气・气温系统各攻略站(game8 / GameWith / 神ゲー攻略 / 攻略の虎)整理 ／ ゲームメモ「天気を変更できる案も存在」(Game Informer 藤林访谈整理)。图示为基于讲演与系统资料的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

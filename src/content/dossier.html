@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>任天堂开发访谈研究卷宗 · 设计哲学与方法论</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;
+  --paper:#14171c;
+  --panel:#1a1e25;
+  --panel2:#20252e;
+  --text:#d8d2c4;
+  --text-dim:#8a8577;
+  --cinnabar:#c8442a;
+  --amber:#d9a441;
+  --teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9;font-size:16px}
+::selection{background:var(--cinnabar);color:#fff}
+
+.wrap{max-width:920px;margin:0 auto;padding:0 28px}
+
+/* ---------- hero ---------- */
+.hero{min-height:92vh;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;
+  background:radial-gradient(1200px 600px at 80% -10%, rgba(200,68,42,.10), transparent 60%),
+             radial-gradient(900px 500px at 10% 110%, rgba(74,154,142,.08), transparent 60%),
+             var(--ink);}
+.hero::after{content:"問";position:absolute;right:-4%;top:8%;font-size:min(46vw,420px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.35em;color:var(--amber);text-transform:uppercase;margin-bottom:22px}
+.hero h1{font-size:clamp(34px,6vw,64px);font-weight:900;line-height:1.25;letter-spacing:.02em}
+.hero h1 em{font-style:normal;color:var(--cinnabar)}
+.hero .sub{margin-top:26px;max-width:640px;color:var(--text-dim);font-size:17px}
+.hero .meta{margin-top:40px;font-family:var(--mono);font-size:12px;color:var(--text-dim);display:flex;gap:28px;flex-wrap:wrap}
+.hero .meta span b{color:var(--teal);font-weight:500}
+
+/* ---------- TOC ---------- */
+.toc{border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);padding:34px 0;margin:0 0 30px}
+.toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px 32px}
+.toc a{display:flex;gap:14px;align-items:baseline;color:var(--text);text-decoration:none;padding:6px 0;border-bottom:1px dashed transparent;transition:.25s}
+.toc a:hover{color:var(--amber);border-bottom-color:var(--amber)}
+.toc a .no{font-family:var(--mono);font-size:12px;color:var(--cinnabar)}
+
+/* ---------- sections ---------- */
+section{padding:72px 0}
+.sec-head{display:flex;align-items:baseline;gap:18px;margin-bottom:14px}
+.sec-head .no{font-family:var(--mono);font-size:14px;color:var(--cinnabar);letter-spacing:.2em}
+.sec-head h2{font-size:clamp(24px,3.6vw,34px);font-weight:900;letter-spacing:.03em}
+.sec-lede{color:var(--text-dim);max-width:700px;margin-bottom:40px;font-size:16.5px}
+h3{font-size:20px;font-weight:700;margin:44px 0 16px;color:var(--amber);letter-spacing:.04em}
+p{margin-bottom:18px}
+strong{color:#efe9da;font-weight:700}
+
+/* ---------- components ---------- */
+.quote{position:relative;margin:34px 0;padding:26px 30px 26px 34px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote.teal{border-left-color:var(--teal)}
+.quote.amber{border-left-color:var(--amber)}
+.quote .q{font-size:18px;font-weight:600;line-height:2;color:#efe9da}
+.quote .who{margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:.08em}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.card{background:var(--panel);border:1px solid var(--hairline);padding:26px 28px;margin:22px 0}
+.card h4{font-size:16px;color:var(--teal);font-weight:700;margin-bottom:12px;letter-spacing:.06em}
+.card p:last-child{margin-bottom:0}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:720px){.grid2{grid-template-columns:1fr}}
+
+.vs{display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin:30px 0;border:1px solid var(--hairline)}
+.vs>div{padding:24px 26px}
+.vs .l{background:var(--panel)}
+.vs .m{display:flex;align-items:center;font-family:var(--mono);color:var(--cinnabar);font-size:20px;font-weight:700;background:var(--ink);border-left:1px solid var(--hairline);border-right:1px solid var(--hairline);padding:0 14px}
+.vs .r{background:var(--panel2)}
+.vs h5{font-family:var(--mono);font-size:12px;letter-spacing:.2em;margin-bottom:12px}
+.vs .l h5{color:var(--text-dim)}
+.vs .r h5{color:var(--teal)}
+.vs p{font-size:14.5px;margin-bottom:0;color:var(--text)}
+@media(max-width:720px){.vs{grid-template-columns:1fr}.vs .m{border:none;border-top:1px solid var(--hairline);border-bottom:1px solid var(--hairline);padding:10px 26px;justify-content:center}}
+
+/* multiply diagram */
+.mult{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;margin:36px 0;padding:32px 20px;background:var(--panel);border:1px solid var(--hairline)}
+.mult .box{font-family:var(--mono);font-size:13px;padding:14px 18px;border:1px solid var(--teal);color:var(--teal);text-align:center;line-height:1.5}
+.mult .op{font-family:var(--mono);font-size:26px;color:var(--cinnabar);font-weight:700}
+.mult .eq{font-family:var(--mono);font-size:13px;padding:14px 20px;background:var(--cinnabar);color:#fff;text-align:center;line-height:1.5;font-weight:500}
+
+/* skeleton timeline */
+.phases{margin:36px 0;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:720px){.phases{grid-template-columns:1fr}}
+.phase{background:var(--panel);border-top:3px solid var(--amber);padding:22px 22px 20px;position:relative}
+.phase:nth-child(2){border-top-color:var(--teal)}
+.phase:nth-child(3){border-top-color:var(--cinnabar)}
+.phase .pn{font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--text-dim);margin-bottom:10px}
+.phase h5{font-size:16px;font-weight:700;margin-bottom:10px;color:#efe9da}
+.phase p{font-size:13.5px;color:var(--text-dim);margin-bottom:0;line-height:1.8}
+
+table{width:100%;border-collapse:collapse;margin:28px 0;font-size:14px}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-align:left;color:var(--amber);padding:12px 14px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:14px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600;white-space:nowrap}
+
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:3px 10px;border:1px solid var(--teal);color:var(--teal);margin:0 6px 6px 0;letter-spacing:.06em}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.08),transparent 60%),var(--panel);border:1px solid rgba(200,68,42,.35);padding:26px 28px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:12px;letter-spacing:.25em;color:var(--cinnabar);margin-bottom:14px}
+.apply ul{list-style:none}
+.apply li{padding:8px 0 8px 26px;position:relative;font-size:15px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:2px;color:var(--cinnabar)}
+
+.divider{height:1px;background:var(--hairline);margin:0}
+
+footer{padding:64px 0 80px;border-top:1px solid var(--hairline);margin-top:40px}
+footer p{font-family:var(--mono);font-size:12px;color:var(--text-dim);line-height:2.2;margin-bottom:0}
+footer a{color:var(--teal);text-decoration:none}
+
+/* scroll reveal */
+.rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+.rv.on{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">NINTENDO DEVELOPER INTERVIEWS · RESEARCH DOSSIER</div>
+    <h1>任天堂开发访谈研究卷宗<br><em>「先做出好玩，再做出规模」</em></h1>
+    <p class="sub">整理自「社長が訊く」「開発者に訊きました」两大官方访谈系列，以及 GDC / CEDEC 开发者讲演。提炼岩田聪、宫本茂、《旷野之息》《斯普拉遁》团队的核心方法论——并映射到你自己的 Web 游戏开发流水线。</p>
+    <div class="meta">
+      <span>来源 <b>社長が訊く / 開発者に訊きました / GDC 2017-2018 / CEDEC 2017-2024</b></span>
+      <span>编纂 <b>2026-07</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<nav class="toc rv">
+  <div class="toc-grid">
+    <a href="#s1"><span class="no">壹</span>访谈体系：三条信息渠道</a>
+    <a href="#s2"><span class="no">贰</span>岩田聪：瓶颈论与重构的勇气</a>
+    <a href="#s3"><span class="no">叁</span>宫本茂：点子的定义与设计观</a>
+    <a href="#s4"><span class="no">肆</span>旷野之息：乘法游戏与2D原型</a>
+    <a href="#s5"><span class="no">伍</span>王国之泪：为准备而准备</a>
+    <a href="#s6"><span class="no">陆</span>斯普拉遁：豆腐原型与大器皿</a>
+    <a href="#s7"><span class="no">柒</span>应用：映射到你的开发流水线</a>
+  </div>
+</nav>
+</div>
+
+<div class="wrap">
+
+<!-- ================= S1 ================= -->
+<section id="s1" class="rv">
+  <div class="sec-head"><span class="no">壹</span><h2>访谈体系：任天堂的三条信息渠道</h2></div>
+  <p class="sec-lede">任天堂是业界少有的、系统性公开开发过程思考的公司。其一手资料主要来自三个渠道，价值密度各不相同。</p>
+
+  <table>
+    <tr><th>渠道</th><th>时期</th><th>特点与价值</th></tr>
+    <tr>
+      <td>社長が訊く</td>
+      <td>2006–2015</td>
+      <td>岩田聪亲自采访开发团队的系列，覆盖 Wii / DS / 3DS / Wii U 时代几乎所有第一方作品。因为提问者本人是天才程序员出身的社长，问题总能切中开发决策的关键分岔点。岩田说自己是抱着「自己的好奇心指向哪里、接下来问什么读者会觉得有趣」的心态持续做这个栏目的。</td>
+    </tr>
+    <tr>
+      <td>開発者に訊きました</td>
+      <td>2021–至今</td>
+      <td>岩田去世后的精神续作，由开发者自述形式呈现。已覆盖《星之卡比 探索发现》《Nintendo Switch Sports》《斯普拉遁3》等软硬件项目，是了解当代任天堂制作思路的第一手来源。</td>
+    </tr>
+    <tr>
+      <td>GDC / CEDEC 讲演</td>
+      <td>不定期</td>
+      <td>最硬核的技术与方法论披露。《旷野之息》GDC 2017 讲演「变化与不变」、CEDEC 2017 的四场制作管线讲演、《王国之泪》CEDEC 2024 讲演，都是可直接落地的开发工程学资料。</td>
+    </tr>
+  </table>
+
+  <div class="apply">
+    <h4>APPLY · 对你的启示</h4>
+    <ul>
+      <li>做二手研究时优先追 GDC / CEDEC 原始讲演报道（4Gamer、Famitsu、GAME Watch 三家覆盖最全），而不是名言合集。</li>
+      <li>「社長が訊く」的采访方法本身就值得学：让懂技术的人去问「为什么这样决策」，而不是「有什么亮点」。你做 Bilibili 内容访谈类选题时可以直接套用这个提问框架。</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================= S2 ================= -->
+<section id="s2" class="rv">
+  <div class="sec-head"><span class="no">贰</span><h2>岩田聪：瓶颈论与重构的勇气</h2></div>
+  <p class="sec-lede">岩田聪的方法论核心是一句话：用程序员的调试思维经营一切——找到瓶颈，把资源砸在瓶颈上，其余的放手。</p>
+
+  <h3>找到瓶颈，而不是做自己擅长的事</h3>
+  <p>《MOTHER2》开发彻底失控时，岩田作为救火队员进场。他给制作人糸井重里两个选项——这句话后来成为传说：</p>
+  <div class="quote">
+    <div class="q">「在现有基础上修修补补，需要两年。如果允许从零重做，半年就能完成。」</div>
+    <div class="who">—— <b>岩田聪</b> · 《MOTHER2》救援时对糸井重里所言</div>
+  </div>
+  <p>更关键的是他进场后做的第一件事：<strong>不是自己上手写代码，而是搭建开发环境</strong>——版本管理工具、开发效率工具、当时还没普及的邮件系统。作为顶级程序员，他判断出「环境整备才是提升整个项目性能的瓶颈」，于是把自己的时间投在那里。最终半年搭完框架，一年内游戏完成。</p>
+
+  <h3>合理性优先于好恶</h3>
+  <div class="quote teal">
+    <div class="q">「我一直是这样：不看喜欢还是讨厌，只要觉得『这件事由我来做最合理』，马上就能下定决心。」</div>
+    <div class="who">—— <b>岩田聪</b> · 《岩田さん》（ほぼ日刊イトイ新聞 编）</div>
+  </div>
+  <p>他做社长时的判断标准同样是「make sense 与否」而非职位：演讲资料自己做最合理就自己做。同书还记录了他的另一个信条——<strong>「计算机能做的事应该全部交给计算机，因为人只想做只有人能做的事」</strong>。这在 AI 辅助开发的今天几乎是预言。</p>
+
+  <h3>其他关键语录</h3>
+  <div class="grid2">
+    <div class="card">
+      <h4>程序员不能说 No</h4>
+      <p>「程序员不可以说 No。无论多困难的需求，说出 No 的那一刻，企划本身就完蛋了。」——这句常被断章取义，原意是：技术方的职责是提出「换个做法能实现」的替代方案，而非直接否决创意。</p>
+    </div>
+    <div class="card">
+      <h4>天才的定义</h4>
+      <p>「能把别人可能嫌烦、别人累到坚持不下去的事情，无止境地持续下去的人，就是天才。」——把天赋重新定义为持续力，这是他看人和用人的标尺。</p>
+    </div>
+    <div class="card">
+      <h4>员工心理安全</h4>
+      <p>面对股东「为何不裁员」的质问：「员工在恐惧中做出的软件，无法打动人心。」半年一次与全体员工面谈，是他任 HAL 研究所社长起坚持的制度。</p>
+    </div>
+    <div class="card">
+      <h4>理解用户的两个「1」</h4>
+      <p>「畅销不是店里卖出多少个。买的人是谁、是很快弃坑还是一直在玩——同样是1份销量，知道与不知道这些，下一步思考的东西完全不同。」——最早的留存思维。</p>
+    </div>
+  </div>
+
+  <div class="apply">
+    <h4>APPLY · 对你的启示</h4>
+    <ul>
+      <li><strong>重构判断公式</strong>：修补耗时 ≥ 重做耗时 × 3 时果断重做。你的 25+ 项目组合里，凡是「不敢动」的老项目都该用这个公式重新评估。</li>
+      <li><strong>项目失控先修环境不修代码</strong>：CI、脚手架、部署流水线先行——这正好印证你 web-game-pipeline 里「技术骨架锚点先跑通」的设计。</li>
+      <li><strong>「程序员不能说 No」的正确用法</strong>：需求评审时把「做不了」改成「这样做的话可以」。对客户交付（NablaWorks）尤其有效。</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================= S3 ================= -->
+<section id="s3" class="rv">
+  <div class="sec-head"><span class="no">叁</span><h2>宫本茂：点子的定义与设计观</h2></div>
+  <p class="sec-lede">宫本茂的所有方法论几乎都能收敛到一个定义上——这个定义由岩田聪总结成文，甚至启发了星野源写出同名歌曲《アイデア》。</p>
+
+  <div class="quote amber">
+    <div class="q">「所谓点子（アイデア），是能一口气解决多个问题的东西。」</div>
+    <div class="who">—— <b>宫本茂</b> · 由岩田聪归纳为「宫本茂流点子论」</div>
+  </div>
+  <p>反过来说：只解决一个问题的方案不叫点子，叫补丁。桌游设计大师 Reiner Knizia 也说过结构相同的话——「同时解决两个问题反而更简单」。当你在设计里感到「哪里不对但说不清」时，多半是问题以复数形式存在，而你在用单数方案应付。</p>
+
+  <h3>游戏设计是「设计」，不是模仿</h3>
+  <p>宫本每年给新员工讲课。他观察到：<strong>玩了很多游戏的新人，倾向于把「以前玩过的游戏做得更豪华」</strong>。而他对游戏设计的定义是：</p>
+  <div class="quote">
+    <div class="q">「从身边的各种事物中，组装出『把什么做成电子游戏会有趣』——这才是游戏设计。用什么硬件和开发环境做、自己想做的东西是否真能实现、为了实现而反复试错……游戏设计就是设计（設計）。」</div>
+    <div class="who">—— <b>宫本茂</b> · 2025年3月期第2四半期经营方针说明会 Q&A</div>
+  </div>
+  <p>他看重的不是游戏的各个零件，而是「这个游戏好玩的核心到底是什么」。思考时，他脑中一直浮现的是<strong>正在玩这个游戏的人的脸</strong>，而不是功能列表。</p>
+
+  <h3>散见于各访谈的设计格言</h3>
+  <table>
+    <tr><th>格言</th><th>含义与出处脉络</th></tr>
+    <tr><td>延期的游戏最终会变好</td><td>「延期的游戏最终会变好，糟糕的游戏永远糟糕。」任天堂敢于把进行中项目大幅推翻重来的文化根源。</td></tr>
+    <tr><td>枯れた技術の水平思考</td><td>严格说是宫本的师匠横井军平（Game Boy 之父）的名言：用成熟廉价的技术做横向的、意想不到的用途。Wii 的体感、Switch 的形态都是这条哲学的延长线。</td></tr>
+    <tr><td>肩越しの視線</td><td>岩田形容宫本的「越肩视线」：随手抓一个路过的员工（对游戏一无所知的人）坐下试玩，自己在背后看——不解释、不引导，观察对方卡在哪里。任天堂内部最早的可用性测试。</td></tr>
+    <tr><td>共感优先</td><td>为「所有人」设计——女性、孩子、主妇，而非只为传统玩家。乐趣核心必须不依赖预备知识就能被感知。</td></tr>
+  </table>
+
+  <div class="apply">
+    <h4>APPLY · 对你的启示</h4>
+    <ul>
+      <li><strong>点子审查法</strong>：给「人生小镇」或星屑急便加任何新机制前，列出它同时解决的问题数。&lt;2 个的机制先放候补区。</li>
+      <li><strong>肩越し测试</strong>：M2 里程碑发给朋友玩时，别写教程文档，静默旁观（或让对方录屏），只记录卡点。这比问卷有效十倍。</li>
+      <li><strong>横井哲学 = 你的技术选型</strong>：Phaser + Colyseus 这种「枯れた技術」正是对的——把创新预算全花在玩法水平思考上，不花在引擎上。</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================= S4 ================= -->
+<section id="s4" class="rv">
+  <div class="sec-head"><span class="no">肆</span><h2>旷野之息：乘法游戏与2D原型</h2></div>
+  <p class="sec-lede">GDC 2017 讲演「变化与不变（Change and Constant）」+ CEDEC 2017 四场讲演 + Famitsu 长篇访谈，构成了近十年信息量最大的一次开发过程公开。</p>
+
+  <h3>足し算 → 掛け算：核心设计转向</h3>
+  <p>总监藤林秀麿的诊断：传统塞尔达的谜题是「加法游戏」——每个火焰谜题都为那个迷宫专门制作、专门消耗资源、一次性使用。《旷野之息》的答案是「乘法游戏」：</p>
+  <div class="mult">
+    <div class="box">玩家动作<br><small>砍/掷/点火/攀爬</small></div>
+    <div class="op">×</div>
+    <div class="box">地形<br><small>坡/水/风/草原</small></div>
+    <div class="op">×</div>
+    <div class="box">对象状态<br><small>燃烧/带电/漂浮</small></div>
+    <div class="op">=</div>
+    <div class="eq">涌现的玩法<br><small>玩家自创解法</small></div>
+  </div>
+  <p>实现层面，技术总监堂田卓宏把动作游戏分解为最原始的要素：<strong>碰撞、移动、对象状态</strong>。前两者交给「游戏物理」（不是真实物理，是对游戏方便的物理），状态则交给自研的「化学引擎」——把火、水、电、风统一为 Element，用一致的状态计算机驱动全世界。目标不是精确模拟化学，而是<strong>「简洁地把世界模型化，提供一台有一贯性的状态计算机」</strong>。堂田在讲演结尾说，想让玩家获得的是「觉得自己是天才」的体验。</p>
+
+  <h3>2D原型：用最便宜的方式验证最贵的假设</h3>
+  <div class="quote teal">
+    <div class="q">「简单到只有情境和目标，只存在『能否到达』这一条规则。当玩家的多彩动作、地形、对象被乘算进去时，多样的事件发生了，玩家自由创造解法抵达目标——它成为了一个能动的游戏。」</div>
+    <div class="who">—— <b>藤林秀麿</b> · GDC 2017 讲演，谈2D原型的验证结论</div>
+  </div>
+  <p>为了验证乘法假设，藤林没有直接上 3D——太贵。他找堂田做了一个<strong>看起来像初代塞尔达的 2D 原型</strong>（林克是蓝色的，实际底层是3D）。口头无法向团队传达的概念，用这个可玩原型一次讲清。青沼英二回忆：拿着 2D 原型向宫本汇报「下一部塞尔达是开放世界」，宫本一眼看穿本质——「以前是世界影响对象，这次是<strong>对象反过来影响世界</strong>」。</p>
+
+  <h3>骨組み方式：三阶段生产管线</h3>
+  <p>CEDEC 2017 披露：过去做塞尔达是先做一个迷宫再不断堆叠（积み上げ式），本作改为骨架式——</p>
+  <div class="phases">
+    <div class="phase">
+      <div class="pn">PHASE 1</div>
+      <h5>搭骨架，锁定乐趣</h5>
+      <p>彻底贯彻「不许精修（作り込んではいけない）」。大量挪用旧作资产占位：时之笛3D的科奇里森林直接摆进去，格鲁德族长直接用风之杖HD的人物模型。所有精力用于确认「好不好玩」。</p>
+    </div>
+    <div class="phase">
+      <div class="pn">PHASE 2</div>
+      <h5>正式数据全量替换</h5>
+      <p>乐趣确定后，才开始铺正式资产。自研项目管理工具「塞尔达编辑器」联动自动化，把大容量开发的出错率压下去，省出的时间全部投入打磨。</p>
+    </div>
+    <div class="phase">
+      <div class="pn">PHASE 3</div>
+      <h5>直到发售日为止全员打磨</h5>
+      <p>包括著名的「全公司300人各玩一周」测试。指示与规格变更不写文档，直接以气泡形式钉在游戏画面里；Field Task View 俯瞰全地图显示每个人的作业范围与进度色块。</p>
+    </div>
+  </div>
+
+  <div class="apply">
+    <h4>APPLY · 对你的启示</h4>
+    <ul>
+      <li><strong>你的「垂直切片」就是他们的2D原型</strong>——但要学到位：原型只验证一条规则（能否到达/能否送达/能否存活），砍掉一切表现层。星屑急便的配送核心循环完全可以先用方块+线段验证。</li>
+      <li><strong>乘法审计</strong>：列出你游戏里所有系统，画交互矩阵。空格越多说明系统间越是「加法」堆叠。优先让已有系统相乘，而不是加新系统。</li>
+      <li><strong>Phase 1 禁令直接抄</strong>：里程碑 M1 期间明文规定「禁止精修美术、禁止调优代码」，占位素材用到底。这条纪律比任何工具都值钱。</li>
+      <li><strong>指示钉在画面里</strong>：Web 游戏可以做个 debug overlay，把 TODO 和 bug 报告直接渲染在对应场景坐标上，等价于塞尔达团队的「吹き出し」。</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================= S5 ================= -->
+<section id="s5" class="rv">
+  <div class="sec-head"><span class="no">伍</span><h2>王国之泪：为准备而准备</h2></div>
+  <p class="sec-lede">CEDEC 2024 讲演「スクラビルドができるまで～準備のために準備する～」：当一个点子的组合空间大到「不可能」时，团队如何分解掉那股「没戏吧」的空气。</p>
+
+  <p>「究极手/余料建造」允许武器与几乎任何素材拼接——组合数爆炸到<strong>约12万种需要逐一检查</strong>。藤林与基础设施工程师廣瀬贤一的解法不是加班硬扛，而是分两层准备：</p>
+  <div class="grid2">
+    <div class="card">
+      <h4>第一层准备：让检查变得可能</h4>
+      <p>搭建浏览器可用的「游戏开发基础设施」Web 应用，把 12 万组合的生成、截图、比对、标记流程工具化。先投资工具，再开始工作——与岩田在《MOTHER2》先搭环境完全同构。</p>
+    </div>
+    <div class="card">
+      <h4>第二层准备：分解「不可能」的空气</h4>
+      <p>把庞大问题切成可以立刻回答「行/不行」的小验证，逐个击破团队的心理阻力。讲演副标题「为准备而准备」即此意：在正式准备（做内容）之前，先准备「让准备成立」的条件。</p>
+    </div>
+  </div>
+  <p>这个思路在《旷野之息》里已有伏笔：BotW 中用长枪捅铁栅栏后的机关、绑上「章鱼气球」让物体漂浮——团队在上一作就嗅到「把东西粘起来」这个玩法的潜力，用一整代作品的时间温养它。<strong>点子不是灵光一现，是被长期持有、等待技术与工期成熟的资产。</strong></p>
+
+  <div class="apply">
+    <h4>APPLY · 对你的启示</h4>
+    <ul>
+      <li><strong>组合爆炸的标准答案是工具，不是人力</strong>：人生小镇如果做事件×性格×年龄的组合系统，先写自动化遍历+截图比对脚本，再填内容。这就是你熟悉的 E2E 测试思维用在游戏内容上。</li>
+      <li><strong>维护一个「点子冷藏库」</strong>：像 BotW 团队温养「粘东西」一样，把当前做不了的玩法记录归档并注明「等什么条件成熟」。你的 25+ 项目组合本身就该有这样一份跨项目机制清单。</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================= S6 ================= -->
+<section id="s6" class="rv">
+  <div class="sec-head"><span class="no">陆</span><h2>斯普拉遁：豆腐原型与大器皿</h2></div>
+  <p class="sec-lede">社長が訊く『Splatoon』+ GDC 2018 野上恒讲演：一个没有任何既有IP可依靠的新系列，如何从「白黑豆腐互喷墨水」长成世界级品牌。</p>
+
+  <h3>机制先行，角色后置</h3>
+  <p>项目起点是「不被既有类型束缚，做全新的游戏」。程序总监佐藤慎太郎的试作是：迷宫里白豆腐与黑豆腐互射墨水抢地盘——<strong>没有角色、没有世界观，只有一条被多数人投票「有趣」的机制</strong>。这个「豆腐原型」与塞尔达的2D原型异曲同工：先让乐趣裸奔。</p>
+
+  <h3>「泳ぐ」：一次重命名引发的雪崩</h3>
+  <div class="vs">
+    <div class="l">
+      <h5>卡住时的表述</h5>
+      <p>「潜入墨水中的高速移动行为」——机制成立，但角色选不出来。试过兔子，被否；候补里其实一直有乌贼，却「缺一个决定性理由」。</p>
+    </div>
+    <div class="m">→</div>
+    <div class="r">
+      <h5>换个说法之后</h5>
+      <p>把它重新表述为<strong>「在墨水中游泳」</strong>——瞬间如天启：游泳→乌贼有了必然性；喷墨→乌贼吐墨的习性；两形态切换→人形攻击/乌贼形回复潜行。世界观制作一泻千里。</p>
+    </div>
+  </div>
+  <p>方法论提炼：<strong>当机制与表现层怎么都对不上时，问题可能出在你给机制起的「名字」上。</strong>换一个动词，设计空间就换了一套必然性。</p>
+
+  <h3>大器皿开发法</h3>
+  <div class="quote teal">
+    <div class="q">「先做好一个大器皿，然后大家往里投球，让内容膨胀起来——这是任天堂在很多项目里用过的方法论之一。」</div>
+    <div class="who">—— <b>野上恒</b> · GDC 2018「Inventing a Stylish Franchise with Global Appeal」</div>
+  </div>
+  <p>总监层只定两条：「主角是乌贼」「与现实略有不同的怪世界」。武器、时装、涂鸦、音乐全部由各成员往器皿里扔：音乐组设定「这是乌贼世界年轻人中流行的乐队的歌」，进而设计出乐队成员、专辑封面——这些从不直接进游戏，却让全团队对世界的理解对齐。系列还坚持<strong>乌贼世界与现实等速流逝时间</strong>（角色会长大、街区会变迁），并把每次祭典（Fes）的玩家投票结果反写进世界观——3代混沌的「蛮颓镇」正是2代终局祭「混沌」获胜的后果。</p>
+
+  <div class="apply">
+    <h4>APPLY · 对你的启示</h4>
+    <ul>
+      <li><strong>先做豆腐</strong>：任何联机玩法创意，先用色块在一个房间里验证「抢地盘/送快递/互动」这一条循环。这与你 pipeline 的 M0 完全对应，关键是抵抗提前上美术的诱惑。</li>
+      <li><strong>重命名法</strong>：机制卡壳时，给核心动词换 5 个说法（移动→游泳/滑行/穿梭/寄生/折叠），每个说法推演一遍它蕴含的角色与世界。低成本高产出的头脑风暴协议。</li>
+      <li><strong>器皿两条法则</strong>：世界观顶层设定压缩到两句话以内，其余留白让内容（或 AI 生成管线）往里填。你的 Bilibili 内容宇宙与游戏世界观建设都适用。</li>
+      <li><strong>玩家行为反写世界</strong>：人生小镇如果有全服统计（职业分布、事件选择），让下个版本的城镇样貌反映它——用极低成本获得「世界活着」的感觉。</li>
+    </ul>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ================= S7 ================= -->
+<section id="s7" class="rv">
+  <div class="sec-head"><span class="no">柒</span><h2>总映射：任天堂原则 × 你的开发流水线</h2></div>
+  <p class="sec-lede">把全卷宗压缩成一张对照表。左列是任天堂访谈中反复出现的原则，右列是它在你的 web-game-pipeline / 项目组合中的落点。</p>
+
+  <table>
+    <tr><th>任天堂原则</th><th>出处</th><th>你的落点</th></tr>
+    <tr><td>点子=一次解决多个问题</td><td>宫本茂/岩田聪</td><td>新机制准入门槛：写不出「同时解决的≥2个问题」就进冷藏库</td></tr>
+    <tr><td>最便宜的原型验证最贵的假设</td><td>BotW 2D原型 / Splatoon 豆腐</td><td>M0 垂直切片 = 色块+一条规则，禁美术禁调优</td></tr>
+    <tr><td>骨架期禁止精修</td><td>BotW 骨組み方式 Phase 1</td><td>范围红线写进 DoD：里程碑验收只看「好不好玩」</td></tr>
+    <tr><td>先修环境再修项目</td><td>岩田 MOTHER2 / TotK 基础设施</td><td>技术骨架锚点先行；组合爆炸用自动化工具解</td></tr>
+    <tr><td>肩越し静默观察</td><td>宫本茂</td><td>M2 发给朋友玩：不给教程、只收录屏、记卡点</td></tr>
+    <tr><td>大器皿+全员投球</td><td>Splatoon 野上恒</td><td>世界观两句话封顶，细节交给内容管线填充</td></tr>
+    <tr><td>重做比修补快</td><td>岩田 MOTHER2</td><td>修补估时 ≥ 重做×3 → 果断重写（老项目审计标准）</td></tr>
+    <tr><td>乘法优先于加法</td><td>BotW 藤林/堂田</td><td>加新系统前先画既有系统交互矩阵，填空格优先</td></tr>
+    <tr><td>换动词重开设计空间</td><td>Splatoon「泳ぐ」</td><td>卡壳协议：核心动词换5个说法各推演一遍</td></tr>
+    <tr><td>玩家数据反写世界</td><td>Splatoon Fes</td><td>全服统计驱动下版本世界变化，低成本「活世界」</td></tr>
+  </table>
+
+  <p style="margin-top:36px">最后，用岩田聪身后由团队整理的那句自我介绍收尾——它同时也是任天堂访谈体系存在的理由：</p>
+  <div class="quote">
+    <div class="q">「名片上，我是社长。头脑中，我是游戏开发者。但在内心里，我是一名玩家。」</div>
+    <div class="who">—— <b>岩田聪</b> · 1959–2015</div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>主要资料来源 · 任天堂官方「社長が訊く」「開発者に訊きました」／ Famitsu・4Gamer・GAME Watch 的 GDC 2017-2018・CEDEC 2017・CEDEC 2024 讲演报道 ／《岩田さん 岩田聡はこんなことを話していた。》（ほぼ日ブックス, 2019）／ 电ファミニコゲーマー「ゲームの企画書」青沼英二访谈。<br>本卷宗为研究整理用途，引文均为最小限度摘录并注明出处。编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+<script>
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('on');io.unobserve(e.target)}})},{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

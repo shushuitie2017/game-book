@@ -1,0 +1,21 @@
+/* ===== 关卡之书 站壳组件（导航条 + footer 链接）。不依赖页面 CSS 变量 ===== */
+.lb-bar{position:sticky;top:0;z-index:99;background:rgba(13,15,18,.92);backdrop-filter:blur(8px);border-bottom:1px solid rgba(216,210,196,.12);font-family:'JetBrains Mono',monospace}
+.lb-in{max-width:920px;margin:0 auto;padding:0 26px;display:flex;justify-content:space-between;align-items:center;height:46px;gap:14px}
+.lb-brand{color:#d8d2c4;text-decoration:none;font-size:13px;letter-spacing:.14em;display:flex;gap:9px;align-items:center;white-space:nowrap}
+.lb-brand:hover{color:#d9a441}
+.lb-mark{color:#c8442a;font-weight:700;font-family:'Noto Serif SC',serif;font-size:16px}
+.lb-links{display:flex;gap:16px;font-size:12px;overflow-x:auto;white-space:nowrap}
+.lb-links a{color:#8a8577;text-decoration:none;letter-spacing:.08em;padding:4px 0}
+.lb-links a:hover{color:#d9a441}
+.lb-links a.on{color:#d8d2c4;box-shadow:0 1px 0 #c8442a}
+.lb-links a.lb-pn{color:#4a9a8e}
+@media(max-width:600px){.lb-in{padding:0 14px}.lb-links{gap:10px;font-size:11px}.lb-brand{font-size:12px}}
+
+/* R 页 footer 导航被替换成 <a> 后的样式（原页面只给 span 定过样式） */
+footer .nav a{color:#8a8577;text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:12px}
+footer .nav a b{color:#4a9a8e;font-weight:500}
+footer .nav a:hover{color:#d9a441}
+footer .nav a:hover b{color:#d9a441}
+
+/* 锚点跳转防 sticky 导航条遮挡 */
+h2[id],section[id]{scroll-margin-top:60px}

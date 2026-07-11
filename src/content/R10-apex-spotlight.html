@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R10 · 顶点聚光灯 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(217,164,65,.11), transparent 60%),var(--ink)}
+.hero::after{content:"焦";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 10 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>顶点聚光灯<br>想让玩家注意的东西,放在视觉三角的顶点上</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      三角形有把视线强力引向顶端的效果。想让玩家注意的任何东西——地标、道具、入口、按钮、关键信息——放在收敛线条汇聚的顶点上,它就自动获得了一盏免费的聚光灯。
+    </div>
+    <div class="src">
+      来源 · <b>CEDEC 2017「フィールド三角形の法則」米津真「三角形は先端に視線誘導をさせる効果が高い」</b> ／ 视觉构图学中的"引导线(leading lines)"与"收敛"原理 ／ 延伸至 UI 视觉动线设计
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>玩家的眼睛,其实是可以被"指挥"的</h2>
+  <p>R7 解决了"玩家想去哪"(引力),R9 解决了"玩家怎么看见目标"(形状与情绪)。R10 处理的是更底层的一件事:<strong>在任意一个画面里,玩家的眼睛先看向哪、注意力落在哪</strong>。</p>
+  <p>这件事看起来玄乎,其实有硬机制。人的视觉系统对<strong>收敛的线条</strong>有本能反应——当多条线朝一个点汇聚时,眼睛会不由自主地被拉向那个汇聚点。这是画家、摄影师用了几百年的"引导线(leading lines)"原理。米津真在 CEDEC 2017 把它总结成三角形法则的第三个职责,一句话:</p>
+  <div class="quote">
+    <div class="q">三角形有把视线引向顶端的强烈效果。所以在山或丘的顶上配置某种特异物,就能促使玩家对那里产生兴趣。</div>
+    <div class="who">—— <b>米津真</b> · CEDEC 2017</div>
+  </div>
+  <p>这条规则的威力在于它<strong>零成本、无需UI、玩家无感知</strong>。你不需要箭头、不需要高亮、不需要弹窗——只要把重要的东西放在几何收敛的顶点,玩家的眼睛就"自己"看过去了。而且玩家完全意识不到自己被引导,他会以为"是我注意到的"。这种不留痕迹的引导,正是任天堂最推崇的境界(呼应 R7 青沼"删掉标记"的哲学)。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CORE · 原理</div>
+  <h2>收敛的线条 = 一根指向焦点的箭头</h2>
+  <p>三角形之所以能引导视线,本质是它的两条斜边在顶点汇聚。<strong>任何收敛的线条组合,都等于一根隐形的箭头,指向汇聚点</strong>。三角形只是最纯粹的一种。理解了这一点,你就能把它推广到任何画面:</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- triangle apex spotlight -->
+      <text x="140" y="24" text-anchor="middle" class="slt" font-size="12">三角顶点</text>
+      <path d="M70 180 L140 60 L210 180 Z" fill="#20252e" stroke="#4a9a8e" stroke-width="1.2"/>
+      <!-- gaze lines converge -->
+      <path d="M70 180 L140 66" stroke="#d9a441" stroke-width="1" stroke-dasharray="2 3" opacity=".7"/>
+      <path d="M210 180 L140 66" stroke="#d9a441" stroke-width="1" stroke-dasharray="2 3" opacity=".7"/>
+      <circle cx="140" cy="58" r="6" fill="#d9a441"/>
+      <text x="140" y="44" text-anchor="middle" class="sla" font-size="9">焦点</text>
+
+      <!-- converging paths (roads/rivers) -->
+      <text x="420" y="24" text-anchor="middle" class="slt" font-size="12">道路/河流收敛</text>
+      <path d="M350 190 L420 70" stroke="#8a8577" stroke-width="3"/>
+      <path d="M490 190 L420 70" stroke="#8a8577" stroke-width="3"/>
+      <path d="M360 190 L420 78" stroke="#d9a441" stroke-width="1" stroke-dasharray="2 3" opacity=".6"/>
+      <path d="M480 190 L420 78" stroke="#d9a441" stroke-width="1" stroke-dasharray="2 3" opacity=".6"/>
+      <circle cx="420" cy="66" r="6" fill="#d9a441"/>
+      <text x="420" y="52" text-anchor="middle" class="sla" font-size="9">焦点</text>
+
+      <!-- framing / arch -->
+      <text x="700" y="24" text-anchor="middle" class="slt" font-size="12">框景(树/拱)</text>
+      <path d="M640 60 Q 645 130 650 190" stroke="#2b4a3e" stroke-width="6"/>
+      <path d="M760 60 Q 755 130 750 190" stroke="#2b4a3e" stroke-width="6"/>
+      <path d="M640 60 Q 700 40 760 60" stroke="#2b4a3e" stroke-width="5" fill="none"/>
+      <circle cx="700" cy="125" r="7" fill="#d9a441"/>
+      <text x="700" y="150" text-anchor="middle" class="sla" font-size="9">被框住=焦点</text>
+    </svg>
+    <div class="figcap">三种收敛结构,同一个原理。<b>三角顶点、道路河流的汇聚点、框景(树木/拱门)围出的中心</b>——它们都是"隐形箭头"指向的焦点。把重要的东西放在焦点上,玩家的眼睛自动看过去。</div>
+  </div>
+
+  <table>
+    <tr><th>收敛结构</th><th>在3D世界里</th><th>推广到2D/UI</th></tr>
+    <tr><td>三角顶点</td><td>山丘顶端放孤树/怪石/发光物</td><td>三角形构图的尖端放主体</td></tr>
+    <tr><td>道路/河流汇聚</td><td>几条路通向一个地标</td><td>线条、箭头、排版流向汇聚到CTA</td></tr>
+    <tr><td>框景(framing)</td><td>拱形树木/山谷框住远景</td><td>留白/边框把视线锁进中心元素</td></tr>
+    <tr><td>明暗/色彩对比</td><td>暗处的一束光、灰调里的暖色</td><td>沉色背景里的高饱和按钮</td></tr>
+  </table>
+  <p>核心口诀:<strong>凡是有"方向性"的东西(线条、坡度、渐变、运动)都在指向某处。让它们指向你要玩家看的地方。</strong></p>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 从地形到UI的同构</div>
+  <h2>关卡的"顶点",就是界面的"视觉焦点"</h2>
+  <p>这条规则最有价值的地方,是它<strong>在关卡设计和界面设计里是同一条</strong>。米津真讲的"三角顶点引导视线",和UI设计里的"视觉层级(visual hierarchy)",是同一个人类视觉机制的两种应用。对你这样既做游戏、又做前端/portfolio 的人,这条规则一次学会,两处都能用。</p>
+  <div class="model">
+    <div class="mstep"><h5>视线有一个"入口"和一条"路径"</h5><p>无论是游戏画面还是网页,玩家/用户的眼睛都有一个最先落下的点,然后沿某条路径扫描。好的设计是<strong>主动规划这条路径</strong>,而不是让它随机游走。三角收敛就是规划路径的工具之一。</p></div>
+    <div class="mstep"><h5>一个画面只能有一个主焦点</h5><p>三角形法则里,顶点是唯一的。UI 同理:一个屏幕如果有五个东西都在喊"看我",等于没有焦点。<strong>先确定这个画面唯一最重要的东西,把所有收敛线条指向它</strong>,其余元素退居次要。</p></div>
+    <div class="mstep"><h5>层级 = 多个三角的嵌套</h5><p>确定主焦点后,次要焦点用更弱的收敛(更小的三角、更低的对比)。形成"主→次→再次"的视觉层级。玩家的眼睛按你设计的顺序,一站一站地走。</p></div>
+  </div>
+  <p>具体的对应关系(直接可用于你的 nav.bluecatbot 改版和作品集):</p>
+  <table>
+    <tr><th>三角形法则(关卡)</th><th>视觉动线(UI/网页)</th></tr>
+    <tr><td>顶点放地标</td><td>视觉焦点区放核心CTA/主标题</td></tr>
+    <tr><td>大三角=远距地标</td><td>首屏主视觉=最强层级元素</td></tr>
+    <tr><td>小三角=近距节奏</td><td>次级信息=较弱层级,维持浏览节奏</td></tr>
+    <tr><td>道路汇聚到目标</td><td>排版流向/箭头/视线引导到转化点</td></tr>
+    <tr><td>时隐时现维持期待</td><td>滚动渐显(scroll reveal)维持浏览动力</td></tr>
+    <tr><td>偶尔落空防麻木</td><td>不是每个元素都高亮,留白让焦点突出</td></tr>
+  </table>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 一个容易忽略的约束</div>
+  <h2>聚光灯只有一盏才亮</h2>
+  <p>顶点聚光灯的威力,建立在<strong>稀缺性</strong>上。三角形法则里,顶点是收敛的唯一汇聚点,所以它独占了视线。如果一个画面里到处都是三角顶点、到处都是收敛线条,视线就无所适从,聚光灯效果互相抵消,等于全灭。</p>
+  <div class="quote">
+    <div class="q">大·中·小按数量递增地配置图形,让无论从哪个方向、走哪条路,画面里都必有一个远处的大三角和一个近处的小三角同居。</div>
+    <div class="who">—— <b>米津真</b> · CEDEC 2017(谈大中小配比)</div>
+  </div>
+  <p>注意这句话的分寸:画面里<strong>同时只有"一大一小"两级</strong>,不是塞满同等强度的焦点。大三角是当前的主目标(远处地标),小三角是脚下的节奏,两者层级分明、不抢戏。这就是"聚光灯只有一盏"的实操:<strong>任一时刻,画面里只有一个最强焦点</strong>,其余都是配角。UI 同理——首屏可以有很多元素,但只能有一个"最先被看到"的主角。</p>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么用收敛引导视线</div>
+  <h2>执行流程(关卡 & UI 通用)</h2>
+  <div class="model">
+    <div class="mstep"><h5>确定这个画面唯一的主焦点</h5><p>问:玩家/用户在这一屏,我最想让他看到什么?只能选一个。这是所有收敛线条要指向的目标。</p></div>
+    <div class="mstep"><h5>找出画面里所有"有方向性"的元素</h5><p>线条、坡度、道路、河流、排版流向、渐变、角色的视线朝向、运动方向……这些都在无声地指向某处。盘点它们。</p></div>
+    <div class="mstep"><h5>让这些方向性元素指向主焦点</h5><p>调整地形/构图,让收敛线的汇聚点落在主焦点上。三角顶点、道路终点、框景中心,都对准它。</p></div>
+    <div class="mstep"><h5>把主焦点放在汇聚点,并给它对比优势</h5><p>光是几何收敛还不够,再叠加明暗/色彩对比(暗处的光、灰调里的暖色),让焦点在收敛+对比双重加持下跳出来。</p></div>
+    <div class="mstep"><h5>压制其他元素的焦点强度</h5><p>确保没有第二个同等强度的收敛点在抢戏。次要元素用更弱的收敛和更低的对比,退居层级下游。</p></div>
+    <div class="mstep"><h5>真的看一眼(3秒测试)</h5><p>让没见过的人瞄画面3秒,问"你第一眼看到了什么"。答案不是你的主焦点,就回去调收敛。这是 UI 版的"越肩视线"(R1)。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 顶点聚光灯审计</h4>
+    <ul>
+      <li>这个画面是否只有一个明确的主焦点?</li>
+      <li>画面里所有"有方向性"的元素是否已盘点?</li>
+      <li>这些方向性元素是否都指向主焦点(而非四散)?</li>
+      <li>主焦点是否放在收敛线的汇聚点上?</li>
+      <li>主焦点是否叠加了明暗/色彩对比优势?</li>
+      <li>是否只有一盏聚光灯(没有第二个同强度焦点抢戏)?</li>
+      <li>次要元素是否退居更弱的层级?</li>
+      <li>3秒测试:陌生人第一眼看到的,是你的主焦点吗?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>视觉焦点设计表</h2>
+  <div class="tpl">
+    <div class="h">FOCAL POINT / LEADING LINES</div>
+    <div class="row"><span class="k">frame</span>: 这个画面/屏幕的名称</div>
+    <div class="row"><span class="k">primary_focus</span>: 唯一主焦点(只能一个)</div>
+    <div class="row"><span class="k">directional_elements</span>: 所有有方向性的元素(线/坡/流向…)</div>
+    <div class="row"><span class="k">convergence</span>: 它们的汇聚点是否=主焦点?(否→<span class="x">调整</span>)</div>
+    <div class="row"><span class="k">contrast_boost</span>: 主焦点叠加的明暗/色彩对比</div>
+    <div class="row"><span class="k">secondary[]</span>: 次要元素(更弱收敛+更低对比)</div>
+    <div class="row"><span class="k">single_spotlight</span>: 确认无第二个同强度焦点抢戏?</div>
+    <div class="row"><span class="k">3sec_test</span>: 陌生人3秒第一眼看到的是______</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>游戏 · portfolio · nav.bluecatbot</h2>
+  <div class="apply">
+    <h4>星屑急便 & 人生小镇(游戏画面)</h4>
+    <ul>
+      <li><strong>用地形/建筑收敛指向关键点</strong>:2D俯视里,让道路、街道、建筑排列的透视线汇聚到本关的核心目标(送达点、关键NPC、入口)。玩家一进入画面,眼睛自动被导向该去的地方,无需UI箭头。</li>
+      <li><strong>顶点放交互物</strong>:想让玩家注意的道具/开关,放在场景收敛线的尖端(街道尽头、建筑缺口正对处、光柱下)。借几何聚光灯,让它"自己"被发现。</li>
+      <li><strong>一屏一焦点</strong>:每个游戏画面只让一个东西最抢眼。多个目标时用层级(主目标强收敛+高对比,次目标弱化),避免玩家视线迷失。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>nav.bluecatbot 改版 & 作品集(UI/网页) — 同一条规则直接复用</h4>
+    <ul>
+      <li><strong>首屏只设一个主焦点</strong>:hub 页首屏,确定唯一最想让访客点的东西(核心作品/CTA/主张),把标题层级、留白、色彩对比全部为它服务。别让五个入口同等大声。</li>
+      <li><strong>用排版流向做"道路"</strong>:标题→副标题→CTA 的视觉流,就是引导视线的"道路"。让它平滑汇聚到转化点,而非四处分叉。左对齐的文字块天然形成一条向下的引导线,善用它。</li>
+      <li><strong>框景锁定核心元素</strong>:用留白或边框把最重要的作品卡"框"起来,四周留空,视线自动锁进中心。这是网页版的"拱形树木框远景"。</li>
+      <li><strong>对比而非堆砌</strong>:一个高饱和的按钮在沉色背景里,胜过十个都想抢眼的元素。聚光灯只有一盏才亮——这条对 hub-and-spoke 的"spoke 入口"排布尤其关键:主 spoke 强化,次 spoke 弱化。</li>
+      <li><strong>滚动渐显=时隐时现</strong>:scroll reveal 对应关卡的"目标时隐时现",维持访客往下浏览的动力(你这套教程本身就用了这个手法)。</li>
+      <li><strong>3秒测试</strong>:把 hub 页给没见过的人看3秒,问"第一眼看到啥/这站是干嘛的"。答不对就回去调收敛与对比。这是 ui-layout-audit 技能可以固化的一条规则。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 一个画面里多个焦点抢戏。</b>到处都是收敛线、到处都是高对比,视线无所适从,聚光灯互相抵消,等于全灭。铁律:一个画面只有一个最强焦点,其余退居层级下游。这是最常见、最致命的错误——尤其在信息密集的 hub 页。</div>
+  <div class="warn"><b>误用二 · 收敛线指向了错误的地方(或空白)。</b>如果画面里的道路、透视线、排版流向汇聚到一个无关紧要的角落或空白处,玩家的眼睛就被引到了错误目标。盘点所有方向性元素,确保它们的汇聚点=你真正要玩家看的东西,别让隐形箭头指错。</div>
+  <div class="warn"><b>误用三 · 只靠几何,忘了对比。</b>光把东西放在三角顶点,如果它和周围颜色/明暗融为一体,收敛的力量会被削弱。几何收敛要和明暗/色彩对比叠加,双重加持焦点才真正跳出来。反之,如果一个次要元素对比过强,会盖过你精心收敛的主焦点。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R9 · 形状与情绪</span>
+      <span>NEXT ▶ <b>R11 · 大中小三角配比:收窄可测试的进入路线</b></span>
+    </div>
+    <p>资料来源 · CEDEC 2017「『ゼルダの伝説 ブレス オブ ザ ワイルド』におけるフィールドレベルデザイン」(米津真「三角形の視線誘導」部分)的 4Gamer.net / GAME Watch / Gamer.ne.jp 报道 ／ 视觉构图学中的引导线(leading lines)、框景(framing)、视觉层级(visual hierarchy)通用原理。图示为基于讲演与构图原理的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

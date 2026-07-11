@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R4 · 参数教学 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(217,164,65,.1), transparent 60%),var(--ink)}
+.hero::after{content:"階";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 04 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>参数教学<br>用一组递增的同型障碍,代替一句文字说明</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      需要教「连续量」类操作(按住时长、蓄力强度、时机、力度)时,不要用文字。摆一组「同一种类、参数递增」的障碍,让玩家在闯关中自己发现「输入越大→结果越大」的映射关系。
+    </div>
+    <div class="src">
+      来源 · <b>马里奥1-1 四根递增水管教「长按跳得更高」</b>(社長が訊く/Wikipedia World 1-1) ／ 业界从业者对马里奥跳跃「アナログ变化」的分析 ／ 宫本茂「不用文字,而是创造让人想试的状况」
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>「连续量」操作,文字根本教不会</h2>
+  <p>有些操作可以用一句话说清:「按A跳跃」「按B攻击」。这类是<strong>离散的、开关式的</strong>——要么按了,要么没按。但另一类操作是<strong>连续的、模拟量的</strong>:按住跳跃键的时长决定跳多高,蓄力的强度决定投多远,松手的时机决定落在哪。这类操作,文字说明完全无能为力。</p>
+  <p>你可以写「按住越久跳得越高」,但玩家读完这句话,依然不知道<strong>「久」是多久</strong>、按0.3秒和0.5秒的手感差别在哪、想跳过这个具体的坑要按多长。连续量的映射关系是一种<strong>身体记忆(手感)</strong>,只能通过反复尝试建立,读文字建立不了。</p>
+  <p>宫本茂的解法是把「参数轴」翻译成「空间轴」:做一组<strong>同一种类、但参数逐级递增的障碍</strong>,让玩家一个接一个地闯过去。第一个障碍教会「原来能这样」,后面每一个都逼玩家把输入调大一点。闯完这一组,玩家的手指已经建立起了完整的参数映射——而且是他自己「发现」的,不是被告知的。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE · 原始案例</div>
+  <h2>四根递增水管:一部无字的按键时长教科书</h2>
+  <p>1-1的开场教完敌人、道具之后,紧接着是四根<strong>高度依次递增</strong>的水管。这不是随便放的装饰,它是一台精密的参数教具:</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 240" xmlns="http://www.w3.org/2000/svg">
+      <rect x="20" y="200" width="800" height="24" fill="#20252e" stroke="rgba(216,210,196,.15)"/>
+      <!-- 4 pipes increasing -->
+      <rect x="140" y="176" width="46" height="24" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <rect x="300" y="158" width="46" height="42" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <rect x="470" y="138" width="46" height="62" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <rect x="640" y="118" width="46" height="82" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <text x="163" y="220" text-anchor="middle" class="sl">轻按</text>
+      <text x="323" y="220" text-anchor="middle" class="sl">稍长</text>
+      <text x="493" y="220" text-anchor="middle" class="sl">更长</text>
+      <text x="663" y="220" text-anchor="middle" class="sl">按满</text>
+      <!-- jump arcs -->
+      <path d="M90 200 Q 130 172 178 196" stroke="#4a9a8e" stroke-width="1.6" fill="none" stroke-dasharray="3 3"/>
+      <path d="M250 200 Q 300 146 342 196" stroke="#4a9a8e" stroke-width="1.6" fill="none" stroke-dasharray="3 3"/>
+      <path d="M420 200 Q 470 122 512 196" stroke="#4a9a8e" stroke-width="1.6" fill="none" stroke-dasharray="3 3"/>
+      <path d="M590 200 Q 640 100 682 196" stroke="#4a9a8e" stroke-width="1.6" fill="none" stroke-dasharray="3 3"/>
+      <!-- input bars -->
+      <text x="40" y="40" class="sla" font-size="11">↓ 玩家的按键时长(输入)必须逐个变长</text>
+      <rect x="140" y="52" width="16" height="8" fill="#d9a441"/>
+      <rect x="300" y="52" width="30" height="8" fill="#d9a441"/>
+      <rect x="470" y="52" width="46" height="8" fill="#d9a441"/>
+      <rect x="640" y="52" width="62" height="8" fill="#d9a441"/>
+    </svg>
+    <div class="figcap">四根水管高度递增,强制玩家的按键时长(黄条)也逐级变长。<b>「参数轴」被翻译成了「空间轴」</b>:玩家不需要理解「时长→高度」的抽象映射,只需要一个一个跳过去,手指自然学会了整条曲线。</div>
+  </div>
+
+  <p>关键在于马里奥的跳跃是<strong>模拟量(アナログ)</strong>的,不是老式游戏那种「按一下固定跳到某高度」。业界分析常指出这一点:</p>
+  <div class="quote">
+    <div class="q">老游戏大多是按一下就跳到「固定高度」。但马里奥的跳跃轨道,会随着按键的「长短」和助跑的「快慢」而模拟量地连续变化。轻按小跳躲敌人,长按高远跳跃——玩家「指尖的情绪」直接反映在画面上。</div>
+    <div class="who">—— <b>ゲーム会社の人</b> · 对马里奥跳跃手感的分析</div>
+  </div>
+  <p>正因为跳跃是连续量,才<strong>必须</strong>用递增水管这种手段教。如果跳跃只有「跳/不跳」两档,一句话就说完了;正是连续量的存在,让「递增障碍」成为唯一有效的教法。</p>
+
+  <p>还有一个容易被忽略的细节:递增水管<strong>紧跟在坑洞之前</strong>。1-1里,学会「长按跳更高」之后立刻遇到需要「助跑+跳跃」才能越过的宽坑——参数教学不是孤立的练习,它<strong>立刻在下一个真实挑战里被用到</strong>。这呼应了 R3 的降采样:教学关的每个练习,都是为正式关的挑战做准备。</p>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 为什么递增比文字更有效</div>
+  <h2>三个心理学机制</h2>
+  <div class="model">
+    <div class="mstep"><h5>发现感 &gt; 被告知感</h5><p>玩家跳过第二根更高的水管时,是他<strong>自己</strong>发现「多按一会儿就过去了」。这个「我发现的」的感觉,记忆强度远超读一句说明。宫本的原话是:不要「说明操作方法」,而要「创造让人想试的状况」。递增水管就是一连串「让人想试」的状况。</p></div>
+    <div class="mstep"><h5>渐进 = 自带难度曲线</h5><p>四根水管本身就是一条平滑的难度曲线:每一根只比上一根难一点点。玩家在不知不觉中被抬升,没有任何一步是陡峭的门槛。这天然满足了「无痛学习」——学习曲线被折叠进了空间布局里。</p></div>
+    <div class="mstep"><h5>失败即时且低成本</h5><p>跳不过某根水管,顶多撞上去弹回来,重跳即可,几乎不损失进度。玩家可以在同一根水管前反复试,直到手指找到正确的时长。<strong>低成本的即时反馈</strong>是建立手感的必要条件——这也是为什么参数教学要放在惩罚很轻的新手区。</p></div>
+  </div>
+  <div class="warn"><b>「同型」是关键约束。</b>四根都是水管——同一种障碍。如果第一个是水管、第二个是敌人、第三个是坑,玩家就无法把它们理解成「同一件事的不同参数」,教学失效。递增障碍<strong>必须视觉和机制上都是同类</strong>,只让「那一个参数」变化,其余全部保持不变。这样玩家才能隔离出「哦,变的是我按键的时长」。</div>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么设计一组参数教学</div>
+  <h2>四步配方</h2>
+  <div class="model">
+    <div class="mstep"><h5>识别出「连续量」操作</h5><p>盘点你的操作,分出「离散(开关式)」和「连续(模拟量)」两类。连续类才需要 R4:蓄力强度、按住时长、瞄准角度、松手时机、移动速度……这些用文字教不会的,才是参数教学的对象。</p></div>
+    <div class="mstep"><h5>选一种同型障碍作为「量尺」</h5><p>为这个参数选一种单一障碍(墙/坑/门/目标),它的「难度」正好由这个参数决定。障碍越高=需要按越久,坑越宽=需要助跑越快。障碍与参数要一一对应。</p></div>
+    <div class="mstep"><h5>排列3–5个,参数逐级递增</h5><p>4个左右是黄金数量(1-1用的就是4)。第一个几乎白送(建立「原来能这样」),最后一个接近该参数的上限(建立「原来能到这么大」)。中间平滑过渡,每步只增一点。</p></div>
+    <div class="mstep"><h5>紧接一个用到该参数的真实挑战</h5><p>学完立刻用。递增组之后马上放一个需要这个参数的实战场景(1-1的宽坑),把刚建立的手感立即兑现成成就感。别让教学悬空。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 参数教学审计</h4>
+    <ul>
+      <li>要教的操作是「连续量」而非「开关式」?(开关式用不着 R4)</li>
+      <li>是否选了单一种类的同型障碍作为量尺?</li>
+      <li>递增组里,除了目标参数,其他变量是否全部保持不变?</li>
+      <li>数量是否在 3–5 个(4 个最佳)?</li>
+      <li>第一个是否接近白送,最后一个是否接近参数上限?</li>
+      <li>每一步的增量是否足够小(没有陡峭门槛)?</li>
+      <li>失败代价是否很轻,允许在同一障碍前反复试?</li>
+      <li>递增组之后是否紧跟一个用到该参数的真实挑战?</li>
+      <li>全程是否零文字提示?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>参数教学序列表</h2>
+  <div class="tpl">
+    <div class="h">PARAMETER TEACHING SEQUENCE</div>
+    <div class="row"><span class="k">parameter</span>: 要教的连续量是______(时长/力度/角度/时机…)</div>
+    <div class="row"><span class="k">obstacle_type</span>: 作为量尺的同型障碍是______</div>
+    <div class="row"><span class="k">mapping</span>: 障碍的哪个属性 ↔ 参数(如「墙高↔按键时长」)</div>
+    <div class="row"><span class="k">seq[0]</span>: 近乎白送(建立「原来能这样」)</div>
+    <div class="row"><span class="k">seq[1]</span>: 参数 +小增量</div>
+    <div class="row"><span class="k">seq[2]</span>: 参数 +小增量</div>
+    <div class="row"><span class="k">seq[3]</span>: 接近参数上限(建立「原来能这么大」)</div>
+    <div class="row"><span class="k">held_constant</span>: 除参数外保持不变的变量(确保隔离)</div>
+    <div class="row"><span class="k">fail_cost</span>: 失败代价(应很轻,允许反复试)</div>
+    <div class="row"><span class="k">payoff_challenge</span>: 紧接的、用到该参数的真实挑战</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>星屑急便(多人配送) — R4 的天然舞台</h4>
+    <ul>
+      <li><strong>蓄力投掷 = 递增投递点</strong>:如果配送有「按住蓄力,松手投掷包裹」的连续量操作,别弹教程。摆四个距离递增的投递目标:第一个近到轻碰就中,第四个需要接近满蓄力。玩家跳过这一组,力度手感就建立了。</li>
+      <li><strong>漂移/加速 = 递增弯道</strong>:如果有速度或漂移的连续控制,做一段弯道由缓到急,每个弯只比上一个急一点,玩家自然学会「多大的速度配多大的转向」。</li>
+      <li><strong>紧接实战</strong>:递增投递组之后,马上放一个「限时+远距离」的真实配送,把刚学的蓄力手感立即用上。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>人生小镇(人生模拟) — 参数教学的抽象化</h4>
+    <ul>
+      <li><strong>把「资源投入量」做成递增决策</strong>:如果游戏有「投入多少时间/金钱→收益多少」的连续权衡,用一组早期小决策教它:第一个决策投入很少就有明显回报,后面逐个提高「需要投入多少才划算」的门槛,让玩家在低风险下摸清「投入↔回报」曲线。</li>
+      <li><strong>同型约束在抽象系统里同样重要</strong>:教「投入回报」时,前几个决策要是<strong>同一类</strong>决策(都是学习投资、或都是社交投资),别混着来,否则玩家分不清是哪个变量在起作用。</li>
+      <li><strong>数值反馈要即时可感</strong>:连续量教学依赖即时反馈。人生模拟里,让早期这几个决策的结果<strong>快速结算并清晰显示</strong>(而不是几个回合后才生效),玩家才能建立映射。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 递增组里混入了不同种类的障碍。</b>四个障碍如果一个是墙、一个是坑、一个是敌人,玩家无法把它们理解成「同一件事的不同参数」,隔离失败。「同型」是硬约束:视觉和机制上必须是同类,只让目标参数变化。</div>
+  <div class="warn"><b>误用二 · 用递增障碍教「开关式」操作。</b>如果操作只有「做/不做」两档(比如「按A开门」),做一排递增的门毫无意义——参数教学只对连续量有效。先分清你要教的是离散还是连续,别把 R4 用错对象。</div>
+  <div class="warn"><b>误用三 · 教完不用,手感白建。</b>玩家辛苦在递增组里建立的手感,如果后面很久都用不上,会迅速遗忘。参数教学必须紧接一个用到它的真实挑战(呼应 R3:教学服务于正式关)。悬空的教学等于没教。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R3 · 降采样教学关</span>
+      <span>NEXT ▶ <b>R5 · 一关一机制:起承转结</b></span>
+    </div>
+    <p>资料来源 · Wikipedia「World 1-1」(社長が訊く内容整理) ／ note「初代マリオのレベルデザイン」(きくぴぃ) ／ note「マリオのジャンプはなぜ気持ちいいのか」(ゲーム会社の人) ／ 社長が訊く『New スーパーマリオブラザーズ Wii』宫本谈无文字教学。图示为基于访谈内容的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,161 @@
+# PLAN-01 · 素材清单与数据真相源（里程碑 M0）
+
+> **前置条件**：已通读 PLAN-00。
+> **本卷产出**：① `src/content/` 下 18 个素材 HTML（复制入库+洗文件名）；② `data/rules.json`（内容在本卷第 4 节给全，照抄即可）。
+> **本卷所有数据（标题、宣言、章节名）都已从素材实际内容中逐字提取核对过，直接使用，不要重新去猜或改写。**
+
+---
+
+## 1. 素材总清单
+
+素材源（只读）：`C:\Users\1\Desktop\note\分析报告\game\`
+
+| # | 源文件名 | 入库后文件名（out/ 同名） | 角色 |
+|---|----------|---------------------------|------|
+| 1 | `nintendo-level-design-manual.html` | `manual.html` | 实战手册（学习路径第①步） |
+| 2 | `R01-teaching-elements (1).html` | `R01-teaching-elements.html` | 规则 R1（注意：源文件名带 ` (1)`，复制时去掉） |
+| 3 | `R02-fortune-from-misfortune.html` | 同名 | 规则 R2 |
+| 4 | `R03-downsample-tutorial.html` | 同名 | 规则 R3 |
+| 5 | `R04-parameter-teaching.html` | 同名 | 规则 R4 |
+| 6 | `R05-kishotenketsu.html` | 同名 | 规则 R5 |
+| 7 | `R06-finale-flourish.html` | 同名 | 规则 R6 |
+| 8 | `R07-gravity-design.html` | 同名 | 规则 R7 |
+| 9 | `R08-cycle-gravity.html` | 同名 | 规则 R8 |
+| 10 | `R09-shape-emotion.html` | 同名 | 规则 R9 |
+| 11 | `R10-apex-spotlight.html` | 同名 | 规则 R10 |
+| 12 | `R11-triangle-ratio.html` | 同名 | 规则 R11 |
+| 13 | `R12-kyoto-calibration.html` | 同名 | 规则 R12 |
+| 14 | `R13-blank-field-first.html` | 同名 | 规则 R13 |
+| 15 | `R14-heatmap-validation.html` | 同名 | 规则 R14 |
+| 16 | `R15-frictionless-feedback.html` | 同名 | 规则 R15 |
+| 17 | `R16-anti-busywork.html` | 同名 | 规则 R16 |
+| 18 | `nintendo-dev-dossier.html` | `dossier.html` | 访谈卷宗（学习路径第③步） |
+
+**M0 操作**：建 `src/content/` 目录，把 18 个文件按上表复制并重命名进去。用 Python 或 robocopy 复制（不要用会碰内容的方式），复制后用文件大小逐一核对与源一致。
+
+## 2. 素材结构事实（构建逻辑依赖这些，已实测核对）
+
+1. **所有 18 个文件都是自包含 HTML**：inline `<style>`，唯一外部依赖是 Google Fonts（`fonts.googleapis.com` 的 Noto Serif SC + JetBrains Mono）。
+2. **R 页解剖**（16 篇完全一致）：hero（`.rid` 编号行 + `<h1>`（两行，`<br>` 分隔：标题/副题）+ `.rule` RULE 宣言块 + `.src` 来源行）→ 若干 `<section>`（各含一个 `<h2>`，**h2 没有 id 属性**）→ `<footer>` 内含 `<div class="nav">`。
+3. **R 页 footer 的 `<div class="nav">` 是纯文本 `<span>`，没有任何 `<a>` 链接**。全站没有任何指向其他页面的链接——把它们连起来是构建器的核心工作之一。
+4. **manual / dossier 有页内目录**：TOC 链接到 `#s1`…`#s7` 锚点，各 7 章。这两个文件的 footer 没有 `.nav` 块（不需要替换 prev/next）。
+5. 所有文件 `<html lang="zh-CN">`、UTF-8，已有 viewport meta；**没有** meta description / canonical / OG 标签（M4 注入）。
+6. CSS 变量名在 R 页里是 `--dim`，在卷宗页里是 `--text-dim`——所以**站壳组件的 CSS 绝不能依赖页面的 CSS 变量**，必须自带硬编码色值（见 PLAN-03）。
+
+## 3. manual / dossier 的章节（供搜索索引与首页文案用，逐字核对过）
+
+**manual.html** — `<h1>` = 「任天堂关卡设计实战手册 / 场景构思的可复用机制」，7 章（锚点 `#s1`–`#s7`）：
+1. 马里奥1-1：无教程的教学配置
+2. 起承转结：四段式关卡构造
+3. 引力：玩家为什么往那边走
+4. 三角形法则：地形即导演
+5. 三把尺子：世界的度量衡
+6. 热力图：验证与修正循环
+7. 速查表：设计规则清单
+
+**dossier.html** — `<h1>` = 「任天堂开发访谈研究卷宗 / 「先做出好玩，再做出规模」」，7 章（锚点 `#s1`–`#s7`）：
+1. 访谈体系：任天堂的三条信息渠道
+2. 岩田聪：瓶颈论与重构的勇气
+3. 宫本茂：点子的定义与设计观
+4. 旷野之息：乘法游戏与2D原型
+5. 王国之泪：为准备而准备
+6. 斯普拉遁：豆腐原型与大器皿
+7. 总映射：任天堂原则 × 你的开发流水线
+
+## 4. `data/rules.json`（数据真相源，**照抄全文**）
+
+以下 JSON 一字不差写入 `data/rules.json`（UTF-8 无 BOM）。`title`/`subtitle` 提取自各 R 页 `<h1>` 的两行，`rule` 是 `.rule` 宣言原文。分组已定稿（四部），不要重新分。
+
+```json
+{
+  "site": {
+    "name": "关卡之书",
+    "tagline": "任天堂关卡设计教程",
+    "description": "把任天堂关卡设计方法论做成一本可执行的书——16 条规则、一份实战手册、一卷开发访谈研究。",
+    "base": "https://level.bluecatbot.com",
+    "port": 5031
+  },
+  "groups": [
+    { "id": "teach",   "no": "第一部", "label": "教学",   "motto": "不用文字教会玩家" },
+    { "id": "arc",     "no": "第二部", "label": "结构",   "motto": "一个机制的一生" },
+    { "id": "guide",   "no": "第三部", "label": "引导",   "motto": "让玩家自己想去" },
+    { "id": "process", "no": "第四部", "label": "流程",   "motto": "先确定好玩，再确定规模" }
+  ],
+  "docs": [
+    {
+      "id": "manual", "file": "manual.html",
+      "title": "任天堂关卡设计实战手册", "subtitle": "场景构思的可复用机制",
+      "role": "学习路径第①步 · 总纲",
+      "sections": ["马里奥1-1：无教程的教学配置", "起承转结：四段式关卡构造", "引力：玩家为什么往那边走", "三角形法则：地形即导演", "三把尺子：世界的度量衡", "热力图：验证与修正循环", "速查表：设计规则清单"]
+    },
+    {
+      "id": "dossier", "file": "dossier.html",
+      "title": "任天堂开发访谈研究卷宗", "subtitle": "「先做出好玩，再做出规模」",
+      "role": "学习路径第③步 · 思想背景",
+      "sections": ["访谈体系：任天堂的三条信息渠道", "岩田聪：瓶颈论与重构的勇气", "宫本茂：点子的定义与设计观", "旷野之息：乘法游戏与2D原型", "王国之泪：为准备而准备", "斯普拉遁：豆腐原型与大器皿", "总映射：任天堂原则 × 你的开发流水线"]
+    }
+  ],
+  "rules": [
+    { "id": "R01", "num": "R1",  "file": "R01-teaching-elements.html",     "group": "teach",
+      "title": "教学元素法则", "subtitle": "每个新手区元素都必须能教会玩家一件事",
+      "rule": "新手区里每一个被摆放的元素,都必须能写出一句「→ 教会玩家 ___」。写不出来的元素,从新手区删除。" },
+    { "id": "R02", "num": "R2",  "file": "R02-fortune-from-misfortune.html", "group": "teach",
+      "title": "因祸得福", "subtitle": "让玩家第一次「以为完蛋」的瞬间获得奖励",
+      "rule": "第一次接触新系统时,安排一次「因祸得福」:玩家以为自己失误了、以为要受罚,结果触发的却是奖励。用一次被翻转的恐惧,把戒备心变成探索欲。" },
+    { "id": "R03", "num": "R3",  "file": "R03-downsample-tutorial.html",   "group": "teach",
+      "title": "降采样教学关", "subtitle": "先做你最想让人玩的那一关,再从中削出教学关",
+      "rule": "先把你觉得最好玩、最能代表这个游戏的那一关做出来(宫本称之为「2-1」);再把它简化、拆解,反推出第一关的教学关(「1-1」)。反着做——先做教学关——会让教学关变成无聊的功能清单。" },
+    { "id": "R04", "num": "R4",  "file": "R04-parameter-teaching.html",    "group": "teach",
+      "title": "参数教学", "subtitle": "用一组递增的同型障碍,代替一句文字说明",
+      "rule": "需要教「连续量」类操作(按住时长、蓄力强度、时机、力度)时,不要用文字。摆一组「同一种类、参数递增」的障碍,让玩家在闯关中自己发现「输入越大→结果越大」的映射关系。" },
+    { "id": "R05", "num": "R5",  "file": "R05-kishotenketsu.html",         "group": "arc",
+      "title": "起承转结", "subtitle": "一关只教一个机制,按四段展开它的一生",
+      "rule": "每一关只围绕一个核心机制,按「起→承→転→結」四段展开:起(零风险展示)、承(加入风险与变化)、転(违反已建立的预期)、結(华丽谢幕)。「転」必须违反预期,只加难度不算転。" },
+    { "id": "R06", "num": "R6",  "file": "R06-finale-flourish.html",       "group": "arc",
+      "title": "炫技谢幕", "subtitle": "结尾段复杂度回落,让玩家带着掌控感离开",
+      "rule": "「結」段的复杂度要回落,不以最难考验收尾。机制的最后一次登场是纪念性的、低风险的炫技演出——让玩家在「我掌握了它」的高峰结束,而不是在「这段好难」的挫败中离开。" },
+    { "id": "R07", "num": "R7",  "file": "R07-gravity-design.html",        "group": "guide",
+      "title": "引力设计", "subtitle": "不画箭头,给每个地点一份「让人想去」的引力",
+      "rule": "为每个 POI(兴趣点)标注两个属性:它服务的动机类型(情报/成长/装备/好奇)与它的可见半径。检查任意一点的视野内,是否总有至少一个未消费的引力点。有盲区就补小引力。" },
+    { "id": "R08", "num": "R8",  "file": "R08-cycle-gravity.html",         "group": "guide",
+      "title": "周期改变引力", "subtitle": "用昼夜与天气,让同一批资产产生多套体验",
+      "rule": "用周期(昼夜/天气/季节)改变引力排序与玩法规则,让同一张地图产出多套路线。同一批资产,靠环境变化产生数倍的探索体验——这是独立开发者性价比最高的内容杠杆。" },
+    { "id": "R09", "num": "R9",  "file": "R09-shape-emotion.html",         "group": "guide",
+      "title": "形状与情绪", "subtitle": "遮蔽物的轮廓,决定玩家看见目标时的情绪",
+      "rule": "遮蔽物按你想要的情绪选形状:三角=渐露(目标缓缓浮现,制造期待);四角=突现(越过瞬间豁然开朗,制造惊吓/惊喜);台形=混合。目标是\"怎么被看见\",而形状就是那个调节旋钮。" },
+    { "id": "R10", "num": "R10", "file": "R10-apex-spotlight.html",        "group": "guide",
+      "title": "顶点聚光灯", "subtitle": "想让玩家注意的东西,放在视觉三角的顶点上",
+      "rule": "三角形有把视线强力引向顶端的效果。想让玩家注意的任何东西——地标、道具、入口、按钮、关键信息——放在收敛线条汇聚的顶点上,它就自动获得了一盏免费的聚光灯。" },
+    { "id": "R11", "num": "R11", "file": "R11-triangle-ratio.html",        "group": "guide",
+      "title": "三角配比", "subtitle": "大地标 + 周围小遮蔽,把开放地图收窄成有限路线",
+      "rule": "按\"大少、中量、小多\"配置三角形。大地标周围环绕密集的小遮蔽,既保留玩家的自由感,又把无穷的进入路线收窄成有限几条可测试的路径——让\"全方向自由\"和\"可控可测\"两全。" },
+    { "id": "R12", "num": "R12", "file": "R12-kyoto-calibration.html",     "group": "process",
+      "title": "京都标定法", "subtitle": "用你有身体记忆的真实空间,给虚拟世界定尺寸",
+      "rule": "动工前,先用你有身体记忆的真实街区,标定三把尺子:距离感(世界该多大)、密度感(每单位面积放多少事件)、尺感(单次游玩的节拍)。数值表格骗人,身体不骗人。" },
+    { "id": "R13", "num": "R13", "file": "R13-blank-field-first.html",     "group": "process",
+      "title": "空场地先行", "subtitle": "密度验证先于美术,骨架期禁止精修",
+      "rule": "验证距离/密度/节拍,一律用「空场地 + 粗糙占位地形」,严格先于一切美术。骨架期只做「确定好不好玩」,精修被明令禁止——先用最便宜的方式把乐趣确定下来,再投入昂贵的制作。" },
+    { "id": "R14", "num": "R14", "file": "R14-heatmap-validation.html",    "group": "process",
+      "title": "热力图验证", "subtitle": "先写下你预期的形状,再去看数据",
+      "rule": "用玩家轨迹热力图验证设计,但先写下你预期的形状,再看数据。探索图要看到\"离散\"、竞技图要看到\"均衡\"、教学关要看到\"收敛\"。没有预期形状,你就无法判断数据是好是坏。" },
+    { "id": "R15", "num": "R15", "file": "R15-frictionless-feedback.html", "group": "process",
+      "title": "反馈免跟进", "subtitle": "免除报告者的确认义务,把反馈量最大化",
+      "rule": "免除 bug/反馈报告者的\"跟进确认义务\"——报告者不必负责复现、追踪、验证修复。降低报告门槛,让报告量最大化。反直觉,但被验证有效:摩擦越小,你能听到的问题越多。" },
+    { "id": "R16", "num": "R16", "file": "R16-anti-busywork.html",         "group": "process",
+      "title": "拒绝填空式自欺", "subtitle": "\"有干活的感觉\"是最危险的信号",
+      "rule": "骨架期不要安易地用旧内容填空。用旧素材、做重复劳动\"有干活的感觉\",但其实什么核心问题都没推进。\"忙碌的充实感\"恰恰是项目正在空转的最危险信号——分清\"感觉在推进\"和\"真的在推进\"。" }
+  ]
+}
+```
+
+**prev/next 关系不写进 JSON**——由构建器按 `rules` 数组顺序推导（见 PLAN-02）。两个端点的特殊规则：
+- R01 的 prev → `index.html#rules`，链接文字 `◀ 教程索引`
+- R16 的 next → `cheatsheet.html`，链接文字 `速查表 ▶`
+
+## 5. M0 自检清单（全过才进 M1）
+
+- [ ] `src/content/` 下恰好 18 个 `.html`，文件名与第 1 节表格"入库后文件名"列完全一致（无 ` (1)`，`manual.html`/`dossier.html` 已改名）。
+- [ ] 逐一比对每个入库文件与源文件的字节大小完全相同（复制未损坏内容）。
+- [ ] `data/rules.json` 存在，`python -c "import json;d=json.load(open('data/rules.json',encoding='utf-8'));print(len(d['rules']),len(d['groups']),len(d['docs']))"` 输出 `16 4 2`。
+- [ ] `rules.json` 里 16 个 `file` 字段所指文件全部存在于 `src/content/`（写 3 行 Python 验证，别用眼睛扫）。
+- [ ] BUILD-LOG.md 已追加 M0 记录。

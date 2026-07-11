@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R14 · 热力图验证 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(200,68,42,.1), transparent 60%),var(--ink)}
+.hero::after{content:"証";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 14 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>热力图验证<br>先写下你预期的形状,再去看数据</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      用玩家轨迹热力图验证设计,但<strong>先写下你预期的形状,再看数据</strong>。探索图要看到"离散"、竞技图要看到"均衡"、教学关要看到"收敛"。没有预期形状,你就无法判断数据是好是坏。
+    </div>
+    <div class="src">
+      来源 · <b>CEDEC 2017 BotW 热力图前后对比</b>(Famitsu / GIGAZINE 报道) ／ "施策前:全黑只有街道亮 → 施策后:路线离散全图彩色" ／ QA「Quality=面白さ」的验证哲学
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>"玩家实际怎么玩",你猜不到,必须测</h2>
+  <p>前面所有规则(引力、形状、配比、尺寸)都是<strong>设计假设</strong>——你认为玩家会被这样引导、会那样走。但设计者最危险的盲区,就是<strong>把自己的假设当成事实</strong>。你觉得引力场布得很匀,玩家路线会自然分叉;但实际测下来,可能所有人还是挤在一条街道上。<strong>你的直觉和玩家的真实行为之间,常常有巨大落差。</strong></p>
+  <p>热力图就是照出这个落差的镜子。它把大量测试者的移动轨迹叠加成一张图:走得多的地方发亮,没人去的地方发黑。一眼就能看出"玩家实际在哪、不在哪"。这是把主观设计假设,拉到客观数据面前对质的方法。</p>
+  <p>但热力图有一个致命的使用陷阱,也是这一条规则的核心:<strong>热力图本身不会告诉你"好还是坏"</strong>。一张路线高度集中的热力图,对竞速地图可能是完美的,对开放探索图却是彻底的失败。同样一张图,是成功还是失败,<strong>取决于你事先期望它长什么样</strong>。如果你不先写下预期形状就去看数据,你会不自觉地"看到什么都觉得合理"——这是确认偏误,等于没测。R14 的精髓,不是"用热力图",而是<strong>"先定义成功的形状,再用热力图检验是否达到"</strong>。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE · BotW 的两张热力图</div>
+  <h2>从"全黑只有街道亮"到"全图彩色路线离散"</h2>
+  <p>R7 提过《旷野之息》靠引力设计取代了失败的"点与线"。而<strong>证明这个改进有效的,正是两张不同时期的热力图对比</strong>。Famitsu 的报道详细描述了它们:</p>
+  <div class="quote">
+    <div class="q">先测的那张热力图,场地整体是黑的,明确亮起来的只有街道——也就是说,几乎所有人都走街道,只有极少数玩家走了没有路的地方。后测的那张则整体色彩缤纷:街道当然还是亮的,但比之前更恰到好处地分散出了玩家的路径。</div>
+    <div class="who">—— <b>藤林秀麿</b> · CEDEC 2017(Famitsu 报道)</div>
+  </div>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 250" xmlns="http://www.w3.org/2000/svg">
+      <!-- before -->
+      <text x="210" y="24" text-anchor="middle" class="slc" font-size="12">施策前:全黑,只有街道亮 = 失败</text>
+      <rect x="40" y="36" width="340" height="180" fill="#0a0c10" stroke="rgba(216,210,196,.12)"/>
+      <path d="M60 200 C 140 150, 220 130, 360 60" stroke="#c8442a" stroke-width="8" fill="none" opacity=".9"/>
+      <path d="M62 196 C 142 148, 222 128, 358 62" stroke="#d9a441" stroke-width="3" fill="none" opacity=".6"/>
+      <text x="210" y="235" text-anchor="middle" class="sl" font-size="10">所有人挤一条街道,大片区域无人踏足</text>
+
+      <!-- after -->
+      <text x="630" y="24" text-anchor="middle" class="slt" font-size="12">施策后:全图彩色,路线离散 = 成功</text>
+      <rect x="460" y="36" width="340" height="180" fill="#12161b" stroke="rgba(216,210,196,.12)"/>
+      <path d="M480 200 C 540 120, 620 100, 790 60" stroke="#4a9a8e" stroke-width="2.5" fill="none" opacity=".85"/>
+      <path d="M480 170 C 570 180, 680 130, 790 130" stroke="#4a9a8e" stroke-width="2.5" fill="none" opacity=".85"/>
+      <path d="M480 80 C 580 60, 700 110, 790 190" stroke="#d9a441" stroke-width="2.5" fill="none" opacity=".8"/>
+      <path d="M490 60 C 570 130, 660 200, 785 205" stroke="#d9a441" stroke-width="2.5" fill="none" opacity=".8"/>
+      <path d="M480 130 C 620 150, 720 70, 795 90" stroke="#c8442a" stroke-width="2" fill="none" opacity=".7"/>
+      <path d="M480 210 C 600 200, 700 180, 790 160" stroke="#4a9a8e" stroke-width="3" fill="none" opacity=".9"/>
+      <text x="630" y="235" text-anchor="middle" class="sl" font-size="10">路线自然分叉,全图被踏破</text>
+    </svg>
+    <div class="figcap">BotW 前后两版热力图(示意复原)。关键在判定标准:<b>对探索型开放世界,"路线离散、全图彩色"才是成功,"集中一条线"是失败。</b>注意这与直觉相反——设计者铺了路,但玩家"没有都走那条路"才算对,因为目标是"没有被强迫感"的自由探索。</div>
+  </div>
+
+  <div class="quote">
+    <div class="q">后者才是《旷野之息》的关卡设计所追求的形态。</div>
+    <div class="who">—— <b>藤林秀麿</b> · CEDEC 2017(Famitsu 报道)</div>
+  </div>
+  <p>这个案例把 R14 的精髓演示得淋漓尽致。<strong>藤林在看数据之前,心里已经有了"成功的形状"——路线离散、全图被踏破。</strong>正因为有这个预期,他才能一眼判定第一张图(集中一条线)是失败、第二张图(离散)是成功。如果没有预设"离散=成功"这个标准,你甚至可能把第一张"街道清晰、玩家都乖乖走路"的图当成好设计(玩家没迷路嘛)。<strong>是预期形状,赋予了数据意义。</strong></p>
+</section>
+
+<section>
+  <div class="eyebrow">CORE · 不同图,不同的"成功形状"</div>
+  <h2>三种地图,三种截然相反的判定标准</h2>
+  <p>R14 最实操的部分:<strong>不同类型的地图,成功的热力图形状是完全不同、甚至相反的</strong>。用错标准,你会把成功当失败、把失败当成功。这里给出三种典型:</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 220" xmlns="http://www.w3.org/2000/svg">
+      <!-- discrete -->
+      <text x="140" y="22" text-anchor="middle" class="slt" font-size="12">离散(探索图)</text>
+      <rect x="50" y="34" width="180" height="130" fill="#12161b" stroke="rgba(216,210,196,.1)"/>
+      <g stroke-width="2" fill="none" opacity=".8">
+        <path d="M60 150 C 100 90, 140 70, 220 50" stroke="#4a9a8e"/>
+        <path d="M60 90 C 120 110, 160 60, 220 90" stroke="#d9a441"/>
+        <path d="M70 50 C 110 120, 150 140, 225 130" stroke="#c8442a"/>
+        <path d="M60 130 C 130 140, 180 100, 225 155" stroke="#4a9a8e"/>
+      </g>
+      <text x="140" y="182" text-anchor="middle" class="sl" font-size="9">路线四散,全图踏破</text>
+      <text x="140" y="198" text-anchor="middle" class="sl" font-size="9">✓ 自由探索达成</text>
+
+      <!-- balanced -->
+      <text x="420" y="22" text-anchor="middle" class="sla" font-size="12">均衡(竞技图)</text>
+      <rect x="330" y="34" width="180" height="130" fill="#12161b" stroke="rgba(216,210,196,.1)"/>
+      <g stroke-width="3" fill="none" opacity=".8">
+        <path d="M360 50 L360 150" stroke="#d9a441"/>
+        <path d="M420 45 L420 155" stroke="#d9a441"/>
+        <path d="M480 50 L480 150" stroke="#d9a441"/>
+      </g>
+      <text x="420" y="182" text-anchor="middle" class="sl" font-size="9">几条路热度相近</text>
+      <text x="420" y="198" text-anchor="middle" class="sl" font-size="9">✓ 无一家独大(平衡)</text>
+
+      <!-- converged -->
+      <text x="700" y="22" text-anchor="middle" class="slc" font-size="12">收敛(教学关)</text>
+      <rect x="610" y="34" width="180" height="130" fill="#12161b" stroke="rgba(216,210,196,.1)"/>
+      <path d="M630 150 C 680 120, 720 90, 780 50" stroke="#c8442a" stroke-width="8" fill="none" opacity=".9"/>
+      <path d="M632 146 C 682 118, 722 88, 778 52" stroke="#d9a441" stroke-width="3" fill="none" opacity=".6"/>
+      <text x="700" y="182" text-anchor="middle" class="sl" font-size="9">全员走同一条路</text>
+      <text x="700" y="198" text-anchor="middle" class="sl" font-size="9">✓ 教学信号被接收</text>
+    </svg>
+    <div class="figcap">同样的热力图形状,在三种地图里意义完全相反。<b>离散</b>对探索图=成功,对教学关却=灾难(玩家没跟上教学);<b>收敛</b>对教学关=成功,对探索图却=失败(玩家被牵着走)。<b>脱离地图类型谈热力图形状,毫无意义。</b></div>
+  </div>
+
+  <table>
+    <tr><th>地图类型</th><th>成功的形状</th><th>为什么</th></tr>
+    <tr><td>探索图(开放世界)</td><td><strong>离散</strong>:路线四散,全图被踏破</td><td>目标是"没有被强迫感"的自由探索。集中=玩家被牵着走=失败。</td></tr>
+    <tr><td>竞技图(PVP/竞速)</td><td><strong>均衡</strong>:几条主路热度相近</td><td>若某条路远比其他热,说明它是"最优解",平衡崩坏,其他路形同虚设。</td></tr>
+    <tr><td>教学关/引导段</td><td><strong>收敛</strong>:全员走同一条设计好的路</td><td>教学要确保每个玩家都接收到教学信号。离散=有人跳过了教学=失败。</td></tr>
+    <tr><td>解谜关</td><td><strong>收敛于解</strong>:轨迹汇聚到正解路径</td><td>谜题有唯一/少数正解,轨迹应最终收敛。若四散,说明玩家没找到解法或谜题歧义。</td></tr>
+  </table>
+  <p>核心纪律:<strong>看热力图之前,先根据地图类型,在纸上写下"我期望它长什么形状"。</strong>然后再打开数据,对比预期与实际。差异出现的地方,就是设计需要修正的地方。<strong>没有预期,数据只是一堆好看的颜色。</strong></p>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 热力图之外的验证配套</div>
+  <h2>不止轨迹:任天堂的验证是一整套体系</h2>
+  <p>热力图是轨迹验证,但任天堂的验证哲学更广。CEDEC 2017 的 QA 讲演里,他们给"质量"下了一个特别的定义:</p>
+  <div class="quote">
+    <div class="q">《旷野之息》把"Quality(质量)"定义为游戏的"面白さ(乐趣)",QA 的职责就是把这份乐趣最大化。</div>
+    <div class="who">—— <b>CEDEC 2017 BotW QA 讲演</b>(CEDEC 官方)</div>
+  </div>
+  <p>这个定义很关键:验证的目标不是"没有bug",而是"够不够好玩"。热力图验证的也不是"路线对不对",而是"探索体验是否达到了设计意图的乐趣"。配套的还有两个值得学的机制:</p>
+  <div class="model">
+    <div class="mstep"><h5>大规模真人测试</h5><p>BotW 做过"全公司约300人各玩一周"的大规模测试。热力图的数据,正来自这种海量真人游玩。样本量足够大,轨迹叠加才有统计意义——三五个人的轨迹说明不了问题。</p></div>
+    <div class="mstep"><h5>测试者被赋予"磨乐趣"的意识,而非只找bug</h5><p>《王国之泪》QA 讲演提到:一个"两种攻击伤害值相同"的现象本不是bug,但测试者带着"让游戏更好玩"的意识去调查才发现它。<strong>好的验证者不只报告"坏了什么",还报告"哪里不够好玩"。</strong></p></div>
+    <div class="mstep"><h5>降低反馈门槛(接后续 R15)</h5><p>BotW 取消了bug报告的"确认义务",让报告门槛降到最低,报告量最大化。热力图是量化验证,而海量的低门槛主观反馈是质化验证,两者互补。</p></div>
+  </div>
+  <div class="warn"><b>热力图是"什么",不是"为什么"。</b>热力图告诉你玩家去了哪、没去哪,但不告诉你原因。看到某区域全黑(没人去),热力图不会说是"没引力"还是"太难到达"还是"玩家没注意到"。<strong>热力图定位问题区域,但诊断原因要靠观察真人游玩(R1 的越肩视线)或问玩家。</strong>量化数据和质化观察必须配合,单靠热力图会误诊。</div>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么用热力图验证</div>
+  <h2>执行流程</h2>
+  <div class="model">
+    <div class="mstep"><h5>先定地图类型,写下预期形状</h5><p>看数据之前,在纸上明确:这是探索图/竞技图/教学关/解谜关?对应的成功形状是离散/均衡/收敛?白纸黑字写下来,防止事后自我合理化。</p></div>
+    <div class="mstep"><h5>埋点采集玩家轨迹</h5><p>定时采样玩家坐标(如每秒一次),记录下来。Web 游戏成本极低——坐标发到服务端,Canvas 叠加渲染就是热力图。</p></div>
+    <div class="mstep"><h5>要足够的样本量</h5><p>三五个人的轨迹是噪声。要尽量多的真人游玩(哪怕十几二十个朋友),叠加才有意义。样本太小的热力图会误导。</p></div>
+    <div class="mstep"><h5>对比预期形状与实际形状</h5><p>把实际热力图和你写下的预期对照。一致=设计达标;有差异=定位到了问题区域。差异是信息,不是失败。</p></div>
+    <div class="mstep"><h5>对差异区域做质化诊断</h5><p>热力图指出"哪里不对",但要靠观察真人游玩或询问,搞清"为什么"(没引力?太难?没注意到?)。别只看热力图就下结论。</p></div>
+    <div class="mstep"><h5>改设计,再测,迭代</h5><p>根据诊断改设计(补引力/调难度/改可见性),重新采集热力图,看是否向预期形状靠拢。BotW 的两张图正是这个迭代循环的前后快照。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 热力图验证审计</h4>
+    <ul>
+      <li>看数据前,是否先写下了预期形状?</li>
+      <li>是否根据地图类型选对了成功标准(离散/均衡/收敛)?</li>
+      <li>是否有足够的真人样本量(非三五个人)?</li>
+      <li>是否把实际形状与预期形状做了对照?</li>
+      <li>对差异区域,是否做了质化诊断(而非只看图下结论)?</li>
+      <li>是否区分了"什么"(热力图)和"为什么"(观察/询问)?</li>
+      <li>验证目标是否是"够不够好玩"(而非只是"路线对不对")?</li>
+      <li>改设计后是否重测,看是否向预期靠拢?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>热力图验证表</h2>
+  <div class="tpl">
+    <div class="h">HEATMAP VALIDATION</div>
+    <div class="row"><span class="k">map_type</span>: 探索 / 竞技 / 教学 / 解谜</div>
+    <div class="row"><span class="k">expected_shape</span>: <span class="x">先写</span>预期形状=离散/均衡/收敛</div>
+    <div class="row"><span class="k">sample_size</span>: 真人样本量(越大越可信)</div>
+    <div class="row"><span class="k">actual_shape</span>: 实际热力图形状</div>
+    <div class="row"><span class="k">diff_zones</span>: 预期与实际不符的区域</div>
+    <div class="row"><span class="k">diagnosis</span>: 每个差异区的"为什么"(质化诊断)</div>
+    <div class="row"><span class="k">fix</span>: 针对性修改(补引力/调难度/改可见性)</div>
+    <div class="row"><span class="k">retest</span>: 改后重测,是否向预期靠拢?</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>星屑急便(多人配送) — 埋点近乎零成本</h4>
+    <ul>
+      <li><strong>Web 游戏是热力图的天堂</strong>:每秒把玩家坐标发到服务端,用 Canvas 叠加渲染,你就有了实时热力图。M2 里程碑发朋友测试时默认开启,几乎零额外成本(你的 Django/AWS 栈完全胜任)。</li>
+      <li><strong>配送图看"离散",竞速图看"均衡"</strong>:如果是自由探索式配送,期望路线离散(玩家各走各的);如果是竞速抢单,期望几条主路热度均衡(没有一条"最优解"路碾压其他)。先按图的性质写下预期,再看数据。</li>
+      <li><strong>联机平衡靠均衡热力图守护</strong>:PVP 配送图最怕某条路线是"必胜解"。用均衡热力图检验:若某条路远比其他热,说明它太强,回去削弱或给其他路加优势。这是联机平衡的量化守门员(呼应 R11 收窄路线才能测)。</li>
+      <li><strong>教学第一单看"收敛"</strong>:新手教学关反过来——期望所有新玩家都走同一条设计好的路(收敛),若热力图离散,说明有人跳过了教学,教学配置失效(呼应 R1)。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>人生小镇(人生模拟) — 热力图的抽象化:选择分布图</h4>
+    <ul>
+      <li><strong>"轨迹"=选择路径</strong>:人生模拟没有空间轨迹,但有决策路径。把玩家在每个决策点的选择分布统计出来,就是"选择热力图"。它照出玩家实际怎么玩,而非你以为的怎么玩。</li>
+      <li><strong>分支剧情看"离散",教学决策看"收敛"</strong>:如果你想要玩家走出多样人生(探索型),期望选择分布离散(各种人生路线都有人走);如果某个开场决策是教学性质,期望收敛(大家都做出正确的入门选择)。</li>
+      <li><strong>选择过于集中=选项没差异化</strong>:如果某个决策点90%玩家选同一个,而你本意是让它多样,说明其他选项没吸引力或明显更差——等价于探索图里"所有人挤一条街道"。回去平衡选项,让每条路都有理由被选。</li>
+      <li><strong>停留时长=困惑信号</strong>:结合决策点的停留时长(呼应 R1 越肩视线的埋点):停太久=玩家困惑/选项不清,停太短=玩家没在思考(选择无意义)。量化数据+质化观察配合诊断。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 不写预期,直接看数据,事后自圆其说。</b>最隐蔽的错误。不先定义"成功形状"就看热力图,你会不自觉地把任何结果都解释成合理的(确认偏误)。数据集中?"玩家很专注嘛";数据离散?"玩家很自由嘛"——怎么都对,等于没测。必须先白纸黑字写下预期,再对照。</div>
+  <div class="warn"><b>误用二 · 用错地图类型的标准。</b>把探索图的"离散=成功"标准套到教学关上,你会把"玩家都跳过了教学"的灾难当成"玩家很自由"的成功。反之亦然。每种地图的成功形状不同甚至相反,判定前必须先确定这是什么类型的图。</div>
+  <div class="warn"><b>误用三 · 只看热力图,不做质化诊断。</b>热力图告诉你"哪里没人去",但不告诉你"为什么"。只凭一张全黑区域就断定"这里要加引力",可能误诊——也许是太难到达、或玩家根本没注意到。量化数据定位问题,质化观察(看真人玩/问玩家)诊断原因,两者缺一不可。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R13 · 空场地先行</span>
+      <span>NEXT ▶ <b>R15 · 反馈免跟进:最大化报告量</b></span>
+    </div>
+    <p>资料来源 · CEDEC 2017「『ゼルダの伝説 ブレス オブ ザ ワイルド』におけるフィールドレベルデザイン」热力图对比部分(Famitsu.com / GIGAZINE 报道) ／ CEDEC 2017 BotW QA 讲演(CEDEC 官方 session) ／ CEDEC 2024『ティアーズ オブ ザ キングダム』QA 讲演(CGWORLD / ゲームメーカーズ 报道)。图示为基于讲演内容的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

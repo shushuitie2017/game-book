@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R13 · 空场地先行 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(74,154,142,.1), transparent 60%),var(--ink)}
+.hero::after{content:"骨";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep.p1::before{content:"壱";font-family:var(--serif);color:var(--amber);font-weight:900}
+.mstep.p2::before{content:"弐";font-family:var(--serif);color:var(--teal);font-weight:900}
+.mstep.p3::before{content:"参";font-family:var(--serif);color:var(--cinnabar);font-weight:900}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 13 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>空场地先行<br>密度验证先于美术,骨架期禁止精修</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      验证距离/密度/节拍,一律用「空场地 + 粗糙占位地形」,严格先于一切美术。骨架期只做「确定好不好玩」,<strong>精修被明令禁止</strong>——先用最便宜的方式把乐趣确定下来,再投入昂贵的制作。
+    </div>
+    <div class="src">
+      来源 · <b>CEDEC 2017「骨組み方式」三阶段生产管线</b>(GAME Watch / Nintendo DREAM 报道) ／ 藤林「空场地+粗糙地形验证密度」 ／ 1周目「本質の実装以外は禁止」·「作り込んではいけない」
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>先做美术,是独立开发者最贵的自杀方式</h2>
+  <p>R12 讲了用三把尺子标定尺寸,并提到验证要用"空场地"。R13 把这一步单独拎出来深挖,因为它背后是一条足以决定项目生死的纪律:<strong>什么时候可以开始做美术。</strong></p>
+  <p>几乎所有半途而废的游戏项目,都栽在同一个陷阱里:<strong>过早地做精美的东西</strong>。做了漂亮的角色、精致的场景、华丽的特效——然后发现玩法根本不好玩、地图尺寸不对、节奏是错的。这时候所有那些精美的资产要么推翻重做,要么舍不得推翻而将就着继续,把整个项目往错误的方向拖。<strong>美术是沉没成本,而沉没成本会绑架决策。</strong></p>
+  <p>更隐蔽的危害是心理层面的:做精美的东西<strong>会给人"我在推进项目"的错觉</strong>(R16 会深挖这一点)。你花三天做了个漂亮模型,感觉很有成就感,但游戏的"好不好玩"这个核心问题,你一步都没解决。对没有大团队容错余地的独立开发者,这种"用美术的忙碌掩盖玩法的空洞"是最致命的自欺。</p>
+  <p>任天堂用《旷野之息》给出了纪律级的答案:<strong>把"确定好不好玩"和"做得好不好看"彻底分成两个阶段,并在第一阶段明令禁止后者。</strong>这就是"骨組み方式(骨架方式)"。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE · 骨組み方式</div>
+  <h2>三阶段生产管线:每一圈都有"禁止事项"</h2>
+  <p>《旷野之息》放弃了传统做法。以往做塞尔达是"积み上げ式"——先精心做一个迷宫,再一个一个往上堆。本作改成了三阶段的"骨组み方式",团队用田径场跑圈来比喻:</p>
+  <div class="quote">
+    <div class="q">1周目是「搭骨架、确定好不好玩」的试作期,2周目是「凑齐全部正式数据」的量产期,3周目是「一直打磨到成品」的仕上期。而且每一圈都设置了禁止事项。</div>
+    <div class="who">—— <b>CEDEC 2017「BotW 项目运营」讲演</b>(GAME Watch 报道)</div>
+  </div>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 230" xmlns="http://www.w3.org/2000/svg">
+      <!-- three phases as track laps -->
+      <!-- phase 1 -->
+      <rect x="40" y="50" width="230" height="120" rx="4" fill="#20252e" stroke="#d9a441" stroke-width="1.4"/>
+      <text x="155" y="40" text-anchor="middle" class="sla" font-size="13">1周目 · 试作期</text>
+      <text x="155" y="78" text-anchor="middle" class="sl2" font-size="12" style="fill:#efe9da">搭骨架,确定好不好玩</text>
+      <text x="155" y="102" text-anchor="middle" class="sl" font-size="10">粗糙占位 · 旧作资产直接摆</text>
+      <rect x="60" y="120" width="190" height="34" fill="rgba(200,68,42,.12)" stroke="#c8442a" stroke-width="1"/>
+      <text x="155" y="141" text-anchor="middle" class="slc" font-size="10">禁止:本质实装以外的一切</text>
+
+      <!-- phase 2 -->
+      <rect x="305" y="50" width="230" height="120" rx="4" fill="#1a1e25" stroke="#4a9a8e" stroke-width="1.4"/>
+      <text x="420" y="40" text-anchor="middle" class="slt" font-size="13">2周目 · 量产期</text>
+      <text x="420" y="78" text-anchor="middle" class="sl2" font-size="12" style="fill:#efe9da">凑齐全部正式数据</text>
+      <text x="420" y="102" text-anchor="middle" class="sl" font-size="10">替换占位为正式资产</text>
+      <rect x="325" y="120" width="190" height="34" fill="rgba(200,68,42,.12)" stroke="#c8442a" stroke-width="1"/>
+      <text x="420" y="141" text-anchor="middle" class="slc" font-size="10">禁止:磨き込み(精修打磨)</text>
+
+      <!-- phase 3 -->
+      <rect x="570" y="50" width="230" height="120" rx="4" fill="#1a1e25" stroke="#8a8577" stroke-width="1.4"/>
+      <text x="685" y="40" text-anchor="middle" class="sl" font-size="13">3周目 · 仕上期</text>
+      <text x="685" y="78" text-anchor="middle" class="sl2" font-size="12" style="fill:#efe9da">一直打磨到成品</text>
+      <text x="685" y="102" text-anchor="middle" class="sl" font-size="10">此时才允许精修</text>
+      <rect x="590" y="120" width="190" height="34" fill="rgba(74,154,142,.1)" stroke="#4a9a8e" stroke-width="1"/>
+      <text x="685" y="141" text-anchor="middle" class="slt" font-size="10">解禁:全力打磨</text>
+
+      <!-- arrows -->
+      <path d="M272 110 L303 110" stroke="#d8d2c4" stroke-width="1.4" marker-end="url(#ap)"/>
+      <path d="M537 110 L568 110" stroke="#d8d2c4" stroke-width="1.4" marker-end="url(#ap)"/>
+      <text x="420" y="200" text-anchor="middle" class="sl" font-size="10">乐趣确定 → 才铺资产 → 才精修。顺序不可颠倒。</text>
+      <defs><marker id="ap" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L5,3 L0,6 z" fill="#d8d2c4"/></marker></defs>
+    </svg>
+    <div class="figcap">三阶段各有"禁止事项"。<b>1周目禁止一切非本质实装、2周目禁止精修、3周目才解禁打磨。</b>关键在于把"确定好不好玩"和"做得好不好看"强制分离到不同阶段——精修被推迟到乐趣已经板上钉钉之后。</div>
+  </div>
+
+  <p>每个阶段的禁止事项,是这套方法的灵魂:</p>
+  <table>
+    <tr><th>阶段</th><th>做什么</th><th>禁止什么</th></tr>
+    <tr><td>1周目 · 试作期</td><td>搭骨架,确定"好不好玩"</td><td><strong>本质实装以外的一切都禁止</strong>。不许精修、不许做美术。</td></tr>
+    <tr><td>2周目 · 量产期</td><td>凑齐全部正式数据,替换占位</td><td><strong>禁止磨き込み(精修打磨)</strong>。专注铺量,不许在细节上停留。</td></tr>
+    <tr><td>3周目 · 仕上期</td><td>一直打磨到成品(含全公司300人测试)</td><td>无禁止——此时才全力精修。</td></tr>
+  </table>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 「作り込んではいけない」</div>
+  <h2>1周目最反直觉的一条:禁止精修,旧资产直接摆</h2>
+  <p>1周目的禁令有一个具体到令人吃惊的执行方式。团队被明令"<strong>作り込んではいけない(不许精修)</strong>",并被要求<strong>全力挪用旧作资产做占位</strong>:</p>
+  <div class="quote">
+    <div class="q">1的阶段彻底贯彻"不许精修",全面活用过去的作品。比如把《时之笛3D》的科奇里森林直接摆进去用;格鲁德族长露珠,则是用了《风之杖HD》里的角色鲁珠。像不像?</div>
+    <div class="who">—— <b>CEDEC 2017「BotW 项目运营」讲演</b>(Nintendo DREAM 报道)</div>
+  </div>
+  <p>停下来体会这件事的分量:全球最顶级的游戏工作室之一,在开发史上最重要的作品时,<strong>第一阶段的世界里塞满了从旧游戏里直接搬来的、明显不匹配的临时资产</strong>。一个占位的森林、一个借来的角色模型——它们丑陋、拼贴、临时,但这<strong>正是设计意图</strong>。因为这个阶段唯一要回答的问题是"这样玩好不好玩",而漂亮的美术不仅无助于回答这个问题,反而会分散注意力、消耗时间、并制造"已经很完善了"的错觉。</p>
+  <div class="quote">
+    <div class="q">1周目就是要把游戏的"本质"实装出来,本质之外的东西一律禁止。</div>
+    <div class="who">—— <b>CEDEC 2017「BotW 项目运营」讲演</b>(GAME Watch 报道)</div>
+  </div>
+  <p>这条纪律对独立开发者是解放性的:<strong>你不需要在项目早期有任何美术能力或美术资产</strong>。用色块、用免费素材、用你以前项目的边角料——怎么丑怎么来,只要能让你回答"好不好玩"。把美术焦虑推迟到乐趣已经确定之后。很多独立开发者卡在"我美术不行做不出好看的东西"而迟迟不动,而任天堂告诉你:<strong>第一阶段,好看是被禁止的。</strong></p>
+
+  <div class="warn"><b>骨架方式 vs 积み上げ式,是两种项目命运。</b>传统"积み上げ式"(先精做一个再堆下一个)的致命问题:你在第一个单元上投入了全部精修,如果整体玩法方向错了,这些精修全部作废,而且你直到堆了很多之后才发现方向错。骨架方式先用粗糙占位把"整体好不好玩"确定下来——方向错了,你损失的只是一堆色块和借来的资产,几乎零成本。<strong>先确定方向,再投入精修,是抗风险的根本。</strong></div>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 空场地验证的具体做法</div>
+  <h2>空场地 = 密度与节拍的最便宜实验室</h2>
+  <p>回到 R12 引出的"空场地"。藤林在讲密度验证时的原话是:</p>
+  <div class="quote">
+    <div class="q">在把游戏做精之前,先做一块测量好尺寸的空场地,把脑内设想的玩法所需的地形粗略地摆出来,进行验证。</div>
+    <div class="who">—— <b>藤林秀麿</b> · CEDEC 2017(Famitsu 报道)</div>
+  </div>
+  <p>空场地是骨組み方式在"场景尺寸"这个具体问题上的应用。它的价值在于:<strong>用最低成本,让你在真实游玩条件下感受距离、密度、节拍是否正确</strong>。要点:</p>
+  <div class="model">
+    <div class="mstep"><h5>尺寸先测准(接 R12)</h5><p>空场地不是随便一块地,它的尺寸是按 R12 的三把尺子标定过的。在正确的尺寸上验证,结论才有效。</p></div>
+    <div class="mstep"><h5>只摆"玩法所需"的粗糙地形</h5><p>脑内设想的玩法需要什么地形(一座山、一条河、几个障碍),就用最粗糙的占位块摆出来。不做纹理、不做细节、不做美化。只要形状和位置对,能支撑玩法验证即可。</p></div>
+    <div class="mstep"><h5>真人走一遍,感受三把尺子的合力</h5><p>用玩家的实际视角和移动速度走这块空场地。距离对不对?密度会不会太空/太挤?节拍舒不舒服?这些只有走起来才知道,俯瞰或看数值都判断不了。</p></div>
+    <div class="mstep"><h5>不对就改,对了才扩张并进入下一阶段</h5><p>密度不对就调占位物的疏密,尺寸不对就改场地大小。反复调到体感正确,才以此为基准扩张全图(接 R11 区块扩张),并进入量产期铺正式资产。</p></div>
+  </div>
+  <p>本质上,空场地就是<strong>关卡设计版的"垂直切片"</strong>——用最小、最粗糙的一块,验证最核心、最贵的假设(这个世界的规模和节奏对不对)。这和你 web-game-pipeline 里"先跑通一个垂直切片"的思想是同一条,只是应用在地图尺寸上。</p>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么执行"空场地先行"</div>
+  <h2>执行流程</h2>
+  <div class="model">
+    <div class="mstep p1"><h5>1周目:搭骨架,只回答"好不好玩"</h5><p>用色块/占位/旧素材搭出核心玩法能跑的最小世界。明令自己:此阶段禁止做任何美术、禁止精修任何细节。唯一目标是确定乐趣。</p></div>
+    <div class="mstep p1"><h5>做空场地验证尺寸密度节拍</h5><p>按 R12 尺寸做空场地,粗糙占位摆玩法所需地形,真人走一遍,调到体感正确。全程零美术。</p></div>
+    <div class="mstep p2"><h5>2周目:乐趣确定后,才铺正式资产</h5><p>只有当"好不好玩"板上钉钉,才进入量产期,把占位替换成正式内容。此阶段专注铺量,禁止在细节上精修停留。</p></div>
+    <div class="mstep p3"><h5>3周目:才开始精修打磨</h5><p>资产铺齐后,才解禁精修,一路打磨到成品。这是唯一允许在美术细节上倾注精力的阶段。</p></div>
+    <div class="mstep"><h5>用"禁止事项"约束自己</h5><p>独立开发最难的是自我约束。明文写下每阶段的禁止事项(1周目禁美术禁精修、2周目禁精修),贴在显眼处。感到"想把这个做漂亮点"的冲动时,回看禁令。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 空场地先行审计</h4>
+    <ul>
+      <li>是否把"确定好不好玩"和"做得好不好看"分成了不同阶段?</li>
+      <li>1周目是否只用色块/占位/旧素材(零美术)?</li>
+      <li>空场地尺寸是否按 R12 三把尺子标定过?</li>
+      <li>是否只摆玩法所需的粗糙地形(无纹理无细节)?</li>
+      <li>是否真人走一遍感受了距离/密度/节拍的合力?</li>
+      <li>乐趣是否已确定,才进入铺资产阶段?</li>
+      <li>资产是否铺齐,才开始精修?</li>
+      <li>是否明文写下并遵守了各阶段的"禁止事项"?</li>
+      <li>感到"想做漂亮点"的冲动时,是否回看了禁令?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>骨架方式阶段表</h2>
+  <div class="tpl">
+    <div class="h">SKELETON-METHOD PHASES</div>
+    <div class="row"><span class="k">phase_1_goal</span>: 试作期——确定"好不好玩"</div>
+    <div class="row">  └ <span class="k">placeholders</span>: 用的占位方式(色块/免费素材/旧项目)</div>
+    <div class="row">  └ <span class="k">blank_field</span>: 空场地(尺寸=R12标定)验证结果</div>
+    <div class="row">  └ <span class="k">ban_1</span>: <span class="x">禁止:本质实装以外的一切(禁美术禁精修)</span></div>
+    <div class="row"><span class="k">phase_2_goal</span>: 量产期——铺齐正式资产</div>
+    <div class="row">  └ <span class="k">ban_2</span>: <span class="x">禁止:精修打磨</span></div>
+    <div class="row"><span class="k">phase_3_goal</span>: 仕上期——精修到成品</div>
+    <div class="row">  └ <span class="k">unlock</span>: 此阶段才解禁精修</div>
+    <div class="row"><span class="k">gate</span>: 乐趣确定=进2周目的门槛;资产齐=进3周目的门槛</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>星屑急便(多人配送) — 你已经有的 pipeline 纪律</h4>
+    <ul>
+      <li><strong>M0/M1 就是1周目</strong>:你 web-game-pipeline 里的垂直切片和早期里程碑,对应骨組み方式的试作期。明文规定:M0–M1 期间用纯色块/几何体,禁止任何美术、禁止调优代码。唯一目标是确定"配送循环好不好玩"。</li>
+      <li><strong>空场地验证配送节拍</strong>:用一张纯色块的测试图,按 R12 标定的尺寸,验证"取货→送达"的距离和节拍爽不爽。多人联机的碰撞、抢单也在这张丑图上验证。手感对了,才进入铺美术。</li>
+      <li><strong>联机尤其要先验证再美化</strong>:联机同步、延迟处理这些"本质"必须在骨架期跑通。如果先做漂亮角色再发现同步方案不成立,损失巨大。先用方块验证联机手感,是抗风险的关键。</li>
+      <li><strong>把禁止事项写进 DoD</strong>:你已经有 DoD(完成定义)的习惯,直接把"M1前禁美术禁调优"写进去,用你熟悉的范围红线机制约束自己。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>人生小镇(人生模拟) — 骨架方式的文本化应用</h4>
+    <ul>
+      <li><strong>1周目=纯文本原型</strong>:人生模拟的"美术"包括精美UI、立绘、动画、音乐。骨架期一律禁止。用纯文本+占位框把核心决策循环跑起来,验证"做人生选择这件事本身好不好玩"。丑到只有文字也无所谓。</li>
+      <li><strong>空场地=占位事件的时间线</strong>:用占位文本事件铺一段游戏时间线(接 R12 的时间标定),自己走一遍,感受时间跨度、事件密度、决策节拍对不对。别先写华丽剧情才发现节奏错了。</li>
+      <li><strong>乐趣确定才写正式内容</strong>:只有当"决策循环好玩"确定后,才进入量产期写正式事件文本;正式文本铺齐后,才进入仕上期做立绘、UI、音乐的精修。顺序颠倒=返工地狱。</li>
+      <li><strong>警惕"写剧情的成就感"</strong>:写一段动人的剧情很有成就感,但如果核心玩法循环还没验证,这就是用"写作的忙碌"掩盖"玩法的空洞"(R16 详述)。先验证循环,再写内容。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 骨架期就想把东西做漂亮。</b>最普遍、最致命的冲动。看着丑陋的占位,忍不住想"稍微美化一下"。但骨架期任何美术投入,一旦玩法方向被推翻,全部作废,还会因沉没成本绑架你不敢推翻。铁律:乐趣确定之前,美术是被禁止的,越丑越安全。</div>
+  <div class="warn"><b>误用二 · 用旧作/免费资产"占位",却因为它们"够好看"就不再替换。</b>占位资产的使命是临时验证,不是最终产品。任天堂用旧森林占位,但量产期一定会替换成正式资产。如果你因为占位素材"看着还行"就懒得换,游戏会变成一个拼贴怪物。占位就是占位,该换必须换。</div>
+  <div class="warn"><b>误用三 · 跳过空场地,直接在"真实地图"上边做边美化。</b>不先用空场地验证尺寸密度,而是直接开始做正式地图并顺手美化,等于把验证和精修混在一起。结果是发现尺寸不对时,已经搭进了大量美术。必须先在丑陋的空场地上把尺寸密度节拍确定,才碰正式地图。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R12 · 京都标定法</span>
+      <span>NEXT ▶ <b>R14 · 热力图:先写预期形状再看数据</b></span>
+    </div>
+    <p>资料来源 · CEDEC 2017「『ゼルダの伝説 ブレス オブ ザ ワイルド』のプロジェクト運営 ～試作から製品までシームレスに！～」及フィールドレベルデザイン讲演的 GAME Watch(game.watch.impress.co.jp) / Nintendo DREAM WEB(ndw.jp) / Famitsu.com 各家报道。图示为基于讲演内容的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

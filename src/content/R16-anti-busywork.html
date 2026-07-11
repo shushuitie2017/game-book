@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R16 · 拒绝填空式自欺 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(200,68,42,.1), transparent 60%),
+             radial-gradient(700px 360px at 5% 120%, rgba(74,154,142,.06), transparent 60%),var(--ink)}
+.hero::after{content:"覚";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+.finale{background:linear-gradient(135deg,rgba(74,154,142,.1),rgba(200,68,42,.06));border:1px solid var(--hairline);padding:30px 28px;margin:34px 0;border-radius:4px}
+.finale h3{margin-top:0;color:#efe9da;font-size:20px}
+.finale table{margin:18px 0 0}
+.finale td:first-child{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 16 <b>/ 16 · 任天堂关卡设计教程 · 收官</b></div>
+    <h1>拒绝填空式自欺<br>"有干活的感觉"是最危险的信号</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      骨架期不要安易地用旧内容填空。用旧素材、做重复劳动"有干活的感觉",但其实什么核心问题都没推进。<strong>"忙碌的充实感"恰恰是项目正在空转的最危险信号</strong>——分清"感觉在推进"和"真的在推进"。
+    </div>
+    <div class="src">
+      来源 · <b>青沼英二「不许安易地用过去作品置换」的开发告诫</b> ／ 青沼「花一年做《塞尔达制作大师》,自己玩着完全不好玩,掀桌重来」 ／ 综合前 15 条的收官原则
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>杀死独立项目的,往往不是懒惰,而是"看起来很努力"</h2>
+  <p>这是本系列的最后一条,也是最反直觉的一条。前面 15 条都在教你"怎么做对",而 R16 要揭穿一种最隐蔽的"做错"——它不表现为偷懒或停滞,恰恰相反,它表现为<strong>忙碌、充实、每天都在产出</strong>。</p>
+  <p>想象你在做游戏:你从旧项目里拷来一批素材,拼进新场景;你调整了一堆参数;你做了几个新的占位关卡。一天下来,文件多了、提交多了、看着丰满了,你感到充实——"今天很有产出"。但如果停下来问一句:<strong>这个游戏"到底好不好玩"这个核心问题,今天推进了吗?</strong>——答案很可能是:没有。你只是在已知的、安全的、不需要动脑的事情上忙碌,而真正难的、真正决定项目成败的核心问题,被这份忙碌<strong>掩盖</strong>了。</p>
+  <p>R13 讲过骨架期可以用旧素材占位(这是对的),但青沼英二在开发中给出了一个至关重要的补充警告:<strong>用旧内容填空,很容易变成"有干活的感觉,但其实什么都没推进"</strong>。占位是手段,不是目的;一旦你开始享受"填空的充实感"本身,你就掉进了陷阱。对没有大团队、没有容错余地的独立开发者,这种自欺是最常见的死因——<strong>项目不是死于放弃,而是死于用忙碌麻痹自己,迟迟不面对核心问题。</strong></p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE 1 · 青沼的告诫</div>
+  <h2>"安易地用旧东西置换,是有干活的感觉却什么都没推进"</h2>
+  <p>青沼英二在谈《旷野之息》开发时,给出了一条与 R13"用旧素材占位"看似矛盾、实则互补的纪律。他要求开发初期<strong>不要安易(轻率)地用过去作品的东西来置换</strong>。原因一针见血:</p>
+  <div class="quote">
+    <div class="q">拿过去作品的东西来填,会有一种"在干活"的感觉,但实际上什么都没有向前推进。</div>
+    <div class="who">—— <b>青沼英二</b> · 谈 BotW 开发初期的纪律(开发访谈整理)</div>
+  </div>
+  <p>这句话必须和 R13 一起理解,才不会误读:</p>
+  <table>
+    <tr><th></th><th>R13 · 允许</th><th>R16 · 警惕</th></tr>
+    <tr><td>用旧素材</td><td>用旧素材<strong>占位</strong>,快速验证"好不好玩"</td><td>用旧素材<strong>填空</strong>,制造"在推进"的错觉</td></tr>
+    <tr><td>目的</td><td>为回答核心问题(乐趣)服务</td><td>回避核心问题,用忙碌代替思考</td></tr>
+    <tr><td>心态</td><td>"这只是临时的,乐趣确定后就换"</td><td>"我今天做了好多东西,很充实"</td></tr>
+    <tr><td>结果</td><td>核心问题被快速逼近</td><td>核心问题被无限推迟</td></tr>
+  </table>
+  <p>区别不在"用不用旧素材",而在<strong>你是在用它逼近核心问题,还是在用它逃避核心问题</strong>。同样是往场景里拖一个旧模型:如果目的是"快速搭出可玩版本来测乐趣",这是 R13;如果目的是"让场景看起来充实、让自己感到有产出",这是 R16 要杀死的自欺。<strong>手段相同,方向相反。</strong></p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE 2 · ちゃぶ台返し</div>
+  <h2>青沼花一年做的东西,自己玩着"完全不好玩",掀桌重来</h2>
+  <p>青沼不是只会说的人。他有一个惊人的亲身案例,证明了他对"充实感陷阱"的警惕是刻在骨子里的。开发《塞尔达 智慧的借物》时:</p>
+  <div class="quote">
+    <div class="q">团队并行摸索了几种玩法,其中一个是玩家把门、烛台等各种东西复制粘贴,做出自己原创迷宫的"编辑迷宫(エディットダンジョン)"玩法——本质上是一个"塞尔达制作大师"。</div>
+    <div class="who">—— <b>寺田(グレッゾ)</b> · 开発者に訊きました『知恵のかりもの』</div>
+  </div>
+  <p>这个"塞尔达制作大师"做了<strong>大约一年</strong>。一年的投入,大量的工作,看起来项目在稳步推进。然后青沼自己上手玩了玩,得出一个残酷的结论:</p>
+  <div class="quote">
+    <div class="q">玩着玩着,我觉得——比起做自己的迷宫给别人玩,不如就把能复制粘贴的东西直接放进游戏场景里、用来打敌人,这样也不错。（把一年的成果掀了桌,转向了"借物"玩法。）</div>
+    <div class="who">—— <b>青沼英二</b> · 开発者に訊きました『知恵のかりもの』(整理)</div>
+  </div>
+  <p>一位玩家的评论精准道出了这件事的分量:</p>
+  <div class="quote">
+    <div class="q">《梦见岛》里的塞尔达制作大师我玩过一次就腻了,"自己完全觉得不好玩",到此为止。而青沼居然能从那里生出"借物"的发想,这想法太厉害了。</div>
+    <div class="who">—— <b>玩家评论</b> · 谈青沼的掀桌决断</div>
+  </div>
+  <p>这个案例是 R16 的活体证明。<strong>青沼没有被"已经做了一年"的沉没成本绑架,没有被"看起来在推进"的充实感欺骗。</strong>他用最诚实的标尺——自己上手玩,好不好玩——来检验,发现不好玩,就果断掀桌(ちゃぶ台返し),把一年的工作转向。注意:这不是浪费,那一年的技术积累(复制粘贴系统)被继承了下来,只是<strong>玩法方向</strong>被推翻了。他区分清楚了"有价值的积累"和"错误的方向",没有因为舍不得前者而将就后者。</p>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 为什么这是收官之条</div>
+  <h2>R16 是前 15 条的守护者</h2>
+  <p>把 R16 放在最后,是因为它守护着前面所有规则。前 15 条给了你一整套"怎么做对"的方法,但所有方法都有一个共同的敌人:<strong>用执行的忙碌,替代对核心问题的思考</strong>。你可以一边"遵循着方法论"、一边掉进填空式自欺——因为方法本身也可以变成一种可以机械执行、制造充实感的填空。</p>
+  <div class="model">
+    <div class="mstep"><h5>"感觉在推进" ≠ "真的在推进"</h5><p>这是 R16 的核心分辨。判据只有一个:<strong>核心问题(这游戏到底好不好玩)今天被逼近了吗?</strong>如果你今天做的事,无论多忙,都没有让你更接近这个答案,那就是空转。用"核心问题是否被逼近"来审计每一天,而不是用"我做了多少东西"。</p></div>
+    <div class="mstep"><h5>唯一诚实的标尺:自己上手玩</h5><p>青沼掀桌的依据不是数据、不是分析,是"我自己玩着不好玩"。这呼应了 R1 的越肩视线、R14 的热力图——但更根本:<strong>作为创作者,你必须亲自、诚实地面对"这好不好玩",不能用忙碌回避这个时刻。</strong>越是感到充实、越要警惕:我是不是在用充实感逃避"上手一玩就露馅"的恐惧?</p></div>
+    <div class="mstep"><h5>区分"有价值的积累"与"错误的方向"</h5><p>掀桌不是全盘否定。青沼保留了一年做出的复制粘贴系统,只推翻了玩法方向。<strong>沉没成本会绑架决策,但正确的做法不是"因为投入多所以坚持",也不是"推翻就全部作废",而是精确切分:哪些技术/资产可以继承,哪个方向必须改。</strong>(呼应 R3 的重构判断)</p></div>
+  </div>
+  <div class="warn"><b>填空式自欺,在 AI 辅助开发时代更危险。</b>当生成内容变得极其廉价,"看起来有产出"的门槛降到了前所未有的低——你可以一天生成大量素材、代码、关卡,充实感爆棚。但生成的量越大,越容易掩盖"核心玩法到底成不成立"这个没被回答的问题。<strong>工具越高效,越需要 R16 的警惕:别让"生成的忙碌"替代"好不好玩的判断"。</strong>这一条对用 LangGraph、Claude Code 做管线的你,是贴身的提醒。</div>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么避免填空式自欺</div>
+  <h2>执行流程</h2>
+  <div class="model">
+    <div class="mstep"><h5>每天/每个里程碑问一句:核心问题被逼近了吗?</h5><p>核心问题通常是"这游戏到底好不好玩"。审计今天的工作:它让你更接近这个答案了,还是只是让文件变多了?后者就是空转,及时警觉。</p></div>
+    <div class="mstep"><h5>定期亲自上手玩,诚实面对</h5><p>别只是"开发"游戏,要定期以玩家身份完整地玩它,并诚实回答"好玩吗"。越不想玩自己的游戏、越用"还没做完"当借口回避,越可能是核心出了问题。</p></div>
+    <div class="mstep"><h5>警惕"充实感"这个信号本身</h5><p>把"今天好充实/好有产出"当成一个需要警惕的信号,而非满足的信号。问自己:这份充实来自"解决了难的核心问题",还是"做了很多不难的填空"?</p></div>
+    <div class="mstep"><h5>敢于掀桌,但精确切分</h5><p>发现方向错了,别被沉没成本绑架。但掀桌不是全毁——切分出"可继承的技术/资产"和"必须推翻的方向",保留前者,只改后者。</p></div>
+    <div class="mstep"><h5>把核心问题放在最前,别用简单任务垫底</h5><p>人天然倾向于先做简单、有确定产出的事(填空),把难的核心问题往后拖。反过来:每天/每阶段先啃核心问题,把填空类工作放到核心问题有进展之后。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 反填空自欺审计</h4>
+    <ul>
+      <li>今天的工作,是否让"核心问题"更接近了答案?</li>
+      <li>还是只是让文件/提交/素材变多了(空转)?</li>
+      <li>是否定期以玩家身份完整地玩了自己的游戏?</li>
+      <li>是否诚实回答了"好玩吗",而非用"没做完"回避?</li>
+      <li>"充实感"是来自解决核心问题,还是来自填空?</li>
+      <li>用旧素材,是为逼近核心问题,还是为制造产出错觉?</li>
+      <li>发现方向错时,是否敢掀桌(而非被沉没成本绑架)?</li>
+      <li>掀桌时,是否精确切分了"可继承"和"该推翻"?</li>
+      <li>是否把核心问题放在每天最前,而非用简单任务垫底?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>核心问题审计表</h2>
+  <div class="tpl">
+    <div class="h">CORE-QUESTION AUDIT</div>
+    <div class="row"><span class="k">core_question</span>: 本项目的核心问题(通常="好不好玩")</div>
+    <div class="row"><span class="k">today_work</span>: 今天/本阶段做了什么</div>
+    <div class="row"><span class="k">approached?</span>: 它逼近核心问题了吗?(否→<span class="x">空转警告</span>)</div>
+    <div class="row"><span class="k">played?</span>: 是否以玩家身份亲自玩了?好玩吗?</div>
+    <div class="row"><span class="k">fullness_source</span>: 充实感来自 解决核心 / 填空(后者警惕)</div>
+    <div class="row"><span class="k">placeholder_use</span>: 用旧素材是 逼近核心 / 制造错觉</div>
+    <div class="row"><span class="k">flip_table?</span>: 方向是否需推翻?</div>
+    <div class="row">  └ <span class="k">keep</span>: 可继承的技术/资产</div>
+    <div class="row">  └ <span class="k">discard</span>: 必须推翻的方向</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>星屑急便(多人配送)</h4>
+    <ul>
+      <li><strong>警惕"堆功能"式的充实</strong>:配送游戏很容易陷入"再加个道具、再加个地图、再加个模式"的填空,每加一个都有产出感。但真正的核心问题是"配送这个核心循环 + 多人一起玩,到底爽不爽"。每加功能前问:这是在逼近这个核心,还是在回避它?</li>
+      <li><strong>联机手感必须亲自玩,不能只开发</strong>:联机的爽感只有真的和人一起玩才知道。别陷在"开发联机功能"的忙碌里,要定期真的拉人开一局,诚实判断"这局玩得爽吗"。不爽就要敢于改方向,哪怕已经写了很多同步代码。</li>
+      <li><strong>掀桌时保留技术积累</strong>:如果发现某个玩法方向不对,像青沼那样切分——联机框架、配送物理这些技术积累可以继承,只推翻具体玩法。别因为"写了这么多"而将就一个不好玩的方向。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>人生小镇(人生模拟)</h4>
+    <ul>
+      <li><strong>写事件文本的充实感最迷惑人</strong>:人生模拟极易陷入"不停写剧情事件"的填空——每写一个都有产出感,文档越来越厚。但核心问题是"做人生选择这件事本身好不好玩"。如果这个循环还没验证,写再多剧情都是在回避核心(呼应 R13)。</li>
+      <li><strong>亲自"过一遍人生",诚实面对无聊</strong>:定期以玩家身份完整走一遍你做的人生流程,诚实回答"这些选择有意思吗、我想继续吗"。如果自己玩着都觉得闷,别用"内容还没铺满"当借口——核心循环的问题,再多内容也填不平。</li>
+      <li><strong>元层面:警惕自己"做工具而非做游戏"</strong>:你擅长做 SKILL、做管线、做工具。要警惕把精力耗在"给游戏做各种工具/系统"的充实里(工具有明确产出,很爽),而迟迟不面对"游戏本身好不好玩"。工具是手段,别让做工具的充实感替代了做游戏的核心判断——这正是青沼"塞尔达制作大师"故事的镜像。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 把"忙碌"当成"进展",用充实感麻痹自己。</b>每天都有产出、文件越来越多、感觉很努力——但核心问题一步没动。这是项目空转最典型的样子,而且因为"看起来很努力"极难自我察觉。用"核心问题是否被逼近"审计,而非用"做了多少"。</div>
+  <div class="warn"><b>误用二 · 误读 R13,以为"用旧素材"本身有问题。</b>R16 不是否定 R13。用旧素材占位快速验证乐趣是对的(R13);用旧素材填空制造产出错觉是错的(R16)。区别在方向:逼近核心问题 vs 回避核心问题。别因为 R16 就不敢用占位——那会走向另一个极端(过早追求精美,又回到 R13 批评的错误)。</div>
+  <div class="warn"><b>误用三 · 被沉没成本绑架,或掀桌时全盘否定。</b>两个相反的错误。一是"已经做了这么多,不能推翻"——被沉没成本绑架,将就错误方向;二是掀桌时把一切都毁掉,浪费可继承的技术积累。正解是青沼式的精确切分:诚实判断方向对错,保留有价值的积累,只推翻错误的方向。</div>
+</section>
+
+<section>
+  <div class="eyebrow">FINALE · 系列收官</div>
+  <h2>16 条,一条主线</h2>
+  <div class="finale">
+    <h3>把 16 条串成一句话</h3>
+    <p style="margin-bottom:0">这套教程从"怎么教玩家"(R1–R6)、到"怎么构筑场景"(R7–R11)、到"怎么标定与验证"(R12–R15)、到最后"怎么不骗自己"(R16),看似分散,其实只有一条主线:<strong>用最便宜的方式,尽早、诚实地逼近"这游戏到底好不好玩"这个唯一重要的问题,并把一切资源集中在它身上。</strong></p>
+    <table>
+      <tr><td>R1–R2</td><td>用关卡本身教玩家,让第一次接触就产生"想探索"的信任</td></tr>
+      <tr><td>R3–R4</td><td>从巅峰关降采样出教学,用递增障碍代替文字</td></tr>
+      <tr><td>R5–R6</td><td>一关一机制走起承转结,峰值给"転"、结尾给掌控感</td></tr>
+      <tr><td>R7–R8</td><td>用引力(而非强制)引导,用周期让一张图变多张</td></tr>
+      <tr><td>R9–R11</td><td>用形状导演情绪、用顶点聚焦视线、用配比收窄可测路线</td></tr>
+      <tr><td>R12–R13</td><td>用身体记忆标定尺寸,空场地先行、骨架期禁精修</td></tr>
+      <tr><td>R14–R15</td><td>先定预期形状再看热力图,把反馈摩擦降到零</td></tr>
+      <tr><td>R16</td><td>拒绝填空式自欺,永远诚实面对"好不好玩"</td></tr>
+    </table>
+    <p style="margin:18px 0 0">前 15 条是"术",R16 是"心"。方法可以学,但如果不能诚实地面对核心问题、不能在充实的忙碌中保持清醒,再多方法也救不了一个正在空转的项目。愿这 16 条,既给你可执行的手,也给你不自欺的眼。</p>
+  </div>
+  <div class="quote">
+    <div class="q">名片上,我是社长。头脑中,我是游戏开发者。但在内心里,我是一名玩家。</div>
+    <div class="who">—— <b>岩田聪</b> · 1959–2015</div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R15 · 反馈免跟进</span>
+      <span>★ 系列完结 · R1–R16 全 16 本</span>
+    </div>
+    <p>资料来源 · 開発者に訊きました『ゼルダの伝説 知恵のかりもの』(任天堂官网,青沼英二×寺田) ／ 電ファミニコゲーマー「ゲームの企画書」青沼英二×藤澤仁访谈 ／ CEDEC 2017 BotW 项目运营讲演(青沼"不许安易置换"相关整理) ／ 玩家考察。图示为基于访谈内容的示意复原,引文为最小限度摘录转述。全系列教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R9 · 形状与情绪 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(74,154,142,.1), transparent 60%),var(--ink)}
+.hero::after{content:"形";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 09 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>形状与情绪<br>遮蔽物的轮廓,决定玩家看见目标时的情绪</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      遮蔽物按你想要的情绪选形状:<strong>三角=渐露</strong>(目标缓缓浮现,制造期待);<strong>四角=突现</strong>(越过瞬间豁然开朗,制造惊吓/惊喜);<strong>台形=混合</strong>。目标是"怎么被看见",而形状就是那个调节旋钮。
+    </div>
+    <div class="src">
+      来源 · <b>CEDEC 2017「フィールド三角形の法則」米津真</b>(4Gamer / GAME Watch / Gamer / Nintendo DREAM 报道) ／ 讲演中"徐々に見せる vs 突如現れる"的情绪对比
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>"看见目标"这件事,本身是可以被导演的</h2>
+  <p>R7 讲了怎么给地点赋予引力,让玩家"想去"。但还有一个更微妙的问题:当玩家<strong>看见</strong>那个目标的瞬间,他的情绪是什么?是缓缓升起的期待,还是猛然出现的惊吓?</p>
+  <p>大多数人会觉得"玩家看见目标"是个中性的、无所谓的事——目标在那里,玩家迟早会看到。但米津真在 CEDEC 2017 揭示了一个反直觉的事实:<strong>玩家"如何看见"一个目标,和目标本身同样重要,而且这完全可以被设计</strong>。同一座塔,你可以让它从山棱线上"逐渐冒出来",也可以让玩家越过一道墙后"猛地撞见它"——两种看见方式,给玩家的情绪截然不同。</p>
+  <p>调节这个情绪的旋钮,就是<strong>遮蔽物的形状</strong>。地形的轮廓(从玩家视角看是三角、四角还是台形)决定了被遮挡的目标"以什么方式重新进入视野"。这就是三角形法则里最精妙、也最容易被忽略的一层——它不只是"怎么挡住东西",而是"怎么让东西被重新看见"。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CORE · 三角形法则回顾</div>
+  <h2>三角形的三个职责,与大中小分工</h2>
+  <p>先快速回顾三角形法则的骨架(R11 会详讲配比,这里聚焦形状对情绪的作用)。米津真给三角形定了三个职责:</p>
+  <div class="model">
+    <div class="mstep"><h5>分岔:左右迂回 or 攀爬翻越</h5><p>一座三角形的山丘,对玩家是一次微决策:绕过去还是爬上去。地形自带路线选择。</p></div>
+    <div class="mstep"><h5>遮蔽:把远处的目标逐渐纳入视野</h5><p>这是本篇的核心。三角形挡住远方的东西,又随着玩家移动"徐々に(渐渐地)"露出它。</p></div>
+    <div class="mstep"><h5>视线诱导:三角形的顶点是免费的聚光灯</h5><p>"三角形有把视线引向顶端的强效果",所以顶点上放异物(孤树、怪石、发光物),玩家自然会注意。</p></div>
+  </div>
+  <p>而大中小三种尺寸各司其职:<strong>大三角=地标</strong>(远距可见、数量少)、<strong>中三角=遮蔽</strong>(挡住更远的东西)、<strong>小三角=节奏</strong>(近距起伏,频繁促使摇杆输入)。本篇要深挖的,是"遮蔽"这个职责背后——不同形状带来不同情绪。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE · 形状 = 情绪旋钮</div>
+  <h2>三角渐露 vs 四角突现 vs 台形混合</h2>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 300" xmlns="http://www.w3.org/2000/svg">
+      <!-- TRIANGLE: gradual reveal -->
+      <text x="140" y="24" text-anchor="middle" class="slt" font-size="12">三角 · 渐露</text>
+      <path d="M60 130 L140 50 L220 130 Z" fill="#20252e" stroke="#4a9a8e" stroke-width="1.4"/>
+      <!-- target peeking above -->
+      <rect x="134" y="30" width="7" height="24" fill="#d9a441"/>
+      <circle cx="137" cy="27" r="4" fill="#d9a441"/>
+      <text x="137" y="16" text-anchor="middle" class="sla" font-size="9">目标从棱线渐升</text>
+      <!-- player path -->
+      <circle cx="55" cy="128" r="5" fill="#c8442a"/>
+      <path d="M62 126 C 90 138, 110 132, 130 62" stroke="#d8d2c4" stroke-width="1.2" stroke-dasharray="3 3" fill="none"/>
+      <text x="140" y="150" text-anchor="middle" class="sl" font-size="10">→ 期待感 · 预告片</text>
+
+      <!-- SQUARE: sudden reveal -->
+      <text x="420" y="24" text-anchor="middle" class="slc" font-size="12">四角 · 突现</text>
+      <rect x="350" y="46" width="140" height="84" fill="#20252e" stroke="#c8442a" stroke-width="1.4"/>
+      <!-- hidden target behind (dashed) -->
+      <circle cx="470" cy="70" r="8" fill="#d9a441" opacity=".25"/>
+      <text x="470" y="62" text-anchor="middle" class="sla" font-size="9" opacity=".6">(墙后完全看不见)</text>
+      <circle cx="345" cy="128" r="5" fill="#c8442a"/>
+      <path d="M352 126 C 380 120, 400 90, 420 132" stroke="#d8d2c4" stroke-width="1.2" stroke-dasharray="3 3" fill="none"/>
+      <text x="420" y="150" text-anchor="middle" class="sl" font-size="10">→ 惊吓/惊喜 · jump scare</text>
+
+      <!-- TRAPEZOID: mixed -->
+      <text x="700" y="24" text-anchor="middle" class="sla" font-size="12">台形 · 混合</text>
+      <path d="M640 130 L672 60 L728 60 L760 130 Z" fill="#20252e" stroke="#d9a441" stroke-width="1.4"/>
+      <rect x="697" y="42" width="6" height="18" fill="#d9a441"/>
+      <circle cx="700" cy="40" r="3.5" fill="#d9a441"/>
+      <text x="700" y="150" text-anchor="middle" class="sl" font-size="10">→ 半渐露半突现</text>
+
+      <!-- bottom emotion axis -->
+      <line x1="60" y1="200" x2="760" y2="200" stroke="rgba(216,210,196,.12)"/>
+      <text x="140" y="222" text-anchor="middle" class="slt" font-size="10">慢·期待</text>
+      <text x="420" y="222" text-anchor="middle" class="slc" font-size="10">快·冲击</text>
+      <text x="700" y="222" text-anchor="middle" class="sla" font-size="10">居中</text>
+      <text x="60" y="260" class="sl" font-size="10">用途:绝景预告、目标指引、诱导前往</text>
+      <text x="60" y="280" class="sl" font-size="10">用途:敌袭伏击、宝藏惊喜、豁然开朗的名场面</text>
+    </svg>
+    <div class="figcap">三种形状的情绪对应。<b>三角</b>让目标随玩家移动缓缓浮现,是"预告片";<b>四角</b>把目标完全藏在墙后,越过瞬间猛然全部呈现,是"jump scare";<b>台形</b>兼具两者性质,介于中间。想要什么情绪,选对应的形状。</div>
+  </div>
+
+  <h3>三角:渐露 = 期待感</h3>
+  <div class="quote">
+    <div class="q">迂回绕过山时,山后的塔从侧面缓缓滑入视野;直接翻越时,塔从棱线上方逐渐升起。目的地不是突然出现,而是"徐々に"地被看见,由此期待感高涨。</div>
+    <div class="who">—— <b>米津真</b> · CEDEC 2017</div>
+  </div>
+  <p>三角形的斜边让被遮挡的目标<strong>随玩家的移动一点一点露出来</strong>。这个"渐渐看清"的过程本身就是一种叙事——玩家先看见塔尖,好奇"那是什么",继续走露出更多,期待累积,直到全貌呈现。用于:想让玩家<strong>向往并前往</strong>的绝景、地标、目标。渐露 = 给玩家一个逐渐清晰的理由去那里。</p>
+
+  <h3>四角:突现 = 冲击感</h3>
+  <div class="quote">
+    <div class="q">四角形和三角形不同,朝它走过去时不会有什么阶段性地逐渐显现的东西;但反过来,能制造"突然间对面豁然开朗"的效果。</div>
+    <div class="who">—— <b>米津真</b> · CEDEC 2017</div>
+  </div>
+  <p>四角形(垂直的墙、方正的岩壁)把目标<strong>完全藏住</strong>,玩家在越过之前一无所知,越过的瞬间目标猛地整个呈现。这个"突如"用于两种相反的情绪:<strong>负面的惊吓</strong>(敌人突然来袭、埋伏)和<strong>正面的惊喜</strong>(转过墙角发现绝景、宝藏、隐藏区域"豁然开朗")。四角 = 制造冲击瞬间。</p>
+
+  <h3>台形:两者兼具</h3>
+  <p>台形(梯形)同时有斜边和平顶,<strong>兼具三角的渐露和四角的突现</strong>。它给你一个中间选项:先让玩家隐约看到一点(斜边渐露),再在越过顶部时给一个较小的豁然开朗(平顶突现)。当你既想要一点期待铺垫、又想要一点最终冲击时,用台形。</p>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 顶点聚光灯与"ミスリード"</div>
+  <h2>两个进阶用法</h2>
+  <h3>顶点 = 免费的视觉聚光灯</h3>
+  <div class="quote">
+    <div class="q">三角形把视线引向顶端的效果很强,所以在山或丘的顶上配置某种特异物,就能促使玩家对那里产生兴趣。</div>
+    <div class="who">—— <b>米津真</b> · CEDEC 2017</div>
+  </div>
+  <p>三角形的收敛几何天然把眼睛导向尖端。这意味着:<strong>你想让玩家注意的任何东西,放在三角形的顶点上,就自动获得了聚光灯</strong>。一棵孤零零的树、一块形状怪异的石头、一个发光物——摆在山顶,玩家会不由自主地看向它、然后想爬上去看看。这是零成本的注意力引导,和 R7 的"好奇型引力"完美配合。</p>
+
+  <h3>ミスリード:故意的落空,也是设计</h3>
+  <p>讲演里还提到一个反向用法:<strong>有时故意用三角形引玩家爬上去,顶上却什么都没有,让玩家"扑空"而略感失望</strong>。这听起来像坏设计,实则是节奏调节——如果每座山顶都有奖励,玩家会麻木地机械爬山;偶尔的落空反而让真正有奖励的山顶更有惊喜价值,也让世界显得真实(不是每处都为玩家精心布置)。<strong>可控的失望,是防止奖励通货膨胀的调味料</strong>。</p>
+  <div class="warn"><b>渐露与突现,还依赖"遮蔽与再现的反复"。</b>米津提到,开发中期他们不用debug瞬移,而是真的让林克跑一遍,发现"塔一直看得见,很无聊"的问题,然后在画面近处追加悬崖等遮蔽,让塔"うまく見え隠れ(恰到好处地时隐时现)"。<strong>渐露的魅力不在于"一直能看见",而在于"看见→被挡住→又看见"的反复</strong>。一个目标如果全程可见,期待感会消磨殆尽。</div>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么用形状导演情绪</div>
+  <h2>执行流程</h2>
+  <div class="model">
+    <div class="mstep"><h5>先确定你想要的情绪</h5><p>对每个重要目标,问:玩家看见它时,我要他期待(慢慢向往)、还是冲击(猛然震撼)?情绪需求决定形状,不是反过来。</p></div>
+    <div class="mstep"><h5>期待→用三角遮蔽</h5><p>想让玩家向往前往的绝景/地标,用三角形斜边遮挡,让目标随移动缓缓浮现。目标放在三角顶点附近,借顶点聚光灯。</p></div>
+    <div class="mstep"><h5>冲击→用四角遮蔽</h5><p>想制造惊吓(敌袭)或惊喜(隐藏绝景)的地方,用四角形垂直遮挡,把目标完全藏住,让玩家越过瞬间豁然开朗。</p></div>
+    <div class="mstep"><h5>中间需求→用台形</h5><p>既要铺垫又要冲击时,用台形:斜边先给一点渐露,平顶再给一点突现。</p></div>
+    <div class="mstep"><h5>制造"时隐时现"的反复</h5><p>别让目标全程可见。用近处的额外遮蔽,让目标"看见→被挡→又看见",维持期待。真的走一遍(不瞬移)来检查这个节奏。</p></div>
+    <div class="mstep"><h5>偶尔安排落空</h5><p>不是每个三角顶点都放奖励。适度的扑空防止奖励麻木,也让世界更真实。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 形状情绪审计</h4>
+    <ul>
+      <li>每个重要目标,是否先确定了想要的情绪(期待/冲击)?</li>
+      <li>期待型目标是否用三角遮蔽、渐露呈现?</li>
+      <li>冲击型目标是否用四角遮蔽、突现呈现?</li>
+      <li>想引起注意的东西,是否放在三角顶点(借聚光灯)?</li>
+      <li>目标是否"时隐时现"而非全程可见?</li>
+      <li>是否真的走一遍(不瞬移)检查了渐露/突现节奏?</li>
+      <li>是否安排了适度的"落空"防止奖励麻木?</li>
+      <li>形状选择是否服务于情绪,而非随意摆放?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>遮蔽形状情绪表</h2>
+  <div class="tpl">
+    <div class="h">OCCLUSION SHAPE / EMOTION</div>
+    <div class="row"><span class="k">target</span>: 要呈现的目标(绝景/地标/敌人/宝藏)</div>
+    <div class="row"><span class="k">desired_emotion</span>: 想要的情绪 = 期待 / 冲击(惊吓/惊喜)</div>
+    <div class="row"><span class="k">shape</span>: 三角(渐露) / 四角(突现) / 台形(混合)</div>
+    <div class="row"><span class="k">reveal_path</span>: 玩家沿哪条路径逐渐/猛然看见它</div>
+    <div class="row"><span class="k">apex_object</span>: 若用三角,顶点上放什么(借聚光灯)</div>
+    <div class="row"><span class="k">peekaboo</span>: 如何制造"时隐时现"(近处追加遮蔽)</div>
+    <div class="row"><span class="k">payoff</span>: 看见后的回报(或故意的落空)</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>星屑急便(多人配送) — 2D俯视的形状情绪</h4>
+    <ul>
+      <li><strong>三角渐露=引导玩家向往的目标</strong>:2D俯视里,用斜向排列的建筑/树丛,让远处的送达点/奖励点随玩家移动"从遮挡后缓缓露出"。玩家先瞥见屋顶一角,好奇,继续接近露出全貌——把"想去那里"的期待做出来。</li>
+      <li><strong>四角突现=惊喜或危险</strong>:用方正的墙体/障碍完全挡住某处,玩家转过拐角瞬间"豁然开朗"——可以是隐藏捷径的惊喜,也可以是联机里对手埋伏的惊吓。转角设计直接决定这个瞬间的情绪。</li>
+      <li><strong>顶点聚光灯</strong>:2D里"三角顶点"可类比为视觉动线的收敛处——把想让玩家注意的道具/入口放在道路的消失点、或建筑群的缺口正对处,玩家视线自然被导过去。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>人生小镇(人生模拟) — 形状情绪的抽象化</h4>
+    <ul>
+      <li><strong>信息的"渐露 vs 突现"就是叙事节奏</strong>:一个人生事件的真相,你可以让它"三角式渐露"(线索一点点浮现,玩家逐渐拼凑,期待累积),也可以"四角式突现"(毫无预兆猛然揭示,制造震撼)。选哪种,取决于你要玩家对这个事件产生期待还是冲击。</li>
+      <li><strong>时隐时现=悬念管理</strong>:一条重要支线的目标,别一次性全摊开,也别藏到玩家忘记。用"看见→被别的事岔开→又提醒"的反复,维持玩家对它的牵挂——这正是2D空间"时隐时现"在叙事上的等价物。</li>
+      <li><strong>偶尔落空的真实感</strong>:不是每条被暗示的线索都通向重大回报。偶尔让玩家追查的东西"扑空",反而让世界显得真实,也让真正的重大揭示更有分量。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 形状随意摆,不考虑情绪。</b>如果遮蔽物的形状是随手放的,玩家看见目标的情绪就是失控的——本该期待的绝景被四角突现搞成了惊吓,本该冲击的伏击被三角提前剧透。先定情绪,再选形状,顺序不能反。</div>
+  <div class="warn"><b>误用二 · 目标全程可见,期待被磨光。</b>把塔一直摆在视野里,玩家最初的一点好奇很快变成"还没到啊"的疲倦。渐露的魅力在"时隐时现"的反复,不在"一直看得见"。用近处遮蔽制造隐现节奏,别让目标裸奔全程。</div>
+  <div class="warn"><b>误用三 · 每个三角顶点都放奖励,导致麻木。</b>如果玩家学会"爬山必有奖励",爬山就从探索退化成机械劳动,惊喜消失。适度安排"扑空"——不是每座山顶都有好东西——反而让有奖励的山顶重新变得值得期待,也让世界不像一个到处是任务点的乐园。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R8 · 周期改变引力</span>
+      <span>NEXT ▶ <b>R10 · 顶点聚光灯:视觉三角顶点放焦点</b></span>
+    </div>
+    <p>资料来源 · CEDEC 2017「『ゼルダの伝説 ブレス オブ ザ ワイルド』におけるフィールドレベルデザイン～ハイラルの大地ができるまで～」(米津真「フィールド三角形の法則」部分)的 4Gamer.net / GAME Watch / Gamer.ne.jp / Nintendo DREAM WEB 各家报道。图示为基于讲演内容的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

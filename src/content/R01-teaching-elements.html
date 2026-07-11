@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R1 · 教学元素法则 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(217,164,65,.09), transparent 60%),var(--ink)}
+.hero::after{content:"教";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 01 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>教学元素法则<br>每个新手区元素都必须能教会玩家一件事</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      新手区里每一个被摆放的元素,都必须能写出一句「→ 教会玩家 ___」。写不出来的元素,从新手区删除。
+    </div>
+    <div class="src">
+      来源 · <b>宫本茂×手塚卓志 Eurogamer 开发者访谈(2015)</b> ／ 吉田宽《东京大学游戏学入门》所引宫本「一个点子用四次」论 ／ 社長が訊く『New スーパーマリオブラザーズ Wii』 ／ 岩田聪谈「宫本的越肩视线」
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>教程弹窗没人看,但规则必须被理解</h2>
+  <p>所有新游戏都面对同一个矛盾:玩家需要学会你的规则,但<strong>没人愿意读教程</strong>。手机游戏的弹窗式教学做得再详尽,大多数玩家只会不耐烦地一路点「跳过」。文字说明和实际操作之间隔着一层,玩家读了不等于会了,更不等于记住了。</p>
+  <p>宫本茂在1985年就用《超级马里奥兄弟》的1-1回答了这个问题——那个年代根本没有「教程」这个概念,而且卡带容量小到连一行说明文字都舍不得放。他的答案是:<strong>把关卡本身设计成教程</strong>,让玩家在玩的过程中,不知不觉地学会一切规则。这套方法后来被总结为「遊びで学ぶ(在游玩中学习)」,并且成了此后所有任天堂游戏的底层哲学。</p>
+  <div class="quote">
+    <div class="q">游戏没玩过的人在旁边看,也能明白在干什么。总之就是把规则做得极其清楚易懂。</div>
+    <div class="who">—— <b>宫本茂</b> · 谈红白机时代做游戏最看重的事</div>
+  </div>
+  <p>R1 就是这套哲学最可操作的落地形式。它把「关卡即教程」翻译成一条能逐元素检查的硬规则:每个东西的存在都要有教学理由。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE · 原始案例的完整拆解</div>
+  <h2>1-1 开场:一条精确的心理连锁</h2>
+  <p>宫本在 Eurogamer 访谈里,把1-1开场的每个摆放逐一讲了一遍。关键不在「用心」,而在于<strong>每个元素触发的玩家反应,恰好为下一个元素做好准备</strong>。这是一条环环相扣的因果链,不是一堆好设计的堆砌。</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 220" xmlns="http://www.w3.org/2000/svg">
+      <rect x="16" y="176" width="808" height="26" fill="#20252e" stroke="rgba(216,210,196,.15)"/>
+      <rect x="44" y="146" width="20" height="30" fill="#c8442a"/>
+      <text x="54" y="138" text-anchor="middle" class="slc">马里奥</text>
+      <rect x="196" y="156" width="22" height="20" fill="#8a6a3f"/>
+      <text x="207" y="148" text-anchor="middle" class="sl">①栗宝宝</text>
+      <path d="M182 166 L160 166" stroke="#8a6a3f" stroke-width="1.4" marker-end="url(#a1)"/>
+      <rect x="280" y="104" width="24" height="24" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+      <text x="292" y="121" text-anchor="middle" class="sla">?</text>
+      <rect x="330" y="104" width="24" height="24" fill="#3a4150"/>
+      <rect x="356" y="104" width="24" height="24" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+      <text x="368" y="121" text-anchor="middle" class="sla">?</text>
+      <rect x="382" y="104" width="24" height="24" fill="#3a4150"/>
+      <rect x="356" y="52" width="24" height="24" fill="none" stroke="#d9a441" stroke-width="1.5"/>
+      <text x="368" y="69" text-anchor="middle" class="sla">?</text>
+      <text x="330" y="42" text-anchor="middle" class="sl">②砖块列(头顶封路)</text>
+      <circle cx="306" cy="92" r="8" fill="#4a9a8e"/>
+      <text x="306" y="78" text-anchor="middle" class="slt">③蘑菇</text>
+      <path d="M315 92 C 390 68, 480 96, 516 148" stroke="#4a9a8e" stroke-width="1.4" stroke-dasharray="4 4" fill="none" marker-end="url(#a2)"/>
+      <path d="M516 156 C 496 168, 460 172, 430 166" stroke="#4a9a8e" stroke-width="1.4" stroke-dasharray="4 4" fill="none" marker-end="url(#a2)"/>
+      <rect x="512" y="126" width="40" height="50" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <text x="532" y="118" text-anchor="middle" class="sl">反弹</text>
+      <rect x="606" y="152" width="30" height="24" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <rect x="652" y="138" width="30" height="38" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <rect x="698" y="124" width="30" height="52" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <rect x="744" y="110" width="30" height="66" fill="#2b4a3e" stroke="rgba(216,210,196,.2)"/>
+      <text x="690" y="100" text-anchor="middle" class="sl">④递增水管=长按跳跃</text>
+      <defs>
+        <marker id="a1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L5,3 L0,6 z" fill="#8a6a3f"/></marker>
+        <marker id="a2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L5,3 L0,6 z" fill="#4a9a8e"/></marker>
+      </defs>
+    </svg>
+    <div class="figcap">开场约六个屏幕的配置。<b>蘑菇的弹道是整条链的枢纽</b>:从?块弹出后前滚,撞水管反弹折返,而此时头顶砖块封死跳跃逃生——「躲不掉」是被几何摆放强制出来的。</div>
+  </div>
+
+  <table>
+    <tr><th>元素</th><th>玩家的反应</th><th>→ 教会玩家</th></tr>
+    <tr><td>①栗宝宝<br><small>缓慢·单独·正面来</small></td><td>「有东西过来」→ 本能躲避 → 慌乱起跳恰好踩死它(速度被专门调校)</td><td>敌人会死 / 碰到会输 / 跳能躲、能踩死</td></tr>
+    <tr><td>②?块<br><small>画着问号</small></td><td>「有?就想敲」→ 敲出金币「叮」一声 + 加分 → 开心 → 敲下一个</td><td>顶块有奖励 → 主动重复这个操作(为投放蘑菇铺路)</td></tr>
+    <tr><td>③蘑菇<br><small>从?块钻出</small></td><td>刚学过「蘑菇形=敌人」→ 想躲 → 头顶砖块封路 → 必定撞上 → 变大</td><td>蘑菇是增益 / 变大能破砖 / 这世界奖励冒险</td></tr>
+    <tr><td>④递增水管<br><small>四根越来越高</small></td><td>矮的随便跳过 → 高的必须按住更久 → 自己发现跳跃时长可控</td><td>按住越久跳越高(无文字的参数教学)</td></tr>
+  </table>
+
+  <div class="quote">
+    <div class="q">撞上了却因此变大,玩家会非常开心。开心之下就会去撞砖、敲块——到这里,这大概是个什么游戏,玩家就全明白了。</div>
+    <div class="who">—— <b>宫本茂</b> · Eurogamer 访谈</div>
+  </div>
+  <p>注意「最糟的时刻发生最好的事」这个结构:玩家以为踩雷,结果是奖励。这一下就把「害怕新东西」翻转成「想乱试试看」——这是把新手从戒备转向探索的最短路径,也是 R2 的核心(下一本详述)。</p>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 一个点子用四次</div>
+  <h2>教学不是一次性的,是四段递进</h2>
+  <p>R1 只说「每个元素要能教一件事」,但宫本给出了更完整的骨架。他在访谈中说过一句被反复引用的话:</p>
+  <div class="quote">
+    <div class="q">一个点子做出来,一定要有「记住它的地方、实际用它的地方、应用它的地方、精通它的地方」——所以一个点子能用四次。</div>
+    <div class="who">—— <b>宫本茂</b> · 引自吉田宽《东京大学游戏学入门》</div>
+  </div>
+  <p>这就是「一个机制要出现四次」的四段结构。它和后面 R5 的「起承转结」是同一套思想在不同尺度的表达:R5 管一整关,这里管单个机制的教学弧线。</p>
+  <div class="model">
+    <div class="mstep"><h5>覚える(记住) — 零风险认识它</h5><p>第一次登场在安全环境,玩家可以随便试、失败也不惩罚。栗宝宝就是「敌人」概念的覚える点。</p></div>
+    <div class="mstep"><h5>遊ぶ(使用) — 在正常玩法里用它</h5><p>把它放进带轻度风险的常规场景,玩家为了推进必须真正使用一次。</p></div>
+    <div class="mstep"><h5>応用する(应用) — 和别的机制组合</h5><p>让它与已学的其他机制相乘,产生新情境。玩家意识到「原来还能这么用」。</p></div>
+    <div class="mstep"><h5>極める(精通) — 高手才做得到的极限用法</h5><p>提供一个可选的、需要熟练度的挑战(隐藏路线、高分技巧),给愿意钻研的玩家留出深度。</p></div>
+  </div>
+  <p>反过来看 1-1 里的坑洞设计正是这个:早期的坑<strong>底部有地板</strong>,掉下去能爬出来不用重玩(覚える阶段惩罚很轻);越往后坑越宽、周围加障碍物(遊ぶ→応用)。惩罚的坡度也是被设计出来的。</p>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么验证你自己的关卡</div>
+  <h2>「越肩视线」:你不是玩家,别猜</h2>
+  <p>R1 的前提是「你知道每个元素教什么」,但你怎么知道玩家真的学会了?宫本的答案不是问卷,是<strong>沉默观察</strong>。岩田聪描述过这个著名做法:</p>
+  <div class="quote">
+    <div class="q">宫本会随手抓一个什么都不懂的人过来,把手柄一塞,说「来,玩玩看」,然后什么都不说,在背后看着。我管这叫「宫本的越肩视线」。</div>
+    <div class="who">—— <b>岩田聪</b> · 《岩田さん》</div>
+  </div>
+  <p>关键动作是<strong>不解释、不引导、不提示</strong>——因为一旦你开口,你就污染了实验。你要观察的正是「在没有任何外部帮助时,玩家会不会卡住、卡在哪」。玩家卡住的地方,就是你的教学配置失效的地方。</p>
+  <div class="check">
+    <h4>CHECKLIST · 新手区元素审计</h4>
+    <ul>
+      <li>列出新手区(第一关/第一小时)出现的每一个元素</li>
+      <li>为每个元素写一句「→ 教会玩家 ___」,写不出的元素标记删除</li>
+      <li>检查教学顺序:每个元素触发的反应,是否为下一个元素做了准备?</li>
+      <li>为核心机制安排「覚→遊→応→極」四个出现点,缺哪段补哪段</li>
+      <li>找一个没玩过的人,塞手柄、闭嘴、在背后看,记录卡点</li>
+      <li>卡点=教学失效点,回去修配置,而不是加文字提示</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>教学元素登记表</h2>
+  <p>把新手区的每个元素填进这张表。任何一栏填不出来,这个元素就有问题。</p>
+  <div class="tpl">
+    <div class="h">TEACHING ELEMENT ENTRY</div>
+    <div class="row"><span class="k">element</span>: 元素名称(敌人/道具/地形/交互物)</div>
+    <div class="row"><span class="k">teaches</span>: → 教会玩家______(一句话,填不出→<span class="x">DELETE</span>)</div>
+    <div class="row"><span class="k">player_reaction</span>: 玩家看到它的第一本能反应是______</div>
+    <div class="row"><span class="k">setup_by</span>: 依赖前面哪个元素建立的认知</div>
+    <div class="row"><span class="k">sets_up</span>: 为后面哪个元素做准备</div>
+    <div class="row"><span class="k">failure_cost</span>: 学习失败的代价(应该很轻)</div>
+    <div class="row"><span class="k">stage</span>: 覚える / 遊ぶ / 応用する / 極める</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>人生小镇(人生模拟)</h4>
+    <ul>
+      <li>第一个事件必须教一条核心规则(比如「选择有代价」)。设计成:玩家凭直觉做的第一个选择,恰好演示出「刚才那个选项关闭了另一条路」——用一次无痛的失去教会核心机制。</li>
+      <li>属性系统、时间流逝、随机事件——每个系统的首次登场都要有独立的「覚える点」,不要在开场把三个系统一起砸出来。</li>
+      <li>把「越肩视线」做成埋点:记录新玩家在第一个决策点的停留时长和选择分布,停太久=没看懂,选择过于集中=选项没差异化。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>星屑急便(多人配送)</h4>
+    <ul>
+      <li>第一单配送 = 覚える点:在无竞争、无时限的环境教「取货→送达」核心循环,玩家怎么玩都能成功。</li>
+      <li>「按住蓄力投掷」这类参数操作,照抄递增水管:摆四个距离递增的投递点,玩家自己学会力度控制,不弹教程。</li>
+      <li>联机机制(抢单/碰撞)放到「応用」段再引入,别在新手第一单就塞对抗。</li>
+      <li>因祸得福结构:让新手第一次「送错地址」时触发一个小彩蛋奖励而非扣分,把失误焦虑转成探索欲。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 「好看但不教东西」的装饰元素混进新手区。</b>新手区里每个元素都在争夺玩家有限的注意力。一个只为美观存在的装饰物,会稀释玩家对真正需要学习的元素的关注。装饰留到玩家学会规则之后再上。</div>
+  <div class="warn"><b>误用二 · 用文字提示补救糟糕的配置。</b>如果玩家卡住了你就加个提示框,那是在给失败的关卡设计打补丁。正确做法是回去改元素的摆放位置和顺序,让规则自己浮现。文字是最后手段,不是第一手段。</div>
+  <div class="warn"><b>误用三 · 把「更难」当成「教得更深」。</b>四段结构里的「応用」是换用法,不是单纯加难度。如果第三次登场只是敌人变多了,那还停留在「遊ぶ」。真正的应用要让玩家产生「原来还能这样」的认知跳跃。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ 教程系列 R1–R16</span>
+      <span>NEXT ▶ <b>R2 · 因祸得福:首次接触即奖励</b></span>
+    </div>
+    <p>资料来源 · Eurogamer「Super Mario's makers play Super Mario Maker」宫本茂×手塚卓志访谈(2015,Game*Spark/GIGAZINE 编译) ／ 吉田宽《东京大学で教わるゲーム学入門》(世界文化社) ／ 社長が訊く『New スーパーマリオブラザーズ Wii』 ／《岩田さん》(ほぼ日ブックス)。图示为基于访谈内容的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

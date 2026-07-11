@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R2 · 因祸得福 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(200,68,42,.1), transparent 60%),var(--ink)}
+.hero::after{content:"福";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 02 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>因祸得福<br>让玩家第一次「以为完蛋」的瞬间获得奖励</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      第一次接触新系统时,安排一次「因祸得福」:玩家以为自己失误了、以为要受罚,结果触发的却是奖励。用一次被翻转的恐惧,把戒备心变成探索欲。
+    </div>
+    <div class="src">
+      来源 · <b>宫本茂「最糟的时刻发生最好的事」</b>(マリオメーカー Developer Story) ／ 社長が訊く『New スーパーマリオブラザーズ Wii』宫本对蘑菇心理过程的逐帧描述 ／ 社長が訊く『スーパーマリオギャラクシー』「10次里1次往左走给奖励」
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>新玩家默认是戒备的,你得先解除警报</h2>
+  <p>玩家面对一个陌生系统时的默认情绪是<strong>戒备</strong>。新道具可能是陷阱,新地形可能有坑,新机制可能让我输——在学会规则之前,谨慎是理性的。而戒备是探索的反面:一个戒备的玩家会绕开你精心设计的所有新东西。</p>
+  <p>R1 解决了「怎么无痛地教规则」,但还有一层更底层的问题:<strong>怎么让玩家愿意主动去碰新东西</strong>。如果每次尝试新机制都可能挨罚,玩家学会的第一课就是「别乱试」——这恰恰扼杀了任天堂最想要的那种主动探索。</p>
+  <p>R2 是对这个问题的心理学级解法。它不靠说服(「相信我这个道具是好的」),而是制造一次<strong>情绪的过山车</strong>:先把玩家推到「我完蛋了」的谷底,然后在谷底给他一个惊喜。恐惧被兑现成奖励的那一瞬,玩家对整个游戏世界的态度发生根本转变——从「这里处处有陷阱」变成「这里的意外都是好事,我想多试试」。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE · 原始案例的完整拆解</div>
+  <h2>蘑菇:一次被精心编排的情绪过山车</h2>
+  <p>宫本在社長が訊く里,把玩家遇到第一个蘑菇时的心理过程<strong>逐帧描述</strong>了一遍。注意这不是「设计得好」的泛谈,而是对一段情绪曲线的精确导演:</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 280" xmlns="http://www.w3.org/2000/svg">
+      <!-- emotion curve axis -->
+      <line x1="40" y1="150" x2="800" y2="150" stroke="rgba(216,210,196,.1)"/>
+      <text x="40" y="30" class="slt" font-size="11">情绪 ↑ 安心</text>
+      <text x="40" y="270" class="slc" font-size="11">情绪 ↓ 恐慌</text>
+      <!-- curve -->
+      <path d="M60 120 L160 120 L220 70 L300 70 L340 200 L430 240 L470 240 L520 60 L640 40 L780 40"
+        stroke="#d9a441" stroke-width="2.5" fill="none"/>
+      <!-- points -->
+      <circle cx="160" cy="120" r="5" fill="#4a9a8e"/>
+      <text x="160" y="108" text-anchor="middle" class="sl">①敲?块</text>
+      <text x="160" y="140" text-anchor="middle" class="sl">蘑菇冒出</text>
+      <circle cx="300" cy="70" r="5" fill="#4a9a8e"/>
+      <text x="300" y="58" text-anchor="middle" class="slt">②「往右跑了</text>
+      <text x="300" y="86" text-anchor="middle" class="slt">太好了,躲开了」</text>
+      <circle cx="430" cy="240" r="5" fill="#c8442a"/>
+      <text x="430" y="262" text-anchor="middle" class="slc">③撞水管折返!</text>
+      <circle cx="470" cy="240" r="5" fill="#c8442a"/>
+      <text x="470" y="222" text-anchor="middle" class="slc">「跳!」→头顶砖块</text>
+      <circle cx="520" cy="60" r="6" fill="#d9a441"/>
+      <text x="560" y="52" text-anchor="middle" class="sla">④「完蛋了」的瞬间</text>
+      <text x="640" y="30" text-anchor="middle" class="sla">↑ 变大 · 情绪反转到顶点</text>
+    </svg>
+    <div class="figcap">玩家情绪曲线:安心 → 更安心 → 骤降到恐慌谷底 → 在「以为要死」的最低点<b>触底反弹到最高点</b>。奖励(变大)不是平白给的,是踩着恐惧的谷底给的,所以爽感被放大数倍。</div>
+  </div>
+
+  <div class="quote">
+    <div class="q">想跳过去躲开,却撞到上面的砖块。「完蛋了,被抓到了!」在下定决心认命的那一瞬间,马里奥咕噜咕噜地变大了……当下不知道发生了什么,但至少知道自己没死。</div>
+    <div class="who">—— <b>宫本茂</b> · 社長が訊く『New スーパーマリオブラザーズ Wii』</div>
+  </div>
+
+  <p>拆开看,这段设计动用了四个装置,缺一不可:</p>
+  <table>
+    <tr><th>装置</th><th>作用</th></tr>
+    <tr><td>先建立恐惧</td><td>玩家刚被栗宝宝(蘑菇形)教训过,已经学会「蘑菇形=敌人=躲」。蘑菇冒出时,玩家真心想躲。<strong>没有这层预设恐惧,后面的反转就不成立</strong>。</td></tr>
+    <tr><td>假的安全感</td><td>蘑菇先往右滚开——玩家松一口气「躲过了」。情绪先被抬高,为下一步的坠落蓄势。</td></tr>
+    <tr><td>强制接触</td><td>蘑菇撞水管反弹折返,头顶砖块封死跳跃逃生路线。<strong>玩家在几何上无路可逃</strong>,必定撞上。这不是概率,是设计出来的必然。</td></tr>
+    <tr><td>谷底给奖励</td><td>在「认命」的情绪最低点,变大发生。惊喜的强度 = 落差的高度。从谷底反弹,爽感远大于平地上给一个道具。</td></tr>
+  </table>
+
+  <div class="quote">
+    <div class="q">1-1 是:栗宝宝来,接着蘑菇来,想躲却撞到天花板,结果撞上了蘑菇。可是拿到蘑菇却会长大。「在最糟的时候发生最好的事」——我是有意识地这样去做的。</div>
+    <div class="who">—— <b>宫本茂</b> · マリオメーカー Developer Story</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 期待值反转的一般形式</div>
+  <h2>不止「因祸得福」,而是「打破玩家的预期」</h2>
+  <p>「最糟时发生最好的事」是一个特例。它背后的通用原理是:<strong>在玩家的预期与现实之间制造一个正向落差</strong>。落差越大,情绪冲击越强。宫本在《银河》里把这条原理提炼成了一个团队级的设计原则:</p>
+  <div class="quote">
+    <div class="q">2D马里奥理所当然是往右跑的。但每10次里有1次,你往左走,那里会放着奖励。因为所有人都深信要往右走,所以给那个回头看一眼的人一份犒赏。</div>
+    <div class="who">—— <b>小泉欢晃转述宫本原则</b> · 社長が訊く『スーパーマリオギャラクシー』</div>
+  </div>
+  <p>注意这和蘑菇是同一个引擎的两种用法:</p>
+  <div class="model">
+    <div class="mstep"><h5>建立一个强预期</h5><p>蘑菇:「蘑菇形=敌人,要躲」。银河:「马里奥必须往右走」。预期越强、越普遍,打破时的冲击越大。</p></div>
+    <div class="mstep"><h5>在预期的反方向埋奖励</h5><p>蘑菇:你以为要挨罚→其实是增益。银河:你以为该往右→往左有惊喜。奖励必须放在玩家「本不会去」的位置。</p></div>
+    <div class="mstep"><h5>让打破预期的成本极低</h5><p>玩家不需要冒大风险就能撞见反转。蘑菇是被强制撞上的;往左走一步的代价几乎为零。<strong>低成本 + 高回报 = 玩家学会「主动打破常规是划算的」</strong>。</p></div>
+  </div>
+  <p>这就是任天堂式探索欲的心理根基:玩家被反复训练出一个信念——「在这个世界里,好奇和冒险总会有回报」。R7(引力设计)之所以能让玩家自愿绕路,底层正是靠 R2 这种反转在早期建立起来的信任。</p>
+
+  <div class="warn"><b>频率是关键参数。</b>银河用的是「10次里1次」。反转如果太频繁,玩家会预期到反转本身,惊喜消失;太稀有,玩家永远学不会这个世界会奖励冒险。稀缺性正是奖励价值的来源。</div>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么在你的游戏里造一次因祸得福</div>
+  <h2>四步配方</h2>
+  <div class="model">
+    <div class="mstep"><h5>找到玩家的一个恐惧或强预期</h5><p>它可以是你前面刚教过的(「这个形状=敌人」),也可以是通用直觉(「掉进坑=死」「往右=正确方向」)。没有预设,就没有可打破的东西。</p></div>
+    <div class="mstep"><h5>把奖励藏在恐惧指向的地方</h5><p>玩家本能想躲开/绕开的位置,正是放奖励的位置。让「看起来危险的东西」其实是好的。</p></div>
+    <div class="mstep"><h5>用几何或规则制造必然接触(仅限首次教学)</h5><p>第一次一定要让玩家撞上,不能靠运气。封死逃生路线、用反弹让道具追上玩家。教会之后就恢复自由,不再强制。</p></div>
+    <div class="mstep"><h5>在情绪最低点触发奖励,并让效果清晰可感</h5><p>变大、变强、屏幕变化、音效突变——奖励必须<strong>一眼可辨</strong>,让玩家立刻知道「刚才那个是好事」。模糊的奖励等于没有反转。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 因祸得福设计审计</h4>
+    <ul>
+      <li>玩家在触发前,是否已经有一个明确的恐惧或预期?(没有→先建立)</li>
+      <li>奖励是否放在玩家「本能想避开」的位置?</li>
+      <li>首次教学时,接触是否必然发生(不靠玩家运气)?</li>
+      <li>奖励效果是否一眼可辨,让玩家立刻知道是好事?</li>
+      <li>情绪落差是否足够大(先推到谷底再反弹)?</li>
+      <li>如果是「稀有奖励」型(银河式),频率是否控制在稀缺区间?</li>
+      <li>教会之后,是否解除了强制,恢复玩家自由?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>因祸得福事件登记表</h2>
+  <div class="tpl">
+    <div class="h">FORTUNE-FROM-MISFORTUNE EVENT</div>
+    <div class="row"><span class="k">preset_fear</span>: 玩家此刻的恐惧/预期是______(必须已建立)</div>
+    <div class="row"><span class="k">bait</span>: 看起来危险、玩家想躲开的东西是______</div>
+    <div class="row"><span class="k">reward</span>: 实际触发的奖励是______(要一眼可辨)</div>
+    <div class="row"><span class="k">forced_contact</span>: 首次如何保证必然接触(几何封路/反弹追击)</div>
+    <div class="row"><span class="k">emotion_low</span>: 玩家在触发前的最低情绪点是「______」</div>
+    <div class="row"><span class="k">frequency</span>: one-shot教学 / 稀有随机(约__次1次)</div>
+    <div class="row"><span class="k">release</span>: 教会后如何解除强制、恢复自由</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>人生小镇(人生模拟)</h4>
+    <ul>
+      <li><strong>把「看似糟糕的选择」设计成隐藏收益</strong>:玩家第一次面对一个明显「不划算」的选项(拒绝一份高薪工作、选择冷门专业),如果他鼓起勇气选了,触发一条更好的隐藏支线。教会玩家「这个游戏奖励非常规选择」——这正是人生模拟最需要的探索动机。</li>
+      <li><strong>失败事件里埋转机</strong>:第一次「投资失败/考试落榜」不应是纯扣分,而是解锁一个只有失败者才能走的路径。把玩家对「失败=坏」的恐惧翻转成「失败也是一种可能性」。</li>
+      <li>银河式稀有奖励:在玩家「本不会点开」的角落(某个不起眼的NPC、某个看似无用的物品)藏低频彩蛋,训练玩家的探索习惯。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>星屑急便(多人配送)</h4>
+    <ul>
+      <li><strong>第一次「送错/迟到」触发彩蛋而非扣分</strong>:新手第一单如果失误,不掉分,反而收到一个「迷路奖励」(隐藏客户、额外小费)。把配送焦虑一次性解除,让玩家敢于探索路线而不是死守最优解。</li>
+      <li><strong>看似危险的捷径其实是奖励路线</strong>:一条看起来会撞障碍/掉落的近路,第一次强制引导玩家走一遍并给奖励,教会「这个世界的冒险捷径是划算的」。之后是否走由玩家自由决定。</li>
+      <li>联机场景:把「被对手抢单」的挫败设计成解锁反击机制的契机——第一次被抢单时给玩家一个只有落后者能用的加速道具。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 恐惧还没建立就给反转。</b>如果玩家还不怕蘑菇形状,「撞上变大」就只是「捡到一个道具」,毫无冲击。反转的前提是先有一个真实的预期。跳过建立恐惧的步骤,整个结构塌掉。</div>
+  <div class="warn"><b>误用二 · 把「因祸得福」变成「祸不单行」的假象骗局。</b>玩家可以被骗一次「以为坏结果是好」,但如果你反过来经常「看似安全其实是陷阱」,玩家学到的是「这个世界在耍我」,从此对一切都不信任。R2 只朝一个方向用:恐惧→奖励。反向滥用会摧毁玩家的探索信任。</div>
+  <div class="warn"><b>误用三 · 反转太频繁,惊喜通货膨胀。</b>如果每个新道具都是「以为坏其实好」,玩家很快预期到套路,反转失效。这个手法在关键的首次教学用一次最有力;稀有奖励型要严守低频。用滥了就不再是惊喜。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R1 · 教学元素法则</span>
+      <span>NEXT ▶ <b>R3 · 先做2-1,再降采样出教学关</b></span>
+    </div>
+    <p>资料来源 · 社長が訊く『New スーパーマリオブラザーズ Wii』(任天堂官网) ／ E3 2015 マリオメーカー Developer Story(宫本茂×手塚卓志) ／ 社長が訊く『スーパーマリオギャラクシー』(任天堂官网) ／ ファミコンのネタ!! 转载访谈。图示为基于访谈内容的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

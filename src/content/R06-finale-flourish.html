@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R6 · 炫技谢幕 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(217,164,65,.1), transparent 60%),var(--ink)}
+.hero::after{content:"結";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 06 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>炫技谢幕<br>结尾段复杂度回落,让玩家带着掌控感离开</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      「結」段的复杂度要<strong>回落</strong>,不以最难考验收尾。机制的最后一次登场是纪念性的、低风险的炫技演出——让玩家在「我掌握了它」的高峰结束,而不是在「这段好难」的挫败中离开。
+    </div>
+    <div class="src">
+      来源 · <b>《3D世界》起承転結的「結」段设计</b>(GMTK / 知久温从业者解读) ／ 初代马里奥「城堡关→通常关难度骤降→玩家产生变强错觉→进入心流」的曲线设计 ／ 樱井政博「达成感」论
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>玩家记住一段体验,靠的是「峰值」和「结尾」</h2>
+  <p>R5 讲了起承転結的完整弧线,而 R6 单独把「結」拎出来,因为它是最反直觉、也最容易做错的一段。大多数设计者的本能是:<strong>难度应该一路爬升,最后达到顶点</strong>——把最难的挑战放在终点,作为对玩家的最终考验。这个直觉是错的。</p>
+  <p>心理学上有个被反复验证的现象:人对一段经历的记忆,不是取整段的平均,而是主要由<strong>「峰值」和「结尾」</strong>两个点决定的。一关的难度峰值应该在「転」(那个「原来还能这样」的认知高潮);而「结尾」如果是全关最难的一段,玩家对这一整关的最终印象就会是<strong>「累」和「挫败」</strong>,哪怕前面的転再精彩。</p>
+  <p>任天堂的做法是:让难度峰值和结尾<strong>分离</strong>。峰值给転,结尾给一段低风险的炫技。玩家越过転的认知高潮后,結段让他用刚刚精通的机制,轻松华丽地冲向终点——这最后一段的"轻松",正是玩家"我变强了"的实感来源。<strong>結不是最后一道坎,而是一段胜利游行。</strong></p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE · 两个层面的证据</div>
+  <h2>关内的「結」,与关间的「难度骤降」</h2>
+
+  <h3>层面一:一关之内——結段回落</h3>
+  <p>知久温(参与《关卡设计教科书》翻译监修的从业者)把《3D世界》的四段结构解读为「学習・発展・転調・結末」,并明确指出结末的位置:</p>
+  <div class="quote">
+    <div class="q">新机关先在没有game over惩罚的区域「学習」,接着以惩罚或技巧要求的形式「発展」,再用概念的方向转换或新视角要求来「転調」,越过这些之后,<strong>ゴール之后才迎来「結末」</strong>。</div>
+    <div class="who">—— <b>知久温</b> · CGWORLD 关卡设计访谈</div>
+  </div>
+  <p>注意关键词:結末在<strong>「越过转调之后」</strong>。难点(転調)在结尾之前就已经跨过了。玩家抵达結末时,考验已经结束,剩下的是收获。这就是为什么《3D世界》每关的旗杆前,往往是一段用本关机制轻松拿绿星、或华丽冲刺的演出,而不是最狠的一道机关。</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 230" xmlns="http://www.w3.org/2000/svg">
+      <!-- wrong curve -->
+      <text x="40" y="26" class="slc" font-size="12">✗ 错误:难度一路爬升,最难放最后</text>
+      <path d="M60 120 L140 116 L240 104 L360 88 L480 68 L600 48 L720 30"
+        stroke="#c8442a" stroke-width="1.8" fill="none" stroke-dasharray="5 4"/>
+      <text x="720" y="24" text-anchor="end" class="slc" font-size="10">玩家印象:累</text>
+      <!-- right curve -->
+      <text x="40" y="150" class="slt" font-size="12">✓ 正确:峰值在「転」,「結」回落</text>
+      <path d="M60 200 C 160 196, 220 180, 340 158 C 430 142, 470 120, 540 116 C 560 115, 575 130, 600 158 C 640 195, 680 200, 720 196"
+        stroke="#4a9a8e" stroke-width="2.2" fill="none"/>
+      <circle cx="540" cy="116" r="5" fill="#c8442a"/>
+      <text x="540" y="106" text-anchor="middle" class="slc" font-size="10">峰值=転</text>
+      <circle cx="720" cy="196" r="5" fill="#d9a441"/>
+      <text x="720" y="216" text-anchor="end" class="sla" font-size="10">結:低风险炫技→掌控感</text>
+      <text x="120" y="216" class="sl" font-size="10">起</text>
+      <text x="300" y="216" class="sl" font-size="10">承</text>
+    </svg>
+    <div class="figcap">两条曲线的对比。错误曲线把难度峰值放在终点,玩家<b>带着挫败离开</b>;正确曲线让峰值落在「転」,結段回落成一段胜利游行,玩家<b>带着「我掌握了」的掌控感离开</b>。记忆由峰值和结尾决定——两者都要经营。</div>
+  </div>
+
+  <h3>层面二:关与关之间——难度骤降制造「变强错觉」</h3>
+  <p>同样的原理在更大尺度上也成立。初代马里奥的关卡分析里,有一个精妙的观察:每个世界的第4关是高难度的城堡关(如1-4),打完城堡进入下个世界的第1关(如2-1)时,<strong>难度会突然大幅下降</strong>。</p>
+  <div class="quote">
+    <div class="q">从1-4这样的城堡关,进到2-1这样的通常关时,难度一下子降低,玩家会产生「我变强了」的错觉,从而进入心流(フロー)状态。</div>
+    <div class="who">—— <b>初代马里奥关卡设计分析</b>(note/きくぴぃ,引樱井政博论)</div>
+  </div>
+  <p>这是 R6 的放大版:刚经历过一段硬仗(城堡关的峰值),紧接着给一段明显轻松的关卡(骤降的结尾)。玩家的技能在硬仗里被拔高了,回到简单关时会觉得"咦,怎么变这么简单了"——这个落差被大脑解读为<strong>"我变强了"</strong>,而这种自我效能感正是心流的入口。<strong>难度不是单调递增的锯齿,而是"爬升→骤降→再爬升"的波浪,每个骤降都是一次"我变强了"的奖赏。</strong></p>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 为什么"回落"比"高潮"更高级</div>
+  <h2>結段真正的产出物,是玩家对自己的信心</h2>
+  <p>一个容易被忽略的点:結段的低难度不是"放水",而是<strong>专门用来生产一种情绪的装置——自我效能感(我能行)</strong>。这种情绪比"我过了一道难关"更持久、更能驱动玩家继续玩下去。</p>
+  <div class="model">
+    <div class="mstep"><h5>結让玩家"表演"刚学会的东西</h5><p>起承転一路教玩家掌握机制,結段是玩家的<strong>汇报演出</strong>。低风险意味着玩家几乎一定成功,而这个"我流畅地做到了"的体验,把前面的学习兑现成了肌肉记忆的自豪感。表演成功的快感,不同于闯关成功的松一口气。</p></div>
+    <div class="mstep"><h5>掌控感 → 想继续玩的动力</h5><p>一关以掌控感结束,玩家进入下一关时是"我很强,来吧"的心态;一关以挫败结束,玩家进入下一关时是"好累,要不歇会儿"的心态。<strong>結段决定的不是这一关的评价,而是玩家会不会开始下一关。</strong>这对留存的影响是巨大的。</p></div>
+    <div class="mstep"><h5>把"最难"留给可选内容,而非主线結尾</h5><p>玩家里总有硬核党想要极限挑战。任天堂的解法不是把主线結尾做狠,而是把高难度封装进<strong>可选内容</strong>:绿星、隐藏关、特别世界(スペシャルワールド)。主线結尾对所有人保持"胜利游行",极限挑战留给自愿寻求的人。这样既不劝退新手,又满足高手。</p></div>
+  </div>
+  <div class="warn"><b>难点属于"転",挑战属于"可选",胜利属于"結"。</b>这是 R6 的一句话总结。把这三者搞混——比如把最难的挑战当作主线結尾——就会同时得罪新手(太难)和破坏记忆曲线(以挫败收尾)。</div>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么设计一个好的結段</div>
+  <h2>执行流程</h2>
+  <div class="model">
+    <div class="mstep"><h5>确认难度峰值已在"転"跨过</h5><p>先检查:这一关最难、最需要动脑或手速的地方,是不是在"転"?如果最难的在結,说明峰值放错了位置,先把它移到転。</p></div>
+    <div class="mstep"><h5>設計一段"用本关机制炫技"的低风险收尾</h5><p>結段让玩家用刚精通的机制,做一件流畅、好看、几乎一定成功的事。它可以是一段华丽的连续动作、一次爽快的冲刺、一个把机制用到淋漓尽致但没有惩罚的小舞台。</p></div>
+    <div class="mstep"><h5>把奖励绑在結段</h5><p>终点前放奖励(分数、收集品、过关演出),让結段同时是情绪高点和收获高点。玩家最后的记忆 = 轻松 + 华丽 + 有收获。</p></div>
+    <div class="mstep"><h5>把极限挑战移到可选内容</h5><p>如果你有很难的点子舍不得删,别塞进主线結尾——做成隐藏关、额外目标、可选收集。让想要的人自己去找。</p></div>
+    <div class="mstep"><h5>在关与关之间安排"骤降"节拍</h5><p>一段硬关(或Boss)之后,紧跟一段明显轻松的关,制造"我变强了"的错觉,把玩家推入心流。别让难度单调递增。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 結段与难度曲线审计</h4>
+    <ul>
+      <li>这一关的难度峰值是否落在"転"而非"結"?</li>
+      <li>結段是否低风险、玩家几乎一定成功?</li>
+      <li>結段是否让玩家"表演"刚精通的机制(炫技感)?</li>
+      <li>奖励/过关演出是否绑在結段?</li>
+      <li>极限挑战是否移到了可选内容,而非主线結尾?</li>
+      <li>玩家结束这一关时,情绪是"我掌握了"还是"好累"?</li>
+      <li>关与关之间是否有"硬关→轻松关"的骤降节拍?</li>
+      <li>整体难度是"爬升→骤降→再爬升"的波浪,而非单调锯齿?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>結段与曲线模板</h2>
+  <div class="tpl">
+    <div class="h">FINALE & DIFFICULTY CURVE</div>
+    <div class="row"><span class="k">peak_at</span>: 确认难度峰值位置 = 転 (若在結→<span class="x">MOVE</span>)</div>
+    <div class="row"><span class="k">finale_showcase</span>: 結段让玩家炫技的动作是______</div>
+    <div class="row"><span class="k">finale_risk</span>: 结尾失败率(应极低,近乎一定成功)</div>
+    <div class="row"><span class="k">finale_reward</span>: 绑在結段的奖励/演出</div>
+    <div class="row"><span class="k">exit_emotion</span>: 玩家离开时的情绪 = 「我掌握了」</div>
+    <div class="row"><span class="k">hard_content</span>: 极限挑战 → 移到哪个可选内容</div>
+    <div class="row"><span class="k">macro_curve</span>: 关间节拍 (…硬关 → <span class="x">骤降</span> → 轻松关…)</div>
+    <div class="row"><span class="k">flow_trigger</span>: 哪次骤降用来制造"我变强了"错觉</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>人生小镇(人生模拟)</h4>
+    <ul>
+      <li><strong>每章以"轻松的收获"收尾,而非最难的抉择</strong>:一个人生阶段的最难两难(転)跨过后,結段给一段"回报兑现"——玩家看到之前的选择开花结果,轻松、温暖、有成就感。别把最痛苦的抉择放在章末,那会让玩家带着沉重进入下一章。</li>
+      <li><strong>章间难度波浪</strong>:一段高压人生期(如创业危机、家庭变故)之后,紧跟一段明显轻松的顺遂期,让玩家在"我扛过来了"的松弛感里恢复,这正是想继续玩下去的动力来源。单调堆叠苦难会劝退玩家。</li>
+      <li><strong>极限剧情留作可选</strong>:最虐、最难达成的隐藏结局,做成可选支线而非主线必经。想挑战的玩家自己去解锁,主线保持"人生虽难但有回甘"的整体基调。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>星屑急便(多人配送)</h4>
+    <ul>
+      <li><strong>每张图以"爽快冲刺"收尾</strong>:一张图的最难配送段(転:复杂路线/机制博弈)跨过后,結段给一段用本图机制的华丽冲刺到终点——比如借传送带惯性一路滑到站点。玩家最后的记忆是"我帅气地送达了"。</li>
+      <li><strong>赛程难度波浪</strong>:如果有多图连续的模式(生存赛),在一张硬图后安排一张明显轻松的图,让玩家喘口气并产生"我变强了"的错觉,维持心流不崩。</li>
+      <li><strong>极限图作为特别关</strong>:最难的配送图做成可选的"特别世界",而非主线晋级的必经卡点,避免难度墙劝退休闲玩家,同时给硬核党留挑战。</li>
+      <li><strong>联机注意</strong>:多人对抗里"結"更微妙——胜者体验掌控感,败者不应体验纯挫败。给落后者一个"虽败犹荣"的收尾(如精彩救球的高光回放),让所有人都想再来一局。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 把最难的挑战当作主线結尾。</b>最常见的错误,源于"结尾应该是高潮"的直觉。但记忆由峰值和结尾共同决定——峰值给"転"就够了,结尾若也是最难,玩家的最终印象是挫败。难点属于転,胜利属于結,别搞反。</div>
+  <div class="warn"><b>误用二 · 結段太长太拖,冲淡掌控感。</b>結是"胜利游行"不是"绕场三圈"。如果炫技段拖得太久,爽快感会稀释成无聊。結要短促、华丽、干脆——一段惊艳的收尾,然后利落插旗。冗长的胜利和挫败一样毁记忆。</div>
+  <div class="warn"><b>误用三 · 难度单调递增,没有骤降节拍。</b>如果每一关都比上一关难,玩家永远得不到"我变强了"的错觉,只会持续感到压力累积,最终疲劳退出。要在硬关之后主动安排轻松关,用落差生产自我效能感。心流来自波浪,不来自陡坡。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R5 · 起承转结</span>
+      <span>NEXT ▶ <b>R7 · 引力设计:每个POI标注动机与可见半径</b></span>
+    </div>
+    <p>资料来源 · CGWORLD「面白いゲームを作る常識『レベルデザイン』とは？」知久温访谈 ／ GMTK「Super Mario 3D World's 4 Step Level Design」 ／ note「初代マリオのレベルデザイン」(きくぴぃ,引樱井政博论) ／ Supersonic「難易度曲線に見るゲームの難易度の最適化」 ／ 開発者に訊きました『スーパーマリオブラザーズ ワンダー』特别世界设计。图示为基于讲演内容的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

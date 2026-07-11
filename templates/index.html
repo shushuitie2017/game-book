@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关卡之书 · 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--cinnabar-hi:#e2694f;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+/* --cinnabar-hi: 朱砂提亮档，仅用于深底上的小字号(≤13px)标注，保 WCAG AA 对比度 */
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:920px;margin:0 auto;padding:0 28px}
+
+/* hero */
+.hero{min-height:72vh;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;
+  background:radial-gradient(1100px 560px at 82% -10%, rgba(200,68,42,.10), transparent 60%),
+             radial-gradient(800px 460px at 8% 110%, rgba(74,154,142,.08), transparent 60%),var(--ink)}
+.hero::after{content:"遊";position:absolute;right:-4%;top:6%;font-size:min(44vw,400px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.kicker{font-family:var(--mono);font-size:12px;letter-spacing:.35em;color:var(--amber);text-transform:uppercase;margin-bottom:20px}
+.hero h1{font-size:clamp(38px,7vw,72px);font-weight:900;line-height:1.2;letter-spacing:.03em}
+.hero h1 em{font-style:normal;color:var(--cinnabar)}
+.hero .sub{margin-top:24px;max-width:640px;color:var(--dim);font-size:17px}
+.hero .meta{margin-top:36px;font-family:var(--mono);font-size:12px;color:var(--dim);display:flex;gap:26px;flex-wrap:wrap}
+.hero .meta b{color:var(--teal);font-weight:500}
+
+/* 学习路径 */
+section{padding:56px 0}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.24em;color:var(--teal);margin-bottom:10px}
+h2{font-size:clamp(22px,3.4vw,30px);font-weight:900;margin-bottom:8px}
+.lede{color:var(--dim);max-width:680px;margin-bottom:34px;font-size:15.5px}
+.path{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:720px){.path{grid-template-columns:1fr}}
+.step{display:block;background:var(--panel);border-top:3px solid var(--amber);padding:22px;text-decoration:none;color:var(--text);transition:.25s}
+.step:nth-child(2){border-top-color:var(--cinnabar)}
+.step:nth-child(3){border-top-color:var(--teal)}
+.step:hover{background:var(--panel2);transform:translateY(-2px)}
+.step .pn{font-family:var(--mono);font-size:11px;letter-spacing:.25em;color:var(--dim);margin-bottom:10px}
+.step h3{font-size:17px;font-weight:700;color:#efe9da;margin-bottom:8px}
+.step p{font-size:13.5px;color:var(--dim);line-height:1.85}
+
+/* 搜索 */
+.searchbox{position:relative;margin:6px 0 6px}
+#q{width:100%;background:var(--panel);border:1px solid var(--hairline);color:var(--text);
+  font-family:var(--serif);font-size:16px;padding:14px 18px;outline:none}
+#q:focus{border-color:var(--teal)}
+#results{position:absolute;left:0;right:0;top:100%;z-index:50;background:var(--panel2);border:1px solid var(--hairline);border-top:none;max-height:380px;overflow:auto;display:none}
+#results a{display:block;padding:11px 18px;color:var(--text);text-decoration:none;border-bottom:1px dashed var(--hairline);font-size:14.5px}
+#results a:hover,#results a.sel{background:var(--panel);color:var(--amber)}
+#results a .rn{font-family:var(--mono);font-size:11px;color:var(--cinnabar-hi);margin-right:10px}
+#results a .hd{color:var(--dim);font-size:12.5px;display:block;margin-top:2px}
+
+/* 规则网格 */
+#rules{scroll-margin-top:60px}
+.rgroup{margin-top:44px}
+.ghead{display:flex;align-items:baseline;gap:16px;margin-bottom:18px;border-bottom:1px solid var(--hairline);padding-bottom:12px}
+.gno{font-family:var(--mono);font-size:12px;letter-spacing:.2em;color:var(--cinnabar-hi)}
+.ghead h3{font-size:20px;font-weight:900}
+.ghead h3 em{font-style:normal;font-family:var(--mono);font-size:12px;color:var(--dim);margin-left:14px;letter-spacing:.08em;font-weight:400}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.rcard{position:relative;display:block;background:var(--panel);border:1px solid var(--hairline);padding:18px 20px;text-decoration:none;color:var(--text);transition:.25s}
+.rcard:hover{border-color:var(--amber);transform:translateY(-2px)}
+.rnum{font-family:var(--mono);font-size:13px;color:var(--cinnabar-hi);font-weight:700;letter-spacing:.1em}
+.rtick{display:none;position:absolute;top:14px;right:16px;color:var(--teal);font-family:var(--mono);font-size:14px}
+.rcard.read .rtick{display:block}
+.rcard h4{font-size:17px;font-weight:700;color:#efe9da;margin:8px 0 6px}
+.rcard p{font-size:13px;color:var(--dim);line-height:1.8}
+.progress{font-family:var(--mono);font-size:12px;color:var(--dim);margin-left:16px}
+.progress b{color:var(--teal);font-weight:500}
+.rowhead{display:flex;align-items:baseline}
+
+/* 速查表入口条 */
+.cheat-cta{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-top:48px;padding:22px 26px;background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);text-decoration:none}
+.cheat-cta h4{color:#efe9da;font-size:16px;font-weight:700}
+.cheat-cta p{color:var(--dim);font-size:13px;margin-top:4px}
+.cheat-cta .go{font-family:var(--mono);color:var(--cinnabar-hi);font-size:13px;white-space:nowrap}
+.cheat-cta:hover .go{color:var(--amber)}
+
+footer{padding:56px 0 76px;border-top:1px solid var(--hairline);margin-top:30px}
+footer p{font-family:var(--mono);font-size:11.5px;color:var(--dim);line-height:2.1}
+</style>
+</head>
+<body>
+{{NAVBAR}}
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">LEVEL BOOK — NINTENDO LEVEL DESIGN</div>
+    <h1>关卡之书<em>。</em></h1>
+    <p class="sub">把「社長が訊く」与 CEDEC / GDC 讲演里散落的任天堂关卡设计方法论，编成一本可执行的书——16 条规则教程 × 1 份实战手册 × 1 卷开发访谈研究。每条规则都带执行流程、模板、检查清单与反面信号。</p>
+    <div class="meta">
+      <span>规则 <b>R1–R16</b></span><span>卷宗 <b>2 册</b></span><span>编纂 <b>2026-07</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section id="path">
+  <div class="eyebrow">HOW TO READ</div>
+  <h2>学习路径</h2>
+  <p class="lede">三步：先建立全景，再逐条精读，最后补思想背景。做项目时回来查速查表。</p>
+  <div class="path">
+    <a class="step" href="manual.html">
+      <div class="pn">STEP 01 · 总纲</div>
+      <h3>通读实战手册</h3>
+      <p>7 章：马里奥1-1 → 起承转结 → 引力 → 三角形法则 → 三把尺子 → 热力图。约 40 分钟建立全景。</p>
+    </a>
+    <a class="step" href="#rules">
+      <div class="pn">STEP 02 · 精读</div>
+      <h3>逐条读 16 规则</h3>
+      <p>四部：教学 / 结构 / 引导 / 流程。每条一页，带模板、检查清单与反面信号，边做边查。</p>
+    </a>
+    <a class="step" href="dossier.html">
+      <div class="pn">STEP 03 · 背景</div>
+      <h3>读开发访谈卷宗</h3>
+      <p>岩田聪的瓶颈论、宫本茂的点子观、旷野之息的乘法设计——规则背后的思想从哪来。</p>
+    </a>
+  </div>
+</section>
+
+<section id="search-sec" style="padding-top:0">
+  <div class="eyebrow">SEARCH</div>
+  <div class="searchbox">
+    <input id="q" type="search" placeholder="搜索规则、章节、关键词…（如：起承转结）" autocomplete="off">
+    <div id="results"></div>
+  </div>
+</section>
+
+<section id="rules" style="padding-top:12px">
+  <div class="rowhead">
+    <div>
+      <div class="eyebrow">THE 16 RULES</div>
+      <h2>规则 R1–R16</h2>
+    </div>
+    <span class="progress">已读 <b id="readcount">0</b>/16</span>
+  </div>
+  {{RULES_SECTIONS}}
+  <a class="cheat-cta" href="cheatsheet.html">
+    <div>
+      <h4>速查表 · 16 条一句话版</h4>
+      <p>全站最高频回访页——做关卡时贴在手边的那一页，可直接打印。</p>
+    </div>
+    <span class="go">打开速查表 ▶</span>
+  </a>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>关卡之书 · 任天堂关卡设计教程 ／ 内容整理自公开访谈（社長が訊く、開発者に訊きました）与公开讲演（GDC、CEDEC）报道，图示为示意复原，引文为最小限度摘录转述 ／ 编纂 2026-07</p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  /* ---------- 阅读进度：卡片打勾 + n/16 ---------- */
+  try {
+    var read = JSON.parse(localStorage.getItem("lb-read") || "[]");
+    var n = 0;
+    document.querySelectorAll(".rcard").forEach(function (card) {
+      if (read.indexOf(card.getAttribute("data-id")) !== -1) { card.classList.add("read"); n++; }
+    });
+    var rc = document.getElementById("readcount");
+    if (rc) rc.textContent = n;
+  } catch (e) {}
+
+  /* ---------- 搜索 ---------- */
+  var q = document.getElementById("q");
+  var box = document.getElementById("results");
+  if (!q || !box) return;
+  var INDEX = null, sel = -1;
+
+  function load(cb) {
+    if (INDEX) return cb();
+    fetch("assets/search-index.json")
+      .then(function (r) { return r.json(); })
+      .then(function (d) { INDEX = d; cb(); })
+      .catch(function () { INDEX = []; cb(); });
+  }
+
+  function match(entry, kw) {
+    /* 返回 {score, h}。标题/编号命中优先于宣言，宣言优先于章节。 */
+    var t = (entry.num + " " + entry.title + " " + entry.subtitle).toLowerCase();
+    if (t.indexOf(kw) !== -1) return { score: 3, h: null };
+    if ((entry.rule || "").toLowerCase().indexOf(kw) !== -1) return { score: 2, h: null };
+    for (var i = 0; i < entry.headings.length; i++) {
+      if (entry.headings[i].text.toLowerCase().indexOf(kw) !== -1)
+        return { score: 1, h: entry.headings[i] };
+    }
+    return null;
+  }
+
+  function render(kw) {
+    if (!kw) { box.style.display = "none"; box.innerHTML = ""; sel = -1; return; }
+    var hits = [];
+    INDEX.forEach(function (e) {
+      var m = match(e, kw);
+      if (m) hits.push({ e: e, m: m });
+    });
+    hits.sort(function (a, b) { return b.m.score - a.m.score; });
+    hits = hits.slice(0, 12);
+    if (!hits.length) {
+      box.innerHTML = '<a><span class="rn">·</span>无结果</a>';
+      box.style.display = "block"; return;
+    }
+    box.innerHTML = hits.map(function (h) {
+      var href = h.e.file + (h.m.h ? "#" + h.m.h.id : "");
+      var sub = h.m.h ? '<span class="hd">§ ' + h.m.h.text + "</span>" : "";
+      return '<a href="' + href + '"><span class="rn">' + h.e.num + "</span>" +
+             h.e.title + " · " + h.e.subtitle + sub + "</a>";
+    }).join("");
+    box.style.display = "block"; sel = -1;
+  }
+
+  q.addEventListener("input", function () {
+    var kw = q.value.trim().toLowerCase();
+    load(function () { render(kw); });
+  });
+  q.addEventListener("keydown", function (ev) {
+    var links = box.querySelectorAll("a[href]");
+    if (ev.key === "ArrowDown" || ev.key === "ArrowUp") {
+      ev.preventDefault();
+      if (!links.length) return;
+      sel = ev.key === "ArrowDown" ? Math.min(sel + 1, links.length - 1) : Math.max(sel - 1, 0);
+      links.forEach(function (a, i) { a.classList.toggle("sel", i === sel); });
+    } else if (ev.key === "Enter") {
+      if (links.length) location.href = links[sel === -1 ? 0 : sel].getAttribute("href");
+    } else if (ev.key === "Escape") {
+      render("");
+    }
+  });
+  document.addEventListener("click", function (ev) {
+    if (!ev.target.closest(".searchbox")) render("");
+  });
+})();
+</script>
+</body>
+</html>

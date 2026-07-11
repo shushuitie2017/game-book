@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R15 · 反馈免跟进 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(74,154,142,.1), transparent 60%),var(--ink)}
+.hero::after{content:"報";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 15 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>反馈免跟进<br>免除报告者的确认义务,把反馈量最大化</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      免除 bug/反馈报告者的"跟进确认义务"——报告者不必负责复现、追踪、验证修复。降低报告门槛,让报告量最大化。反直觉,但被验证有效:摩擦越小,你能听到的问题越多。
+    </div>
+    <div class="src">
+      来源 · <b>CEDEC 2017「BotW QA」讲演「テスターの修正確認義務なし」</b>(GAME Watch / 4Gamer / Togetter 报道) ／ QA「Quality=面白さ」定义 ／ 游戏内 bug 报告功能 ／ CEDEC 2024 TotK「消除开发者与测试者的环境隔阂」
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>你听不到的问题,才是最危险的</h2>
+  <p>R14 用热力图做量化验证,但游戏"好不好玩"很多问题是量化数据照不出的——某个地方"感觉怪怪的"、某个交互"不太顺"、某段节奏"有点闷"。这些只能靠人主观反馈。而反馈验证有一个致命的隐藏敌人:<strong>那些没被说出来的问题</strong>。</p>
+  <p>一个测试者玩游戏时注意到了十个小问题,但最后只报告了两个——另外八个去哪了?它们被"报告的麻烦"过滤掉了。在大多数团队里,报告一个 bug 意味着:你要负责把它描述清楚、要能复现、要跟踪它的修复进度、修好后还要回去确认。<strong>报告一个问题,等于给自己揽一堆后续活儿。</strong>于是人会本能地权衡:"这个小问题值得我惹这么多麻烦吗?算了,不报了。"</p>
+  <div class="quote">
+    <div class="q">报告了 bug,结果自己陷进"确认修复"的任务里出不来——这大概是很常见的场景。因为讨厌这个,而干脆不报告,就能被规避掉。</div>
+    <div class="who">—— <b>关于"确认义务なし"机制的解读</b>(CEDEC 参会者讨论)</div>
+  </div>
+  <p>这就是问题所在:<strong>报告的摩擦,系统性地过滤掉了大量本该被听到的反馈</strong>。而被过滤掉的,往往正是那些"不严重但影响体验"的小问题——恰恰是打磨"面白さ(乐趣)"最需要的那类信息。任天堂的解法极其反直觉:<strong>把报告和后续责任彻底解绑,让报告变成一件零负担的事。</strong></p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE · 确认义务なし</div>
+  <h2>报告完就结束了,剩下的不归你</h2>
+  <p>《旷野之息》的 QA 体系里,有一条被业界广泛惊叹的机制,和一整套配套设计。先看那份让开发者们震动的清单:</p>
+  <div class="quote">
+    <div class="q">塞尔达的开发:严格的版本管理 / 单调作业几乎全自动化 / 每5分钟一次自动构建 / 构建错误点名通知 / 游戏内 bug 报告功能 / 三周的增量开发 / <strong>测试者无修复确认义务</strong> / 资源热重载 / 从早期就开始 debug——这太夸张了。</div>
+    <div class="who">—— <b>CEDEC 2017 BotW 讲演总结</b>(Togetter 广传清单)</div>
+  </div>
+  <p>其中"<strong>テスターの修正確認義務なし(测试者无修复确认义务)</strong>"是最反直觉的一条。它的意思是:测试者报告了一个问题之后,<strong>他的责任就此终结</strong>——不需要跟踪这个 bug 有没有被修、不需要修好后回来验证、不需要陷入任何后续流程。报告即完成。</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 250" xmlns="http://www.w3.org/2000/svg">
+      <!-- traditional: report drags a tail -->
+      <text x="210" y="24" text-anchor="middle" class="slc" font-size="12">传统:报告拖着一条责任尾巴</text>
+      <circle cx="70" cy="70" r="14" fill="#c8442a"/>
+      <text x="70" y="74" text-anchor="middle" fill="#fff" font-size="10" font-family="monospace">报</text>
+      <path d="M88 70 L 130 70" stroke="#8a8577" stroke-width="1.2" marker-end="url(#a1)"/>
+      <text x="185" y="66" class="sl" font-size="10">描述清楚</text>
+      <path d="M240 70 L 280 70" stroke="#8a8577" stroke-width="1.2" marker-end="url(#a1)"/>
+      <text x="330" y="66" class="sl" font-size="10">保证可复现</text>
+      <path d="M390 70 L 430 70" stroke="#8a8577" stroke-width="1.2" marker-end="url(#a1)"/>
+      <text x="480" y="66" class="sl" font-size="10">跟踪进度</text>
+      <path d="M525 70 L 565 70" stroke="#8a8577" stroke-width="1.2" marker-end="url(#a1)"/>
+      <text x="620" y="66" class="sl" font-size="10">修复后回来确认</text>
+      <text x="210" y="104" text-anchor="middle" class="slc" font-size="11">→ 报一个问题=揽一堆活 → 干脆不报</text>
+
+      <!-- botw: report ends immediately -->
+      <text x="210" y="164" text-anchor="middle" class="slt" font-size="12">BotW:报告即完成,无尾巴</text>
+      <circle cx="70" cy="200" r="14" fill="#4a9a8e"/>
+      <text x="70" y="204" text-anchor="middle" fill="#fff" font-size="10" font-family="monospace">报</text>
+      <path d="M88 200 L 128 200" stroke="#4a9a8e" stroke-width="1.4" marker-end="url(#a2)"/>
+      <rect x="132" y="188" width="70" height="24" rx="12" fill="rgba(74,154,142,.15)" stroke="#4a9a8e"/>
+      <text x="167" y="204" text-anchor="middle" class="slt" font-size="10">完成✓</text>
+      <text x="470" y="204" text-anchor="middle" class="sl" font-size="11">修复归开发者 → 报告零负担 → 什么都报</text>
+      <defs>
+        <marker id="a1" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L5,3 L0,6 z" fill="#8a8577"/></marker>
+        <marker id="a2" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L5,3 L0,6 z" fill="#4a9a8e"/></marker>
+      </defs>
+    </svg>
+    <div class="figcap">两种报告流程。传统流程里,报告拖着"描述→复现→跟踪→确认"一条长尾巴,报告者被后续任务绑架,于是为省麻烦而少报。<b>BotW 把尾巴砍掉:报告即完成,修复责任全归开发者。报告零负担,于是测试者什么都愿意报——报告量最大化。</b></div>
+  </div>
+
+  <p>配套的还有一个关键工具:<strong>游戏内 bug 报告功能</strong>。测试者在游戏里遇到问题,当场就能报告,不用退出游戏、不用切到另一个系统、不用填一堆表格。<strong>报告的物理摩擦也被降到最低。</strong>确认义务なし(消除心理摩擦)+ 游戏内报告(消除操作摩擦),双管齐下,让"报告一个问题"从一件麻烦事变成一件顺手事。</p>
+  <p>这一切服务于那个特殊的 QA 定义(R14 提过):<strong>Quality = 面白さ(乐趣),QA 的职责是把乐趣最大化</strong>。要打磨乐趣,你需要尽可能多地听到"哪里不够好玩"。而只有把报告的摩擦降到零,你才能听到那些原本会被"嫌麻烦"过滤掉的、关于乐趣的细微反馈。</p>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 底层原理</div>
+  <h2>为什么"免责"反而能提升质量?三层逻辑</h2>
+  <div class="model">
+    <div class="mstep"><h5>摩擦是反馈的税,税越高征到的越少</h5><p>每一道报告流程(描述、复现、跟踪、确认)都是一笔"税"。税越重,人越倾向于只报告"值得纳这个税"的大问题,而放弃小问题。但打磨乐趣恰恰依赖大量小问题。<strong>免除确认义务=大幅减税=征到海量原本收不到的小反馈。</strong></p></div>
+    <div class="mstep"><h5>分工回归专业:报告者报告,修复者修复</h5><p>让报告者负责跟踪修复,是一种错误的责任捆绑——发现问题和修复问题是两种不同的工作。免责后,报告者专注于"多发现、多报告",开发者专注于"判断、修复、验证"。<strong>各司其职,整体效率反而更高。</strong>正如讨论中所说,修复方在修的时候本来就最清楚原因、最会验证,让报告者去确认反而是低效的。</p></div>
+    <div class="mstep"><h5>报告量大 → 信号更全 → 打磨更准</h5><p>反馈的价值有统计性:你听到的问题越多,越能看出哪些是普遍痛点、哪些是个例。海量低门槛反馈汇聚起来,才能让你准确定位真正影响乐趣的地方。<strong>宁可收到100条里90条无用,也好过因为高门槛只收到5条。</strong></p></div>
+  </div>
+
+  <h3>续篇:TotK 更进一步——消除开发者与测试者的隔阂</h3>
+  <p>这套哲学在《王国之泪》里被推得更远。CEDEC 2024 披露,他们意识到一个更深的问题:</p>
+  <div class="quote">
+    <div class="q">只要开发者和测试者之间的环境存在隔阂,"既好玩又没bug的游戏"这个目标就很难达成。于是给测试者提供了和开发者同等的工具,开放开发Wiki、聊天工具、任务管理工具,还让测试者参加开发者的会议。</div>
+    <div class="who">—— <b>CEDEC 2024 TotK QA 讲演</b>(CGWORLD 报道)</div>
+  </div>
+  <p>结果是,一个"两种攻击伤害值相同"的现象被测试者发现——<strong>这本来不是 bug,但测试者带着"让游戏更好玩"的意识去调查才注意到它</strong>。这揭示了 R15 的终极形态:当你把报告门槛降到零、并让反馈者和开发者站在同一视野里,反馈者就不再只是"找 bug 的人",而变成了<strong>"一起打磨乐趣的人"</strong>。反馈的性质从"报错"升级成了"共创"。</p>
+  <div class="warn"><b>免责,但不免"分类"。</b>零门槛报告会带来海量反馈,其中必然大量无用。R15 不是说"照单全收全部修复",而是"让报告零负担,但由开发方来判断哪些重要"。TotK 的"穴探しツール"就把地形洞分成"必修的大洞"和"不影响体验的小洞"。<strong>降低报告门槛的同时,必须有一套分类/优先级机制在开发端把信号从噪声里筛出来</strong>——否则会被反馈淹没。免责是给报告者的,筛选是给开发者的。</div>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么把反馈摩擦降到零</div>
+  <h2>执行流程</h2>
+  <div class="model">
+    <div class="mstep"><h5>免除报告者的一切后续义务</h5><p>明确告诉测试者/朋友:你只管说"哪里怪、哪里不好玩",不用负责描述精确、不用复现、不用跟踪、不用回来确认。报告即完成,剩下的是我的事。</p></div>
+    <div class="mstep"><h5>提供"游戏内/就地"的报告入口</h5><p>降低操作摩擦:在游戏里放一个一键报告按钮(截图+当前状态自动附上),或一个随手可填的极简入口。别让人退出游戏、切系统、填长表格。</p></div>
+    <div class="mstep"><h5>接受"模糊反馈",不要求精确</h5><p>"这段有点闷""这里不太顺"这类模糊反馈也照收。它可能指向真问题,精确定位是你的活,不是报告者的活。要求精确=提高门槛=减少反馈。</p></div>
+    <div class="mstep"><h5>在开发端建分类/优先级机制</h5><p>零门槛必然带来海量、混杂的反馈。你需要一套筛选:哪些是普遍痛点(多人提到)、哪些必修、哪些可忽略。像 TotK 把洞分大小一样,给反馈分级。免责给报告者,筛选归你。</p></div>
+    <div class="mstep"><h5>让反馈者尽量进入你的视野(进阶)</h5><p>条件允许时,让核心测试者看到你的开发进展、参与讨论。他们会从"找茬的人"变成"一起磨乐趣的人",反馈质量跃升。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 反馈免跟进审计</h4>
+    <ul>
+      <li>是否明确免除了报告者的复现/跟踪/确认义务?</li>
+      <li>是否提供了游戏内/就地的低摩擦报告入口?</li>
+      <li>是否接受模糊反馈(不要求报告者精确定位)?</li>
+      <li>报告者是否清楚"报告即完成,剩下不归你"?</li>
+      <li>开发端是否有分类/优先级机制筛信号?</li>
+      <li>是否区分了"必修"和"可忽略"的反馈?</li>
+      <li>验证目标是否是"打磨乐趣"(而非只是"消灭bug")?</li>
+      <li>是否让核心反馈者进入了你的视野(进阶)?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>反馈系统设计表</h2>
+  <div class="tpl">
+    <div class="h">FRICTIONLESS FEEDBACK SYSTEM</div>
+    <div class="row"><span class="k">reporter_obligation</span>: <span class="x">免除:复现/跟踪/确认</span>(报告即完成)</div>
+    <div class="row"><span class="k">report_entry</span>: 报告入口(游戏内一键/极简表单)</div>
+    <div class="row"><span class="k">auto_attach</span>: 自动附带(截图/坐标/状态,省报告者手工)</div>
+    <div class="row"><span class="k">accept_vague</span>: 是否接受模糊反馈("有点闷"也收)</div>
+    <div class="row"><span class="k">dev_triage</span>: 开发端分类机制(必修/可忽略/普遍痛点)</div>
+    <div class="row"><span class="k">priority_signal</span>: 如何从噪声里筛信号(多人提=优先)</div>
+    <div class="row"><span class="k">reporter_visibility</span>: 反馈者能否看到开发进展(进阶)</div>
+    <div class="row"><span class="k">goal</span>: 验证目标 = 打磨乐趣(非仅消灭bug)</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>星屑急便(多人配送) — 游戏内报告是现成的</h4>
+    <ul>
+      <li><strong>M2 发朋友测试时,内置一键反馈</strong>:在游戏里放个反馈按钮,点一下自动截图+附上当前关卡/坐标/状态,发到你的后端。朋友不用退出、不用描述、不用截图——"这里怪"点一下就完事。你的 Django/AWS 栈接这个毫无压力。</li>
+      <li><strong>明确告诉朋友"随便吐槽,不用负责"</strong>:朋友帮你测游戏最怕"给你添麻烦"。明说"你只管说哪里不爽,后面的全归我,你报完就没你事了"。这句话能让你收到的反馈量翻好几倍。</li>
+      <li><strong>联机反馈尤其宝贵且易流失</strong>:联机手感、延迟感、平衡问题,玩家在对局中最有体感,但对局结束就忘/懒得说。就地一键反馈能抓住这些转瞬即逝的联机体验反馈。</li>
+      <li><strong>开发端建分级</strong>:零门槛会让你收到一堆反馈,建个简单标签系统(必修/体验/个例/多人提及),用你熟悉的任务管理方式(你本来就用 SQS/任务流)把信号筛出来。免责给朋友,筛选归你。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>人生小镇(人生模拟) — 反馈免跟进的泛化</h4>
+    <ul>
+      <li><strong>剧情/节奏反馈最需要零门槛</strong>:人生模拟的问题多是"这段剧情闷""这个抉择没感觉"这类主观体验,玩家很难精确描述,更懒得写长反馈。给一个"当前场景一键吐槽"入口,接受最模糊的反馈("这里无聊"),你来定位原因。</li>
+      <li><strong>把"读到哪里弃坑"当作最强反馈</strong>:比起主动报告,玩家"在哪一段停止游玩"是更诚实的信号(等价于 R14 热力图)。埋点记录弃坑位置,零需要玩家做任何事——这是摩擦为零的反馈的极致形态。</li>
+      <li><strong>免责心态延伸到你自己</strong>:这条对独立开发者还有一层元意义——<strong>降低你自己"记录问题"的门槛</strong>。开发时随手把"这里以后要改"记下来(哪怕一句话、一个 TODO 注释),别要求自己当场想清方案。免除自己的"当场解决义务",能让你捕获更多灵感和问题,留待后面统一处理(对接你的机制冷藏库)。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 免了责任,却没建筛选机制,被反馈淹没。</b>零门槛会带来海量混杂反馈。如果开发端没有分类/优先级机制,你会被淹没、无从下手,最后干脆全部忽略——等于白收。免责是给报告者减负,但筛信号的活必须由你(开发端)扛起来。两者是配套的,缺一不可。</div>
+  <div class="warn"><b>误用二 · 要求报告者"说清楚点",把门槛又提上去。</b>看到模糊反馈("这里怪")就追问"具体哪里怪?能复现吗?",等于把你砍掉的摩擦又装回去。报告者一旦感到"报告要费脑子",就会退回到"少报"。接受模糊,精确定位是你的活。</div>
+  <div class="warn"><b>误用三 · 把"零门槛报告"等同于"照单全收全部修复"。</b>免责不代表每条反馈都要修。海量反馈里大量是个例、误解、或不重要的。你要做的是"全部听到、择要而修",而不是"全部修复"。分不清这点,会让你在无关紧要的反馈上耗尽精力。听得多,修得准。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R14 · 热力图验证</span>
+      <span>NEXT ▶ <b>R16 · 骨架期禁止用旧内容填空(收官)</b></span>
+    </div>
+    <p>资料来源 · CEDEC 2017「『ゼルダの伝説 ブレス オブ ザ ワイルド』におけるQA ～ゲームの面白さを最大化するツールやデバッグの紹介～」(GAME Watch / 4Gamer / Togetter 广传清单 / 参会者讨论) ／ CEDEC 2024「『ティアーズ オブ ザ キングダム』におけるフィールド制作とQA」(CGWORLD / ゲームメーカーズ 报道)。图示为基于讲演内容的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

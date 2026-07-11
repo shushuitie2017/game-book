@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R11 · 三角配比 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(74,154,142,.1), transparent 60%),var(--ink)}
+.hero::after{content:"配";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep.big::before{content:"大";font-family:var(--serif);color:var(--amber);font-weight:900}
+.mstep.mid::before{content:"中";font-family:var(--serif);color:var(--teal);font-weight:900}
+.mstep.sml::before{content:"小";font-family:var(--serif);color:var(--cinnabar);font-weight:900}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 11 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>三角配比<br>大地标 + 周围小遮蔽,把开放地图收窄成有限路线</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      按"大少、中量、小多"配置三角形。大地标周围环绕密集的小遮蔽,<strong>既保留玩家的自由感,又把无穷的进入路线收窄成有限几条可测试的路径</strong>——让"全方向自由"和"可控可测"两全。
+    </div>
+    <div class="src">
+      来源 · <b>CEDEC 2017「フィールド三角形の法則」米津真</b>(4Gamer / GAME Watch / Gamer 报道) ／ "全ルートを計算するのは不可能"→圆锥配置解法 ／ 大中小分工与配比逻辑
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>开放世界的噩梦:玩家能从任何方向来,你测不完</h2>
+  <p>前面几条(R7 引力、R9 形状、R10 顶点)都在解决"怎么引导玩家"。R11 解决一个更工程、更现实的问题:<strong>当玩家可以从任何方向进入一个区域时,设计者根本无法预测和测试所有可能路线</strong>。</p>
+  <div class="quote">
+    <div class="q">《旷野之息》是开放世界,必须考虑全方向的进入路线。但要把所有路线都计算好再配置,实质上是不可能的。</div>
+    <div class="who">—— <b>米津真</b> · CEDEC 2017</div>
+  </div>
+  <p>这是开放世界的根本矛盾。线性关卡里,玩家只能从A走到B,你能精确控制他看到什么、遇到什么。但在"全方向自由"的开放地图里,进入任意一点的路径有无穷多条——你不可能为每条路径都设计好体验、测试好平衡。要么牺牲自由(加隐形墙、强制路线),要么放弃质量(听天由命)。</p>
+  <p>三角形法则的配比逻辑,是对这个矛盾的天才解法。它<strong>不靠强制,而是靠地形的自然分布,把"无穷多路线"悄悄收窄成"有限几条主要路线"</strong>——玩家依然觉得自己想怎么走就怎么走(自由感保留),但实际上他的路线被地形温和地约束在了设计者能覆盖、能测试的范围内。这是"看似完全自由,实则可控可测"的魔术。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CORE · 大中小分工</div>
+  <h2>三种尺寸,三种职责,三种数量</h2>
+  <p>R9 提过大中小分工,这里深入到"数量配比"这个关键维度。米津真给三种尺寸定了明确的职责和数量原则:</p>
+  <div class="model">
+    <div class="mstep big"><h5>大三角 = 地标 · 数量最少</h5><p>山脉级的大地形,远距可见,充当"ランドマーク(地标)"。它是玩家的远期目标锚点(接 R7 引力)。<strong>数量少</strong>——地标太多会互相争夺注意力,反而没有焦点。占地面积大,但个数稀少。</p></div>
+    <div class="mstep mid"><h5>中三角 = 遮蔽 · 数量中等</h5><p>中等的山丘,职责是"遮蔽"——挡住更远处的东西,制造 R9 的渐露效果。它让远景时隐时现,维持探索期待。数量适中,分布在大地标和玩家之间。</p></div>
+    <div class="mstep sml"><h5>小三角 = 节奏 · 数量最多</h5><p>近距的岩石、起伏,职责是"テンポ(节奏)"。它促使玩家频繁做小的路线微调(左绕还是右绕、上还是下),<strong>频繁的摇杆输入直接带来操作的游玩手感</strong>。数量最多,密集铺满地表。</p></div>
+  </div>
+  <div class="quote">
+    <div class="q">按大·中·小的顺序,数量递增地把图形配置到场地上,就能做到无论从哪个方向、走哪条路,画面里都必定同时存在一个远处的大三角和一个近处的小三角。</div>
+    <div class="who">—— <b>米津真</b> · CEDEC 2017</div>
+  </div>
+  <p>这个"大少、中量、小多"的金字塔配比,保证了<strong>任意视角的构图都是完整的</strong>:远处有地标给方向(大),中景有遮蔽给期待(中),近景有起伏给操作节奏(小)。玩家无论站在哪、朝哪看,画面都不空、不乱、有层次。这是配比的第一层价值——构图永远成立。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE · 配比如何收窄路线</div>
+  <h2>大地标周围环绕小三角 = 悄悄生成有限路径</h2>
+  <p>配比的第二层、也是最深的价值,是<strong>把无穷路线收窄成有限路线</strong>。关键机制在 4Gamer 的报道里被点破:</p>
+  <div class="quote">
+    <div class="q">作为地标的大三角周围有许多小三角,这实质上生成了通向大三角的多条路径。这一点提高了玩家视角下的选择自由度。</div>
+    <div class="who">—— <b>米津真讲演</b> · 4Gamer 报道</div>
+  </div>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 320" xmlns="http://www.w3.org/2000/svg">
+      <!-- WITHOUT small triangles: infinite lines -->
+      <text x="200" y="24" text-anchor="middle" class="slc" font-size="12">✗ 光秃的地标:无穷条进入路线,测不完</text>
+      <path d="M150 140 L200 60 L250 140 Z" fill="#20252e" stroke="#d9a441" stroke-width="1.3"/>
+      <!-- many lines from bottom to landmark -->
+      <g stroke="#c8442a" stroke-width="0.8" opacity=".5">
+        <path d="M60 200 L195 130"/><path d="M100 200 L198 130"/><path d="M140 200 L200 130"/>
+        <path d="M180 200 L202 130"/><path d="M220 200 L204 130"/><path d="M260 200 L206 130"/>
+        <path d="M300 200 L208 130"/><path d="M340 200 L210 130"/><path d="M80 200 L196 130"/>
+        <path d="M120 200 L199 130"/><path d="M160 200 L201 130"/><path d="M200 200 L203 130"/>
+        <path d="M240 200 L205 130"/><path d="M280 200 L207 130"/><path d="M320 200 L209 130"/>
+      </g>
+      <text x="200" y="216" text-anchor="middle" class="sl" font-size="10">∞ 条路径</text>
+
+      <!-- WITH small triangles: funneled -->
+      <text x="620" y="24" text-anchor="middle" class="slt" font-size="12">✓ 环绕小遮蔽:收窄成几条主路,可测试</text>
+      <path d="M570 140 L620 60 L670 140 Z" fill="#20252e" stroke="#d9a441" stroke-width="1.3"/>
+      <!-- surrounding small triangles (obstacles) -->
+      <path d="M500 200 L525 165 L550 200 Z" fill="#1a1e25" stroke="#c8442a" stroke-width="1"/>
+      <path d="M560 205 L580 175 L600 205 Z" fill="#1a1e25" stroke="#c8442a" stroke-width="1"/>
+      <path d="M640 205 L660 175 L680 205 Z" fill="#1a1e25" stroke="#c8442a" stroke-width="1"/>
+      <path d="M690 200 L715 165 L740 200 Z" fill="#1a1e25" stroke="#c8442a" stroke-width="1"/>
+      <path d="M525 235 L548 205 L571 235 Z" fill="#1a1e25" stroke="#c8442a" stroke-width="1"/>
+      <path d="M668 235 L691 205 L714 235 Z" fill="#1a1e25" stroke="#c8442a" stroke-width="1"/>
+      <!-- funneled paths (only gaps) -->
+      <g stroke="#4a9a8e" stroke-width="1.6" fill="none">
+        <path d="M555 250 C 575 220, 600 180, 618 132" marker-end="url(#af)"/>
+        <path d="M620 255 C 625 210, 622 175, 620 132" marker-end="url(#af)"/>
+        <path d="M690 250 C 665 218, 640 180, 622 132" marker-end="url(#af)"/>
+      </g>
+      <text x="620" y="280" text-anchor="middle" class="slt" font-size="10">3~4 条主路(穿过小三角的缝隙)</text>
+      <defs><marker id="af" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0 L5,3 L0,6 z" fill="#4a9a8e"/></marker></defs>
+    </svg>
+    <div class="figcap">同一个地标,两种处理。<b>左:光秃的地标,玩家可从任意角度直线扑向它,进入路线无穷,设计者无法测试。右:地标周围环绕密集小三角(遮蔽),玩家被迫从小三角之间的缝隙穿行,无穷路线被收窄成 3~4 条主路。</b>玩家仍觉得"我在自由选路",但每条路都在设计者的掌控与测试范围内。</div>
+  </div>
+
+  <p>这就是配比的魔术核心。乍看矛盾——加了障碍怎么反而"提高了选择自由度"?因为:</p>
+  <div class="model">
+    <div class="mstep"><h5>光秃的地标 = 假自由</h5><p>没有小三角时,玩家确实能从任意方向直冲地标,但这些路径体验雷同(都是直线走过去)、无法测试、也不有趣。"无穷条一样的路"不是自由,是空洞。</p></div>
+    <div class="mstep"><h5>环绕小三角 = 真选择</h5><p>加上密集小三角后,玩家必须在小三角之间做选择:走左边缝隙(可能有宝箱)、走右边坡道(可能更快)、还是翻过中间的丘(能俯瞰)。<strong>每条路都不同、都有内容、都被设计者测过</strong>。有限但有意义的选择,比无限但雷同的路径,自由感更强。</p></div>
+    <div class="mstep"><h5>收窄 = 可覆盖 = 可保证质量</h5><p>路线被收窄到3~4条,设计者就能为每条路都安排引力点、遮蔽渐露、平衡好难度,并逐条测试。<strong>玩家的"自由"落在了设计者能100%覆盖的范围内</strong>——这才是开放世界质量可控的秘密。</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 渐进式构建</div>
+  <h2>不是一次画完全图,而是"一区块 × 无数次"</h2>
+  <p>配比还有一个工程层面的智慧:任天堂不是先规划整张海拉鲁再填充,而是<strong>先做透一个小区块的大中小配比,再像滚雪球一样扩展</strong>:</p>
+  <div class="quote">
+    <div class="q">把由大中小要素构成的一块区域先做出来,配合玩家诱导的意图,一圈、再一圈地逐渐扩展手法,最终组建起整个世界。</div>
+    <div class="who">—— <b>米津真</b> · CEDEC 2017</div>
+  </div>
+  <p>这对独立开发者极其重要。它意味着:<strong>你不需要一开始就设计好整张地图</strong>。先把一个区块的大中小配比调到满意(一个大地标+若干中遮蔽+密集小三角,收窄出几条好路线),验证它好玩,然后用同一套配比逻辑向外扩展一圈,再一圈。<strong>配比是可复用的"区块模板",不是一次性的全局规划</strong>。这和你 web-game-pipeline 里"先跑通垂直切片再扩展"的思想完全一致——先做透一个区块的配比,就是地图版的垂直切片。</p>
+  <div class="warn"><b>用"真的走一遍"来验证配比,不用瞬移。</b>米津提到开发中期不用debug瞬移,而是真让林克跑,才发现"塔一直看得见很无聊"等问题,再追加近处遮蔽调整。配比的好坏,只有用玩家的实际视角和移动速度走一遍才能判断。俯瞰全图看着漂亮的配比,走起来可能完全是另一回事。</div>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么用配比收窄路线</div>
+  <h2>执行流程</h2>
+  <div class="model">
+    <div class="mstep"><h5>先放大地标,数量要少</h5><p>确定这个区块的远期目标锚点(1个,最多2个大地标)。它是玩家会朝之前进的方向。别放太多,否则焦点分散。</p></div>
+    <div class="mstep"><h5>在地标与玩家之间放中遮蔽</h5><p>中等地形挡住地标,制造渐露(接 R9),让目标时隐时现,维持期待。数量适中。</p></div>
+    <div class="mstep"><h5>在地标周围密集环绕小三角</h5><p>关键一步:用密集的小遮蔽包围地标,把玩家的进入路线逼进小三角之间的缝隙。这是"收窄"发生的地方。</p></div>
+    <div class="mstep"><h5>确认收窄出了3~5条有意义的主路</h5><p>检查:穿过小三角缝隙,是否形成了少数几条清晰主路?每条路是否体验不同、各有内容?若还是能任意直冲,加密小三角;若路太少太挤,减一点。</p></div>
+    <div class="mstep"><h5>为每条主路安排内容并逐条测试</h5><p>路线收窄后,给每条路布引力点、遮蔽渐露、难度平衡,然后逐条真人走测。这是收窄换来的红利——有限路线可以100%覆盖。</p></div>
+    <div class="mstep"><h5>验证构图:任意视角都有大+小同居</h5><p>在区块内多个位置停下看,确认画面里总同时有远处大三角和近处小三角。缺则补,保证任意构图都成立。</p></div>
+    <div class="mstep"><h5>调满意后,以此为模板向外扩一圈</h5><p>别急着铺全图。一个区块配比调好、验证好玩后,用同一套逻辑向外扩展,滚雪球式构建。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 三角配比审计</h4>
+    <ul>
+      <li>大地标数量是否少(1~2个),避免焦点分散?</li>
+      <li>中遮蔽是否让地标时隐时现(渐露)?</li>
+      <li>小三角是否密集环绕地标?(数量:大&lt;中&lt;小)</li>
+      <li>进入路线是否被收窄成 3~5 条清晰主路?</li>
+      <li>每条主路是否体验不同、各有内容(而非雷同直线)?</li>
+      <li>每条主路是否都安排了内容并逐条测试过?</li>
+      <li>任意视角构图是否都有"远大三角+近小三角"同居?</li>
+      <li>是否用真人视角走一遍(非瞬移)验证了配比?</li>
+      <li>是否先做透一个区块再向外扩展(而非一次铺全图)?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>区块配比设计表</h2>
+  <div class="tpl">
+    <div class="h">BLOCK TRIANGLE COMPOSITION</div>
+    <div class="row"><span class="k">block_name</span>: 区块名称</div>
+    <div class="row"><span class="k">big[1-2]</span>: 大地标(远期锚点,数量少)</div>
+    <div class="row"><span class="k">mid[]</span>: 中遮蔽(让地标渐露,数量中)</div>
+    <div class="row"><span class="k">small[]</span>: 小三角(环绕地标,数量最多)</div>
+    <div class="row"><span class="k">funneled_routes</span>: 收窄出的主路(目标3~5条)</div>
+    <div class="row">  └ <span class="k">route_1</span>: 内容/引力/难度 + 是否已测</div>
+    <div class="row">  └ <span class="k">route_2</span>: 内容/引力/难度 + 是否已测</div>
+    <div class="row">  └ <span class="k">...</span></div>
+    <div class="row"><span class="k">composition_check</span>: 任意视角是否大+小同居?</div>
+    <div class="row"><span class="k">walked_test</span>: 真人视角走过?(非瞬移)</div>
+    <div class="row"><span class="k">expand_from</span>: 以此模板向外扩展的方向</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>星屑急便(多人配送) — 配比收窄=可测试的联机地图</h4>
+    <ul>
+      <li><strong>用建筑/障碍收窄配送路线</strong>:2D俯视里,送达点是"大地标",在它周围用建筑、围栏、水域(小三角等价物)环绕,把玩家的接近路线收窄成3~4条主路。玩家仍觉得自由选路,但每条路你都能安排捷径/道具/陷阱并逐条测平衡。</li>
+      <li><strong>联机地图的救命价值</strong>:R11 对联机尤其关键。开放的PVP/竞速地图如果玩家能任意穿行,你根本测不完所有战术路线,平衡崩坏。用配比把进攻/配送路线收窄到有限几条,你才能保证每条路的博弈都测过、都平衡。这直接解决联机地图"测不完"的噩梦。</li>
+      <li><strong>大中小构图=清晰的空间可读性</strong>:远处大地标给玩家方向感,近处小障碍给操作节奏(频繁微操绕行),让高速配送/竞速时空间始终清晰可读,不会迷失。</li>
+      <li><strong>区块模板复用</strong>:做一个配比良好的区块(一个送达点+环绕障碍+几条主路),验证好玩后,整张图用同一套逻辑拼接多个这样的区块。符合你 pipeline 的垂直切片思想。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>人生小镇(人生模拟) — 配比的抽象化:收窄决策空间</h4>
+    <ul>
+      <li><strong>"大地标"=人生大目标,"小三角"=沿途小决策</strong>:一个人生阶段的大目标(考上大学、买房)是大地标。别让玩家有无穷条路径直冲它,而是用一系列小决策(每天的时间分配、小事件)环绕它——把"如何达成大目标"收窄成几条有意义的人生路线(苦读型/社交型/投机型),每条都被你设计和平衡过。</li>
+      <li><strong>有限但有意义 &gt; 无限但雷同</strong>:人生模拟最怕"选择很多但都差不多"。R11 的教训直接适用:与其给玩家100个无差别的选项,不如收窄成3~4条体验迥异的人生路线,每条都独特、都值得重玩。有限的深度胜过无限的浅薄。</li>
+      <li><strong>构图=信息层级</strong>:大地标(长期目标)始终在"视野"里给方向,中遮蔽(中期里程碑)时隐时现给期待,小三角(日常选择)给操作节奏。让玩家任何时候都清楚"我的长期目标是什么、下一步做什么",不迷失。</li>
+      <li><strong>区块模板=章节复用</strong>:一个人生阶段的配比(大目标+里程碑+日常决策)调好后,作为模板复用到下一阶段,只换内容不换结构。降低设计成本,保证节奏一致。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>三个反面信号</h2>
+  <div class="warn"><b>误用一 · 只有大地标,没有环绕的小遮蔽。</b>光秃的地标周围一马平川,玩家能从任意方向直线扑过去。路线无穷、体验雷同、无法测试——这正是"假自由"。必须用密集小三角环绕地标,把路线收窄成有限几条有内容、可测试的主路。</div>
+  <div class="warn"><b>误用二 · 大地标太多,焦点分散。</b>如果一个区块里塞了五六个大地标,它们互相争夺注意力,玩家不知道该朝哪走,方向感崩溃。大三角要"少"——1~2个足矣。数量配比必须是"大少、中量、小多"的金字塔,倒过来就乱套。</div>
+  <div class="warn"><b>误用三 · 只在俯瞰视角调配比,不真人走。</b>从上帝视角看着漂亮均衡的三角分布,用玩家的实际视角和移动速度走一遍,可能完全是另一回事(地标一直可见很无聊、或某条路根本走不通)。配比的最终验证必须是真人视角走测,不能靠俯瞰或瞬移。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R10 · 顶点聚光灯</span>
+      <span>NEXT ▶ <b>R12 · 京都标定法:用身体记忆定尺寸</b></span>
+    </div>
+    <p>资料来源 · CEDEC 2017「『ゼルダの伝説 ブレス オブ ザ ワイルド』におけるフィールドレベルデザイン～ハイラルの大地ができるまで～」(米津真「フィールド三角形の法則」大中小配比部分)的 4Gamer.net / GAME Watch / Gamer.ne.jp / Nintendo DREAM WEB 各家报道。图示为基于讲演内容的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R5 · 起承转结 — 任天堂关卡设计教程</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0d0f12;--panel:#1a1e25;--panel2:#20252e;
+  --text:#d8d2c4;--dim:#8a8577;
+  --cinnabar:#c8442a;--amber:#d9a441;--teal:#4a9a8e;
+  --hairline:rgba(216,210,196,.12);
+  --serif:'Noto Serif SC',serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:var(--serif);line-height:1.9}
+::selection{background:var(--cinnabar);color:#fff}
+.wrap{max-width:880px;margin:0 auto;padding:0 26px}
+
+.hero{padding:80px 0 50px;position:relative;overflow:hidden;
+  background:radial-gradient(900px 460px at 88% 0%, rgba(74,154,142,.1), transparent 60%),var(--ink)}
+.hero::after{content:"転";position:absolute;right:-2%;bottom:-16%;font-size:min(38vw,320px);font-weight:900;color:rgba(216,210,196,.035);line-height:1;pointer-events:none}
+.rid{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--cinnabar);margin-bottom:14px}
+.rid b{color:var(--dim);font-weight:400}
+h1{font-size:clamp(27px,4.6vw,42px);font-weight:900;line-height:1.32}
+.rule{margin-top:22px;padding:18px 22px;background:var(--panel);border-left:3px solid var(--amber);font-size:16px;color:#efe9da}
+.rule .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--amber);display:block;margin-bottom:8px}
+.src{margin-top:18px;font-family:var(--mono);font-size:11px;color:var(--dim);letter-spacing:.05em;line-height:1.9}
+.src b{color:var(--teal);font-weight:500}
+
+section{padding:44px 0;border-top:1px solid var(--hairline)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--teal);margin-bottom:12px}
+h2{font-size:clamp(21px,3.1vw,28px);font-weight:900;margin-bottom:20px}
+h3{font-size:18px;font-weight:700;margin:34px 0 12px;color:var(--amber)}
+p{margin-bottom:16px}
+strong{color:#efe9da}
+
+.quote{margin:22px 0;padding:20px 24px;background:var(--panel);border-left:3px solid var(--cinnabar)}
+.quote .q{font-size:16.5px;font-weight:600;line-height:1.95;color:#efe9da}
+.quote .who{margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--dim)}
+.quote .who b{color:var(--amber);font-weight:500}
+
+.fig{margin:26px 0;background:var(--panel);border:1px solid var(--hairline);padding:22px}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{margin-top:12px;font-family:var(--mono);font-size:11px;color:var(--dim);line-height:1.85}
+.figcap b{color:var(--teal);font-weight:500}
+
+table{width:100%;border-collapse:collapse;margin:22px 0;font-size:14px}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-align:left;color:var(--amber);padding:10px 12px;border-bottom:1px solid var(--amber);font-weight:500}
+td{padding:12px;border-bottom:1px solid var(--hairline);vertical-align:top;line-height:1.8}
+td:first-child{color:var(--teal);font-weight:600}
+
+.model{counter-reset:mc;margin:24px 0}
+.mstep{display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px dashed var(--hairline)}
+.mstep:last-child{border-bottom:none}
+.mstep::before{counter-increment:mc;content:counter(mc);font-family:var(--mono);font-size:20px;color:var(--cinnabar);font-weight:700}
+.mstep.k::before{content:"起";font-family:var(--serif);color:var(--teal)}
+.mstep.sh::before{content:"承";font-family:var(--serif);color:var(--amber)}
+.mstep.t::before{content:"転";font-family:var(--serif);color:var(--cinnabar);font-weight:900}
+.mstep.ke::before{content:"結";font-family:var(--serif);color:var(--dim)}
+.mstep h5{font-size:15.5px;color:#efe9da;font-weight:700;margin-bottom:5px}
+.mstep p{font-size:14px;margin-bottom:0}
+
+.tpl{background:var(--panel2);border:1px solid var(--hairline);padding:20px 22px;margin:24px 0;font-family:var(--mono);font-size:13px;line-height:2}
+.tpl .h{color:var(--amber);letter-spacing:.1em;margin-bottom:10px}
+.tpl .row{color:var(--text)}
+.tpl .k{color:var(--teal)}
+.tpl .x{color:var(--cinnabar)}
+
+.check{background:linear-gradient(135deg,rgba(74,154,142,.08),transparent 55%),var(--panel);border:1px solid rgba(74,154,142,.3);padding:22px 24px;margin:26px 0}
+.check h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--teal);margin-bottom:12px}
+.check ul{list-style:none}
+.check li{padding:7px 0 7px 26px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.check li:last-child{border-bottom:none}
+.check li::before{content:"☐";position:absolute;left:2px;color:var(--teal)}
+
+.apply{background:linear-gradient(135deg,rgba(200,68,42,.09),transparent 55%),var(--panel);border:1px solid rgba(200,68,42,.32);padding:22px 24px;margin:26px 0}
+.apply h4{font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--cinnabar);margin-bottom:12px}
+.apply ul{list-style:none}
+.apply li{padding:7px 0 7px 24px;position:relative;font-size:14.5px;line-height:1.8;border-bottom:1px dashed var(--hairline)}
+.apply li:last-child{border-bottom:none}
+.apply li::before{content:"▸";position:absolute;left:0;color:var(--cinnabar)}
+
+.warn{border:1px solid rgba(217,164,65,.3);background:rgba(217,164,65,.05);padding:18px 22px;margin:22px 0;font-size:14.5px}
+.warn b{color:var(--amber)}
+
+footer{padding:44px 0 70px;border-top:1px solid var(--hairline)}
+.nav{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;margin-bottom:24px}
+.nav span{color:var(--dim)}
+.nav b{color:var(--teal)}
+footer p{font-family:var(--mono);font-size:10.5px;color:var(--dim);line-height:2}
+
+.sl{font-family:'JetBrains Mono',monospace;fill:#8a8577;font-size:11px}
+.slt{font-family:'JetBrains Mono',monospace;fill:#4a9a8e;font-size:11px}
+.sla{font-family:'JetBrains Mono',monospace;fill:#d9a441;font-size:11px}
+.slc{font-family:'JetBrains Mono',monospace;fill:#c8442a;font-size:11px}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="rid">RULE 05 <b>/ 16 · 任天堂关卡设计教程</b></div>
+    <h1>起承转结<br>一关只教一个机制,按四段展开它的一生</h1>
+    <div class="rule">
+      <span class="lbl">THE RULE</span>
+      每一关只围绕一个核心机制,按「起→承→転→結」四段展开:起(零风险展示)、承(加入风险与变化)、転(违反已建立的预期)、結(华丽谢幕)。「転」必须违反预期,只加难度不算転。
+    </div>
+    <div class="src">
+      来源 · <b>林田宏一(3Dランド/3Dワールド总监)的「新要素を立て続けに導入する」设计哲学</b> ／ 社長が訊く『スーパーマリオ 3Dワールド』 ／ GDC 2012「The Structure of Fun」 ／ GMTK「Super Mario 3D World's 4 Step Level Design」
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <div class="eyebrow">WHY · 这条规则要解决的问题</div>
+  <h2>《3D世界》塞了几十个新机制,却没有一个教程弹窗</h2>
+  <p>《超级马里奥 3D世界》是个几乎不讲道理的游戏:突击秃鹫、翻转板、双重樱桃(分身)、炮台箱、开关滑板、忽隐忽现的方块、空中秋千……<strong>整个游戏塞满了全新系统</strong>。按常理,这么多新机制必然导致两种灾难之一:要么教程满天飞,玩家烦不胜烦;要么什么都不教,玩家一头雾水。</p>
+  <div class="quote">
+    <div class="q">这么多系统塞进一个游戏,为什么没有变得冗余、难懂、或者教程满天飞?最熟知这个问题答案的,就是林田宏一。他从自己的开发经验中,提炼出了「新要素を立て続けに導入する(接连不断地导入新要素)」这套设计哲学。</div>
+    <div class="who">—— <b>GIGAZINE</b> · 对 GMTK「4 Step Level Design」的整理</div>
+  </div>
+  <p>答案就是 R5:<strong>一关只教一个机制</strong>。翻转板有它专属的一关,炮台箱有它专属的一关,分身樱桃有它专属的一关。每一关都是某个机制的完整一生——从登场到谢幕。玩家永远只需要同时消化一个新东西,所以永远不会过载;而机制被一关接一关地不断更换,所以游戏永远新鲜。这就是林田哲学的精髓:<strong>用「一关一机制」换来「既不过载又不乏味」</strong>。</p>
+  <p>而每一关内部,这个机制要如何展开?林田借用了叙事学里的「起承转结」——一个四段式的戏剧结构。这也是 R5 真正的技术核心。</p>
+</section>
+
+<section>
+  <div class="eyebrow">CASE · 四段构造的完整拆解</div>
+  <h2>起 · 承 · 転 · 結:一个机制的完整弧线</h2>
+
+  <div class="fig">
+    <svg viewBox="0 0 840 240" xmlns="http://www.w3.org/2000/svg">
+      <path d="M40 190 C 180 188, 240 168, 360 142 C 480 116, 540 104, 620 62 C 680 32, 720 40, 770 84 C 795 106, 815 140, 800 168"
+        stroke="#d9a441" stroke-width="2.4" fill="none"/>
+      <line x1="220" y1="24" x2="220" y2="205" stroke="rgba(216,210,196,.14)" stroke-dasharray="4 5"/>
+      <line x1="440" y1="24" x2="440" y2="205" stroke="rgba(216,210,196,.14)" stroke-dasharray="4 5"/>
+      <line x1="680" y1="24" x2="680" y2="205" stroke="rgba(216,210,196,.14)" stroke-dasharray="4 5"/>
+      <text x="128" y="44" text-anchor="middle" class="slt" font-size="17">起</text>
+      <text x="330" y="44" text-anchor="middle" class="sla" font-size="17">承</text>
+      <text x="562" y="44" text-anchor="middle" class="slc" font-size="17" font-weight="700">転</text>
+      <text x="748" y="44" text-anchor="middle" class="sl" font-size="17">結</text>
+      <text x="128" y="64" text-anchor="middle" class="sl">安全展示</text>
+      <text x="330" y="64" text-anchor="middle" class="sl">加入风险</text>
+      <text x="562" y="64" text-anchor="middle" class="sl">违反预期</text>
+      <text x="748" y="64" text-anchor="middle" class="sl">华丽谢幕</text>
+      <text x="40" y="224" class="sl">复杂度/难度 →</text>
+      <text x="800" y="224" text-anchor="end" class="sl">插旗</text>
+      <!-- peak marker at 転 -->
+      <circle cx="620" cy="62" r="5" fill="#c8442a"/>
+      <text x="620" y="30" text-anchor="middle" class="slc" font-size="10">峰值:认知跳跃</text>
+    </svg>
+    <div class="figcap">复杂度曲线在「転」达到顶峰,「結」<b>回落</b>。注意結不是最难的一段——机制的最后一次登场是纪念性的、低风险的谢幕演出(比如通往旗杆前用它拿一个绿星),让玩家带着掌控感而非疲惫离开。</div>
+  </div>
+
+  <p>以《3D世界》里的「翻转板(フリップパネル)」为例——踩过去会翻面变色的地板:</p>
+  <div class="model">
+    <div class="mstep k"><h5>起 — 在零风险环境展示核心规则</h5><p>平地上放一小块翻转板,玩家踩上去看到它翻面变色。<strong>掉不下去、没有威胁</strong>,玩家可以随便走来走去,纯粹认识「这东西踩了会变」。这一段的唯一任务:让玩家安全地理解机制是什么。</p></div>
+    <div class="mstep sh"><h5>承 — 加入风险,或与已知机制组合</h5><p>把翻转板架到<strong>悬空</strong>——现在踩错顺序会掉下去。或者让翻转板配合移动、配合敌人。机制没变,但开始有了代价。这一段把「认识」变成「掌握」:玩家必须真正用好它才能过。</p></div>
+    <div class="mstep t"><h5>転 — 违反刚刚建立的预期</h5><p>这是全关的灵魂。前面让玩家以为翻转板就是「按顺序踩过的路」,転就打破它:比如整片大型翻转板阵+敌人干扰,必须<strong>一笔画规划路线</strong>,或者揭示翻转板的一个全新用途。玩家产生「原来还能这样!」的认知跳跃。<strong>只是「更难」不算転,必须是「换个角度/换个用法/换个尺度」。</strong></p></div>
+    <div class="mstep ke"><h5>結 — 短促华丽的谢幕,然后退场</h5><p>一段炫技式但低风险的最终演出,通常连着旗杆和奖励(绿星)。让玩家在掌控感的高峰结束这一关。然后<strong>这个机制退场,下一关换全新的</strong>——绝不拖泥带水地重复。</p></div>
+  </div>
+
+  <p>这套结构和 R1 的「一个点子用四次(覚→遊→応→極)」是<strong>同一个思想在不同尺度的表达</strong>:R1 管单个机制在整个游戏里的教学分布,R5 管单个机制在一关之内的戏剧展开。起≈覚える,承≈遊ぶ,転≈応用する,結≈極める的一次性演出。</p>
+  <div class="quote">
+    <div class="q">「起承転結」是个简单、谁都能用的方法。但要用好它,需要「巧妙的点子」和「有趣的转调」。任天堂等于是开发了一个换个游戏也能复用的便利结构。</div>
+    <div class="who">—— <b>GIGAZINE</b> · 对 4 Step Level Design 的总结</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 「転」为什么是灵魂,以及它从哪来</div>
+  <h2>転 = 有趣的转调,这是整关唯一不可省的部分</h2>
+  <p>起承结都相对机械,唯有「転」需要真正的创意。它是玩家一整关里记得住的那个瞬间——「哦!原来这机制还能这么玩」。没有転的关卡,只是一段平滑加难度的练习,玩完就忘。有了転,这一关才有了记忆点。</p>
+  <p>那么「有趣的転」从哪里来?《3D世界》的答案藏在它的开发方式里——<strong>便利贴墙(付箋の壁)</strong>:</p>
+  <div class="quote">
+    <div class="q">约100人的团队,包括制作人小泉欢晃,把游戏点子写在便利贴上,贴满工作室的墙。被团队认可的点子会被实装、测试。共同总监元仓健太说:纸上很难判断点子好坏,这种时候就直接在游戏里试,不好玩就不进最终产品。</div>
+    <div class="who">—— <b>《3D世界》开发,Wikipedia 整理</b></div>
+  </div>
+  <p>换句话说,転不是坐着想出来的,是<strong>海量试错筛出来的</strong>。团队产出远超成品所需的点子量,然后用「实际做出来玩一玩,不好玩就扔」的标准残酷筛选。能当上某一关「転」的,是从便利贴墙里活下来的极少数。这给独立开发者的启示很直接:<strong>你的「転」需要一个候选池,而不是灵光一现</strong>——这正好对接你的机制冷藏库。</p>
+
+  <h3>从「技术门槛」到「智慧门槛」:転的一种高级形态</h3>
+  <p>林田参与设计的《马里奥奇迹》里,把「転」的哲学又推进了一步。传统2D马里奥的难点在<strong>操作精度</strong>(时机、逃生空间);奇迹刻意转向:</p>
+  <div class="quote">
+    <div class="q">这次不是靠技术,而是「动脑筋就能过关」——不光是操作,绞尽脑汁想办法就能前进的机制。</div>
+    <div class="who">—— <b>开発者に訊きました『スーパーマリオブラザーズ ワンダー』</b></div>
+  </div>
+  <p>这提示了「転」的两种类型:<strong>操作型転</strong>(把机制用得更极限,考手速手感)和<strong>智慧型転</strong>(把机制用出意想不到的组合,考脑子)。后者对独立游戏尤其友好——它不要求玩家有高操作水平,却能制造同样强的「原来如此!」的惊喜。你的人生小镇这类偏思考的游戏,几乎全部应该用智慧型転。</p>
+</section>
+
+<section>
+  <div class="eyebrow">DEEPEN · 配套决策</div>
+  <h2>「一关一机制」需要一个牺牲:摄像机自由</h2>
+  <p>R5 能成立,还依赖一个容易被忽略的技术决策。社長が訊く里林田和小泉说明:从《3D乐园》起,他们<strong>「明确地割舍(明確な割り切り)」了自由摄像机</strong>,改成与马里奥保持固定方向、固定距离的平行摄像机。</p>
+  <div class="quote">
+    <div class="q">摄像机变成从固定方向、不再绕转之后,在关卡里迷路的情况骤减了。而且是从「分屏是不可能的」这个前提出发,一下子就想通了单画面多人游玩的理想形态。</div>
+    <div class="who">—— <b>社長が訊く『スーパーマリオ 3Dワールド』</b></div>
+  </div>
+  <p>为什么这和 R5 有关?因为「一关只教一个机制」要求玩家的注意力<strong>高度集中在那个机制上</strong>。如果摄像机自由旋转,玩家会分心于「我在哪、镜头该怎么转」,机制的教学信号被噪声淹没。<strong>锁定摄像机 = 移除干扰 = 让那唯一的机制成为画面的绝对主角</strong>。这是「用限制换清晰」的典范:主动放弃一项自由(镜头控制),换来教学的纯净和多人同屏的可能。对你的启示是:当你想突出某个机制时,先问「有什么自由是可以砍掉的,好让玩家只看这一个东西」。</p>
+</section>
+
+<section>
+  <div class="eyebrow">HOW · 怎么给一个机制排四段</div>
+  <h2>执行流程</h2>
+  <div class="model">
+    <div class="mstep"><h5>为这一关选定唯一的核心机制</h5><p>一关一个,不多。写下这一关「玩家要理解并掌握的那一件事」。其他所有元素都是为它服务的配角。</p></div>
+    <div class="mstep"><h5>起:设计零风险的首次展示</h5><p>让机制在无威胁环境登场,玩家能安全地试。问自己:玩家在这一段会不会死?如果会,风险太高了,退回去。</p></div>
+    <div class="mstep"><h5>承:加入风险或组合</h5><p>同一机制,加坑/加敌/加时限,或与已学机制相乘。玩家现在必须真正用好它。</p></div>
+    <div class="mstep"><h5>転:从候选池里选一个「违反预期」的用法</h5><p>这是要花最多心思的一步。检验标准:它是否违反了前两段建立的预期?如果只是「更多更快更难」,那还是承,回去重想。优先选智慧型転(换用法)而非纯操作型。</p></div>
+    <div class="mstep"><h5>結:设计低风险的华丽谢幕,然后让机制退场</h5><p>复杂度回落,给一个炫技但不难的收尾+奖励。确认下一关换的是全新机制,不重复这个。</p></div>
+  </div>
+  <div class="check">
+    <h4>CHECKLIST · 起承转结审计</h4>
+    <ul>
+      <li>这一关是否只围绕一个核心机制?(多于一个→拆关)</li>
+      <li>起:机制首次登场是否零风险、可安全试?</li>
+      <li>承:是否加入了风险或与已知机制的组合?</li>
+      <li>転:是否<strong>违反了前两段建立的预期</strong>(而不只是更难)?</li>
+      <li>転:是操作型还是智慧型?思考类游戏优先智慧型</li>
+      <li>結:复杂度是否回落,以低风险炫技+奖励收尾?</li>
+      <li>結之后:下一关是否换成全新机制,不重复本关?</li>
+      <li>你是否有一个「転候选池」,而非临时硬想?</li>
+      <li>有没有可以砍掉的自由(如镜头),好让机制成为绝对主角?</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">TEMPLATE · 可直接复制的字段</div>
+  <h2>一关一机制模板</h2>
+  <div class="tpl">
+    <div class="h">ONE-MECHANIC LEVEL / KI-SHO-TEN-KETSU</div>
+    <div class="row"><span class="k">core_mechanic</span>: 这一关唯一的核心机制</div>
+    <div class="row"><span class="k">起 intro</span>: 零风险展示(玩家在此不会死)</div>
+    <div class="row"><span class="k">承 develop</span>: 加入的风险/组合</div>
+    <div class="row"><span class="k">転 twist</span>: 违反的具体预期是「玩家以为__,其实__」</div>
+    <div class="row">  └ <span class="k">twist_type</span>: 操作型 / 智慧型</div>
+    <div class="row"><span class="k">結 finale</span>: 低风险炫技+奖励,复杂度回落</div>
+    <div class="row"><span class="k">next_mechanic</span>: 下一关换成的全新机制(证明本机制退场)</div>
+    <div class="row"><span class="k">cut_freedom</span>: 为突出机制而砍掉的自由(镜头/选项…)</div>
+    <div class="row"><span class="k">twist_pool</span>: 転候选池(挑剩的放冷藏库)</div>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">APPLY · 映射到你的项目</div>
+  <h2>人生小镇 & 星屑急便</h2>
+  <div class="apply">
+    <h4>人生小镇(人生模拟) — 用智慧型転</h4>
+    <ul>
+      <li><strong>把每个人生阶段做成「一章一机制」</strong>:求学章只教「时间分配」机制,职业章只教「风险回报」机制,家庭章只教「关系维护」机制。玩家每章只消化一个新系统,不会被人生模拟常见的系统洪流淹没。</li>
+      <li><strong>每章内走起承转结</strong>:以「时间分配」章为例——起:一个低风险的时间选择,怎么选都行;承:引入代价,选错会有后果;<strong>転:揭示一个反直觉的时间策略</strong>(比如「故意荒废某方面反而解锁隐藏路线」),制造智慧型认知跳跃;結:一个轻松的总结性选择+奖励,然后进入下一章换新机制。</li>
+      <li><strong>建転候选池</strong>:每个机制想5个「反直觉玩法」,做出来快速验证(哪怕纯文本),留最惊喜的一个当転,其余进冷藏库。</li>
+    </ul>
+  </div>
+  <div class="apply">
+    <h4>星屑急便(多人配送) — 操作型与智慧型混用</h4>
+    <ul>
+      <li><strong>每张图一个配送机制</strong>:传送管图只教传送、传送带图只教移动地形、限时图只教节奏。一图一机制,玩家逐图学会全部系统。</li>
+      <li><strong>単人图走完整起承转结</strong>:以「移动传送带」图为例——起:平地上一小段传送带,站上去感受被推着走;承:传送带架空,站错会掉;<strong>転:逆向传送带+需要利用惯性才能到达的点</strong>,揭示「可以借传送带的力做超远投掷」这种意外用法;結:一段爽快的传送带滑行到终点。</li>
+      <li><strong>联机图把「転」变成对抗涌现</strong>:联机场景里,让机制的意外用法成为玩家间博弈的来源(比如利用传送带把对手的包裹弹飞),把単人的「転」升级为多人的策略深度。</li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <div class="eyebrow">PITFALL · 常见误用</div>
+  <h2>四个反面信号</h2>
+  <div class="warn"><b>误用一 · 把「更难」当成「転」。</b>这是最常见、最致命的错误。第三段如果只是敌人更多、坑更宽、速度更快,那还停留在「承」。真正的転必须让玩家产生「原来还能这样」的<strong>认知跳跃</strong>,而不是「这段好难」的挫败。区分标准:玩家过关后记住的是一个新理解,还是只记住累。</div>
+  <div class="warn"><b>误用二 · 一关塞了多个机制。</b>如果一关同时教翻转板和炮台箱,玩家的注意力被撕裂,两个都没学好。R5 的铁律是一关一机制。想教两个,就做两关。贪多必然导致过载。</div>
+  <div class="warn"><b>误用三 · 結不回落,以最难考验收尾。</b>把最难的部分放在最后,玩家带着疲惫和挫败离开这一关。結应该是掌控感的高峰——低风险的炫技,让玩家觉得「我掌握了这个机制」。難度峰值属于転,不属于結。</div>
+  <div class="warn"><b>误用四 · 机制舍不得退场,下关继续用。</b>某个机制做得好,就忍不住一关接一关地用。这违背了林田哲学的核心——「接连不断地导入新要素」靠的正是<strong>不断更换</strong>。結之后必须换新机制,旧机制可以在后期作为「组合配角」回归,但不该继续当主角。</div>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="nav">
+      <span>◀ R4 · 参数教学</span>
+      <span>NEXT ▶ <b>R6 · 结尾段复杂度回落:炫技谢幕</b></span>
+    </div>
+    <p>资料来源 · 社長が訊く『スーパーマリオ 3Dワールド』(任天堂官网) ／ GDC 2012「The Structure of Fun: Learning from Super Mario 3D Land's Director」(Game Developer) ／ GMTK「Super Mario 3D World's 4 Step Level Design」(GIGAZINE 日语整理) ／ 開発者に訊きました『スーパーマリオブラザーズ ワンダー』 ／ Wikipedia「スーパーマリオ 3Dワールド」「林田宏一」。图示为基于讲演内容的示意复原,引文为最小限度摘录转述。教程编纂 · 2026年7月。</p>
+  </div>
+</footer>
+
+</body>
+</html>
