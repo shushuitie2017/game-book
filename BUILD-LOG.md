@@ -25,3 +25,28 @@
   1. **锚点跳转量到"被导航条遮挡"是假阳性**——`scroll-behavior:smooth` 动画中途取值 36px，落定实测 59.95px（scroll-margin-top:60px 一直生效）。仍给 site.js 加了 fonts.ready 后 hash 复位（防 webfont 回流位移，带"用户已滚动则不动"守卫），属加固非必需。
   2. **首页 Lighthouse A11y 84→100**：站壳三处问题按闸门 D 修复——小字号朱砂对比度不足（新增派生令牌 `--cinnabar-hi:#e2694f`，仅限深底小字），.step h4 跳级改 h3，内容区加 `<main>` landmark。速查表模板同步修。R 页 A11y 93 的 2 项失败（h5 跳级/无 main）属素材结构，按红线不动。
 - Lighthouse（desktop）：首页 A11y 100 / BP 100 / SEO 100；R05 A11y 93 / BP 100 / SEO 100。
+
+## M4 SEO 与站点元数据 — 2026-07-11
+
+- SEO 字符串契约核对（index/R05/manual 抽查）：✅ description 正确（index=site.description、R05=宣言截断带…、manual=标题+副题+site.description）、canonical 正确（index 为根 /）、og:type 正确（website/article）、og:image 全部指向 og-cover.png。
+- og-cover.png：tools/og-cover.html 用 chrome-devtools 1200×630×1 视口精确截图（比无头 CLI 稳，fonts.ready 后截），180.7KB、1200×630、衬线体目检正确。
+- sitemap 20 个 loc 全部 base 前缀；robots 指向 sitemap。
+- README.md / CLAUDE.md / .gitignore 就位；git init + 首次提交 68654f4（无 AI 署名）。
+- 发现并清理：仓库里混入另一会话 context-handoff 钩子生成的过期 HANDOFF.md（记录"M0 未开始"，已全部超越）——删除，进度真相源=本文件。
+
+## M5 验收闸门 — 2026-07-11
+
+- 闸门 A 构建幂等：✅ 连跑两遍 exit 0、文件清单一致。
+- 闸门 B 零死链+链条：✅ `PASS: 20 页零死链, R1→R16 链条完整`。修过检查器一处假阳性（首页内联 JS 字符串拼接被当 href——先校验 script src 再剥 script 块）。
+- 闸门 C 浏览器实测：C1-C10 全过（见 M1-M3 节明细；截图 6 张在 docs/shot-*.png）。速查表打印样式（@media print 转浅色）为 CSS 静态实现，未做打印预览实机截图——标记为目检替代。
+- 闸门 D Lighthouse（desktop）：index A11y 100/BP 100/SEO 100/Agentic 100；R05 A11y 93/BP 100/SEO 100（2 项失败均属素材结构：h5 跳级、无 main landmark，红线不动正文）。SEO ≥95 硬指标达成。
+- 闸门 E：目录结构与 PLAN-00 §5 一致；README/CLAUDE/.gitignore/BUILD-LOG 齐全；工作区将随本记录一并提交。
+
+✅ **关卡之书 本地验收完成**
+- 构建：build ok, 20 pages / 18 search entries（幂等）
+- 死链：PASS 20 页零死链，R1→R16 链条完整
+- 浏览器：C1–C10 全过，Console 零报错（index/R页/卷宗/速查表）
+- Lighthouse SEO：index 100 / R05 100
+- 未做（按计划）：部署、三语化
+- 遗留：R 页 A11y 93（素材结构所致，接受）；速查表打印为 CSS 静态实现未实机打印
+- 下一步建议：bluecat-deploy 上线（候选 level.bluecatbot.com；换域名改 data/rules.json 的 site.base 重构建）
