@@ -22,6 +22,15 @@ def truncate(s, n=155):
 def seo_block(title, desc, fname):
     url = f'{SITE["base"]}/{fname}' if fname != "index.html" else SITE["base"] + "/"
     og_type = "website" if fname in ("index.html", "cheatsheet.html") else "article"
+    schema_type = "WebSite" if og_type == "website" else "Article"
+    ld = json.dumps({
+        "@context": "https://schema.org",
+        "@type": schema_type,
+        "name" if schema_type == "WebSite" else "headline": title,
+        "description": truncate(desc),
+        "url": url,
+        **({"publisher": {"@type": "Organization", "name": SITE["name"]}} if schema_type == "Article" else {}),
+    }, ensure_ascii=False)
     return (
         f'<meta name="description" content="{esc(truncate(desc))}">\n'
         f'<link rel="canonical" href="{url}">\n'
@@ -32,7 +41,9 @@ def seo_block(title, desc, fname):
         f'<meta property="og:url" content="{url}">\n'
         f'<meta property="og:image" content="{SITE["base"]}/assets/og-cover.png">\n'
         f'<meta property="og:site_name" content="{esc(SITE["name"])}">\n'
+        f'<meta property="og:locale" content="zh_CN">\n'
         f'<meta name="twitter:card" content="summary_large_image">\n'
+        f'<script type="application/ld+json">{ld}</script>\n'
         f'<link rel="stylesheet" href="assets/site.css">\n'
     )
 
