@@ -59,6 +59,19 @@
 - 验证：R15 8 处 / R05 9 处 / R11 13 处段落宽度全部恢复 768px（桌面）；390px 移动端 min 278px 无横向溢出；check_links 仍 PASS。
 - 注意：`分析报告\game\` 里的素材原件仍带此缺陷（属只读归档，未动）；若要修原件需用户另行授权。
 
+## 二次修复：排版缺陷全量清扫 — 2026-07-11（86f8dfa）
+
+- 用户报告手册页仍大面积一字一行——上次只修了 R 页 `.mstep`，**manual 的 `.steps .step`（52px+1fr，7 处）是同类缺陷的另一个 class**，被漏掉。教训：发现一个组件缺陷后必须按"缺陷类型"全量扫描，不能按"出问题的组件"点杀。
+- 全量排查：扫全部源文件 `grid-template-columns` → 嫌疑=Npx 首列的 `.mstep`/`.step`（dossier `.vs` 子结构恰好 3 项，安全）。修法统一为 `>*{grid-column:2}`。
+- 新增自动扫描器（iframe 渲染 20 页 × 1280/390 两宽度，检"窄列长文本"+横向溢出）：揪出最后一处 dossier 宽表格 390px 溢出 20px → `@media(max-width:600px){table{display:block;overflow-x:auto}}`。终扫 **clean**。
+- 本地+github.io+gamebook.bluecatbot.com（并行会话 scp 部署）三处均实测修复生效。
+
+## 安全事件：servers.json 误入公开仓（已清除）— 2026-07-11
+
+- 起因：并行部署会话在项目根生成 `servers.json`（游戏服 IP+用户名+本地 pem 路径；**密钥本体未入库**），本会话 `git add -A` 把它带进公开仓并推送。
+- 处置：立即 `git rm --cached` + gitignore；经用户授权 force push 重写历史（reset --soft 到干净基点重提交），`git log --all -- servers.json` 于 main 链上零命中；远端 root 无此文件。并行会话的提交 5466cc2 树与重写后 main 完全一致，零内容丢失。
+- 残余风险：GitHub 对不可达对象可能短期按 SHA 缓存；因无密钥本体，评估为低风险。教训：**公开仓永远不用 `git add -A`，用显式路径；servers.json 建项目时就该进 .gitignore（计划书漏了这条）**。
+
 ## 部署：GitHub Pages 上线 — 2026-07-11
 
 - **✅ 已上线 https://shushuitie2017.github.io/game-book/**（仓库 shushuitie2017/game-book，用户预建的空仓）。
