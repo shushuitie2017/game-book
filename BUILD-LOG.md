@@ -50,3 +50,11 @@
 - 未做（按计划）：部署、三语化
 - 遗留：R 页 A11y 93（素材结构所致，接受）；速查表打印为 CSS 静态实现未实机打印
 - 下一步建议：bluecat-deploy 上线（候选 level.bluecatbot.com；换域名改 data/rules.json 的 site.base 重构建）
+
+## 验收后修复：素材 .mstep 网格缺陷 — 2026-07-11（3c284e8）
+
+- 用户报告：所有文章从「执行步骤清单」类小节起排版错位（段落一字一行）。
+- 定位：**素材自带 CSS 缺陷，非构建引入**——用 file:// 直开 `分析报告\game\R15…html` 同样损坏。`.mstep{grid-template-columns:44px 1fr}` 的子项是 ::before(编号)+h5+p 三个网格项，自动布局把 p 排进 44px 编号列。16 篇 R 页全中招（共 123 个 mstep，结构一致，无一自带 grid-column 修正）。
+- 修复：site.css 注入层加 `.mstep>h5,.mstep>p{grid-column:2}`，素材源文件一字未动（红线保持）。
+- 验证：R15 8 处 / R05 9 处 / R11 13 处段落宽度全部恢复 768px（桌面）；390px 移动端 min 278px 无横向溢出；check_links 仍 PASS。
+- 注意：`分析报告\game\` 里的素材原件仍带此缺陷（属只读归档，未动）；若要修原件需用户另行授权。
