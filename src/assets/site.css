@@ -19,3 +19,8 @@ footer .nav a:hover b{color:#d9a441}
 
 /* 锚点跳转防 sticky 导航条遮挡 */
 h2[id],section[id]{scroll-margin-top:60px}
+
+/* 素材 CSS 缺陷修复（16 篇 R 页共 123 处）：.mstep 是 44px+1fr 两列网格，
+   子项为 ::before(编号)+h5+p 三个网格项，自动布局会把 p 排进 44px 编号列
+   导致一字一行。强制 h5/p 进第 2 列还原设计意图。素材源文件不动。 */
+.mstep>h5,.mstep>p{grid-column:2}
