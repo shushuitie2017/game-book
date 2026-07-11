@@ -79,3 +79,10 @@
 - 坑：**首跑 deploy 步失败**——push 触发的 run 启动时 Pages 还没开启（API 开启在 push 之后）。开启后 workflow_dispatch 重触发即成功。正确顺序应为：先开 Pages 再 push。
 - 公网实测：首页 16 卡、搜索「起承转结」命中 R5+manual#s2、R15 mstep 修复生效（min 768px）、footer prev/next 正常、canonical/og 指向 github.io、og-cover/cheatsheet/R05 全 200。
 - 仓库元数据：description + homepage 已设。out/ 不入库（Actions 端构建）。
+
+## 阅读层排版优化（design-review）— 2026-07-12（6316712）
+
+- 用户反馈通篇字体/排版差。走查采点（设计正典 A2）：①行长 52 汉字/行 远超舒适档；②13-14.5px 衬线中文在 Windows 低分屏发虚；③无避头尾/对齐。
+- 修法（全部 site.css 注入层+构建器给内容页打 body.lb-doc 类，素材不动）：行长收窄 760px→42字/行；正文层换 Noto Sans SC（标题/RULE宣言/引文保衬线锚，衬线+无衬线+mono 三层字体结构）；小字号全线提档（组件正文 15.5px 起）；正文 justify+line-break:strict；内容页 h1 降半档防孤字。
+- 验证：本地实测（R05 42字/行/17px sans/justify）+ 回归扫描 20页×2宽度 clean + github.io 公网实测生效。
+- 注：项目目录已由 level-book 迁至 game-book（并行会话所为）；gamebook.bluecatbot.com 主站 scp 同步待用户授权。
