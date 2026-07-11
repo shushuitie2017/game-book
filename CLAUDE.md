@@ -19,7 +19,8 @@
 
 ## 部署
 
-尚未部署。上线走 bluecat-deploy（静态站，候选 `level.bluecatbot.com`；换域名改 `data/rules.json` 的 `site.base` 重构建）。
+- **线上**：GitHub Pages https://shushuitie2017.github.io/game-book/（仓库 shushuitie2017/game-book，main 推送触发 `.github/workflows/pages.yml`：Actions 跑 build_site.py → deploy-pages，本机无需构建产物入库）。
+- 换域名（如日后上 bluecatbot）：只改 `data/rules.json` 的 `site.base` 重构建/重推。
 
 ## 计划书
 

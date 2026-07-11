@@ -3,7 +3,7 @@
     "name": "关卡之书",
     "tagline": "任天堂关卡设计教程",
     "description": "把任天堂关卡设计方法论做成一本可执行的书——16 条规则、一份实战手册、一卷开发访谈研究。",
-    "base": "https://level.bluecatbot.com",
+    "base": "https://shushuitie2017.github.io/game-book",
     "port": 5031
   },
   "groups": [
