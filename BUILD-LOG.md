@@ -58,3 +58,11 @@
 - 修复：site.css 注入层加 `.mstep>h5,.mstep>p{grid-column:2}`，素材源文件一字未动（红线保持）。
 - 验证：R15 8 处 / R05 9 处 / R11 13 处段落宽度全部恢复 768px（桌面）；390px 移动端 min 278px 无横向溢出；check_links 仍 PASS。
 - 注意：`分析报告\game\` 里的素材原件仍带此缺陷（属只读归档，未动）；若要修原件需用户另行授权。
+
+## 部署：GitHub Pages 上线 — 2026-07-11
+
+- **✅ 已上线 https://shushuitie2017.github.io/game-book/**（仓库 shushuitie2017/game-book，用户预建的空仓）。
+- 链路：`site.base` 换 github.io/game-book → 重构建（20 页/零死链复检过）→ push main → `.github/workflows/pages.yml`（Actions：setup-python 3.12 → build_site.py → upload-pages-artifact → deploy-pages）→ API 开 Pages（`POST /pages {"build_type":"workflow"}`）→ 公网验证。
+- 坑：**首跑 deploy 步失败**——push 触发的 run 启动时 Pages 还没开启（API 开启在 push 之后）。开启后 workflow_dispatch 重触发即成功。正确顺序应为：先开 Pages 再 push。
+- 公网实测：首页 16 卡、搜索「起承转结」命中 R5+manual#s2、R15 mstep 修复生效（min 768px）、footer prev/next 正常、canonical/og 指向 github.io、og-cover/cheatsheet/R05 全 200。
+- 仓库元数据：description + homepage 已设。out/ 不入库（Actions 端构建）。
