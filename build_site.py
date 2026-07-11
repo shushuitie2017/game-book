@@ -44,6 +44,7 @@ def seo_block(title, desc, fname):
         f'<meta property="og:locale" content="zh_CN">\n'
         f'<meta name="twitter:card" content="summary_large_image">\n'
         f'<script type="application/ld+json">{ld}</script>\n'
+        f'<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">\n'
         f'<link rel="stylesheet" href="assets/site.css">\n'
     )
 
@@ -85,6 +86,8 @@ def rule_prev_next(i):
 
 def inject(page_html, seo, nav):
     out = page_html.replace("</head>", seo + "</head>", 1)
+    # 内容页打 lb-doc 类，供 site.css 阅读层（行长/字号/两族字体）限定作用域
+    out = re.sub(r"<body(?![^>]*class)", '<body class="lb-doc"', out, count=1)
     out = re.sub(r"(<body[^>]*>)", lambda m: m.group(1) + "\n" + nav, out, count=1)
     out = out.replace("</body>", '<script src="assets/site.js"></script>\n</body>', 1)
     return out

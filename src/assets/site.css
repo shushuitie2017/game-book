@@ -32,6 +32,49 @@ h2[id],section[id]{scroll-margin-top:60px}
   table{display:block;overflow-x:auto}
 }
 
+/* ===== 阅读层（design-review 2026-07-12）：治「字体/排版读着累」=====
+   P0-1 行长：内容页 828px÷16px≈52 汉字/行 → 收窄到 ~41 字/行（中文舒适 35-42）。
+   P0-2 字体：Noto Serif SC 在 Windows 低分屏小字号发虚 → 正文层换 Noto Sans SC，
+        标题/RULE 宣言/引文保持衬线做锚点（两族字体结构：衬线锚 + 无衬线正文 + mono 标注）。
+   P0-3 小字号提档 + 避头尾 + 两端对齐。全部走注入层，素材源文件不动。
+   作用域：body.lb-doc = 18 个内容页（构建器打类）；字体族规则全站生效。 */
+
+/* 正文层字体族（p/li/td 及其内联后代继承；标题、.rule、.quote 未列入=保持衬线） */
+p, li, td, .warn, .figcap, .sub, .lede{
+  font-family:'Noto Sans SC','Noto Serif SC',sans-serif;
+}
+
+/* 行长 */
+.lb-doc .wrap{max-width:760px}
+
+/* 正文与组件字号提档（覆盖素材里 13–14.5px 的衬线小字） */
+.lb-doc section p{font-size:17px;line-height:2.05}
+.lb-doc .rule{font-size:17.5px;line-height:2.05}
+.lb-doc .quote .q{font-size:17.5px}
+.lb-doc .mstep p{font-size:15.5px;line-height:1.95}
+.lb-doc .mstep h5{font-size:16.5px}
+.lb-doc .steps .step p{font-size:15.5px;line-height:1.95}
+.lb-doc .steps .step h5{font-size:16.5px}
+.lb-doc .check li,.lb-doc .apply li{font-size:15.5px}
+.lb-doc .warn{font-size:15.5px}
+.lb-doc .card p{font-size:15.5px}
+.lb-doc .vs p{font-size:15px}
+.lb-doc .phase p{font-size:14.5px}
+.lb-doc td{font-size:14.5px}
+.lb-doc .tpl{font-size:13.5px}
+.lb-doc .src,.lb-doc .figcap{font-size:12px}
+
+/* CJK 长文细节：两端对齐 + 严格避头尾（仅内容页正文，短文案不硬对齐） */
+.lb-doc section p,.lb-doc .mstep p,.lb-doc .steps .step p,.lb-doc .card p{
+  text-align:justify;line-break:strict;
+}
+
+/* 速查表宣言行（全站字体族已换 sans，这里只提字号） */
+ol li a span{font-size:15px}
+
+/* 窄列下 R 页 h1 降半档，避免副题行溢出孤字（CJK 断行） */
+.lb-doc .hero h1,.lb-doc h1{font-size:clamp(25px,3.8vw,36px)}
+
 /* 复制给 AI 浮动按钮 */
 #lb-copy{
   position:fixed;bottom:24px;right:22px;z-index:200;
